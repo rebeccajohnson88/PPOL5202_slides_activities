@@ -8,6 +8,7 @@ format:
 editor: visual
 ---
 
+
 ## Welcome to PPOL 5202!
 
 Structure of today (tl;dr no coding / substantive content yet)
@@ -19,6 +20,8 @@ Structure of today (tl;dr no coding / substantive content yet)
 -   **📝 Class norms activity**
 
 -   **🗳️ Polls on course structure**
+
+# Intros
 
 ## Where we are
 
@@ -62,6 +65,10 @@ Structure of today (tl;dr no coding / substantive content yet)
 
 Add
 
+## Intros: from survey
+
+Add code and graph 
+
 ## Intros: Your turn
 
 -   Around the room
@@ -73,6 +80,8 @@ Add
     -   Favorite DSPP experience thus far 💻
 
     -   Your dream dataset 🦄
+    
+# Review of Syllabus
 
 ## Where we are
 
@@ -84,7 +93,10 @@ Add
 
 -   [Polls on course structure]{style="color:gray;"}
 
-## Walk through syllabus
+
+## Link (also on Canvas)
+
+[Fall 2024 Syllabus](https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/ppol5202_fall24_syllabus.pdf)
 
 ## Nuts and bolts
 
@@ -94,10 +106,40 @@ Add
 
 -   **Canvas:** major course announcements + assignments + grades; minimal content otherwise
 
-## Code
+# Class Norms
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Where we are
 
-```{r}
-1 + 1
-```
+-   [Intros]{style="color:gray;"}
+
+-   [Review of Syllabus]{style="color:gray;"}
+
+-   **📝 Class norms activity**
+
+-   [Polls on course structure]{style="color:gray;"}
+
+
+
+
+
+## Foundations example
+
+
+
+## For us
+
+-   Add dimensions 
+
+
+
+# Polls
+
+## Where we are
+
+-   [Intros]{style="color:gray;"}
+
+-   [Review of Syllabus]{style="color:gray;"}
+
+-   [Class norms activity]{style="color:gray;"}
+
+-   **🗳 Polls on course structure**
