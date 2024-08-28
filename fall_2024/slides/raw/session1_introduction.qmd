@@ -1,0 +1,103 @@
+---
+title: "Session 1: Introduction"
+author: "Prof. Rebecca A. Johnson"
+date: "28 August 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+editor: visual
+---
+
+## Welcome to PPOL 5202!
+
+Structure of today (tl;dr no coding / substantive content yet)
+
+-   👋 **Intros:** me + you all
+
+-   **📄 Review of syllabus**
+
+-   **📝 Class norms activity**
+
+-   **🗳️ Polls on course structure**
+
+## Where we are
+
+-   👋 **Intros:** me + you all
+
+-   [Review of Syllabus]{style="color:gray;"}
+
+-   [Class norms activity]{style="color:gray;"}
+
+-   [Polls on course structure]{style="color:gray;"}
+
+## Intros: Me
+
+-   Assistant Professor (AP) at McCourt in DSPP since Fall of 2022. Across 🇺🇸 before:
+
+    -   2020-2022: AP at Dartmouth College (New Hampshire; Vermont) 🏔️
+
+    -   2014-2020: Grad student at Princeton (New Jersey with stints in DC)
+
+    -   2012-2014: Pre-doc researcher at NIH Bioethics (DC/Maryland) 🏥
+
+    -   2007-2012: BA/MA at Stanford (California) 🌊
+
+    -   Pre 2007: Midwest 🌽
+
+## Intros: Me
+
+-   Focus on education 🏫 + health 🏥 but love learning about a variety of topics!
+
+-   More on current research here: [www.rebeccajohnson.io](https://www.rebeccajohnson.io/)
+
+-   **Coding journey:**
+
+    -   Undergrad: STATA
+
+    -   Grad school: R (social science/stats training) - \> Python (ML training; govt collaborations)
+
+    -   Now: 💌 both equally with slight preference for 🐍
+
+## Intros: Your TA Jiaqin Wu
+
+Add
+
+## Intros: Your turn
+
+-   Around the room
+
+    -   Name
+
+    -   A few places you've lived (I know "where you're from" can get difficult!) 🌐
+
+    -   Favorite DSPP experience thus far 💻
+
+    -   Your dream dataset 🦄
+
+## Where we are
+
+-   [Intros]{style="color:gray;"}
+
+-   **📄** Review of Syllabus
+
+-   [Class norms activity]{style="color:gray;"}
+
+-   [Polls on course structure]{style="color:gray;"}
+
+## Walk through syllabus
+
+## Nuts and bolts
+
+-   **Slides + activities:** pull from course GitHub repo at beginning of class
+
+-   **Slack:** main mode of communication (preferred over email) 📧
+
+-   **Canvas:** major course announcements + assignments + grades; minimal content otherwise
+
+## Code
+
+When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
