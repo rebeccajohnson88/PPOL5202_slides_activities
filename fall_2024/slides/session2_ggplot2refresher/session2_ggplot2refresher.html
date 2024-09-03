@@ -417,12 +417,11 @@ Prof.&nbsp;Rebecca A. Johnson
 <h2>Overview</h2>
 <ul>
 <li><p><strong>Prepping data to plot</strong></p></li>
-<li><p><strong>Four types of EDA</strong><sup>1</sup></p>
+<li><p><strong>Three types of EDA</strong><sup>1</sup></p>
 <ul>
 <li>Comparisons</li>
 <li>Distributions / Relationships</li>
 <li>Compositions</li>
-<li>Maps / Networks / Hierarchies</li>
 </ul></li>
 </ul>
 <aside><ol class="aside-footnotes"><li id="fn1"><p>Acknowledgements to Prof Pickens’ Data visualization for exploratory data analysis lecture for this framework!</p></li></ol></aside></section></section>
@@ -435,7 +434,7 @@ Prof.&nbsp;Rebecca A. Johnson
 <h2>Where we are</h2>
 <ul>
 <li><p><strong>Prepping data to plot</strong></p></li>
-<li><p><span style="color:gray;">Four types of EDA</span></p></li>
+<li><p><span style="color:gray;">Three types of EDA</span></p></li>
 </ul>
 </section>
 <section id="example-data" class="slide level2">
@@ -698,12 +697,12 @@ Prof.&nbsp;Rebecca A. Johnson
 <section id="alluvial-charts-parallel-sets" class="slide level2">
 <h2>Alluvial charts (Parallel sets)</h2>
 
-<img data-src="images/alluvial.png" class="r-stretch quarto-figure-center"><p class="caption">Source: https://datavizproject.com/data-type/alluvial-diagram/</p></section>
+<img data-src="input/alluvial.png" class="r-stretch quarto-figure-center"><p class="caption">Source: https://datavizproject.com/data-type/alluvial-diagram/</p></section>
 <section id="sankey-diagrams" class="slide level2">
 <h2>Sankey diagrams</h2>
 <p>Flow diagram - width of the area is proportional to flow amount</p>
 
-<img data-src="images/sankey.png" class="r-stretch quarto-figure-center"><p class="caption">Source: https://datavizproject.com/data-type/sankey-diagram/</p></section>
+<img data-src="input/sankey.png" class="r-stretch quarto-figure-center"><p class="caption">Source: https://datavizproject.com/data-type/sankey-diagram/</p></section>
 <section id="violin-plots" class="slide level2">
 <h2>Violin plots</h2>
 
@@ -809,7 +808,7 @@ Prof.&nbsp;Rebecca A. Johnson
 <span id="cb21-5"><a href=""></a>       <span class="fu">aes</span>(<span class="at">x =</span> metro_cat, <span class="at">y =</span> m)) <span class="sc">+</span></span>
 <span id="cb21-6"><a href=""></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
 <span id="cb21-7"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"What kind of area?"</span>) <span class="sc">+</span></span>
-<span id="cb21-8"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Distribution: % children in poverty"</span>) <span class="sc">+</span></span>
+<span id="cb21-8"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Distribution: % </span><span class="sc">\n</span><span class="st">children in poverty"</span>) <span class="sc">+</span></span>
 <span id="cb21-9"><a href=""></a>  <span class="fu">theme_bw</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
@@ -829,7 +828,7 @@ Prof.&nbsp;Rebecca A. Johnson
 <span id="cb22-2"><a href=""></a>       <span class="fu">aes</span>(<span class="at">x =</span> metro_cat, <span class="at">y =</span> percchildbelowpovert)) <span class="sc">+</span></span>
 <span id="cb22-3"><a href=""></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
 <span id="cb22-4"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"What kind of area?"</span>) <span class="sc">+</span></span>
-<span id="cb22-5"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Distribution: % children in poverty"</span>) <span class="sc">+</span></span>
+<span id="cb22-5"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Distribution: %</span><span class="sc">\n</span><span class="st">children in poverty"</span>) <span class="sc">+</span></span>
 <span id="cb22-6"><a href=""></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">24</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
@@ -850,7 +849,7 @@ Prof.&nbsp;Rebecca A. Johnson
 <span id="cb23-3"><a href=""></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
 <span id="cb23-4"><a href=""></a>  <span class="fu">geom_boxplot</span>(<span class="at">width=</span><span class="fl">0.1</span>) <span class="sc">+</span></span>
 <span id="cb23-5"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"What kind of area?"</span>) <span class="sc">+</span></span>
-<span id="cb23-6"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Distribution: % children in poverty"</span>) <span class="sc">+</span></span>
+<span id="cb23-6"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Distribution: %</span><span class="sc">\n</span><span class="st">children in poverty"</span>) <span class="sc">+</span></span>
 <span id="cb23-7"><a href=""></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">24</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
@@ -894,17 +893,67 @@ Prof.&nbsp;Rebecca A. Johnson
 </div>
 </div></section><section id="wrapping-up-and-wednesdays-lab" class="slide level2">
 <h2>Wrapping up and Wednesday’s lab</h2>
-<p>Add</p>
+<p>What we covered:</p>
+<ul>
+<li><p><strong>Prepping data to plot</strong></p></li>
+<li><p><strong>Three types of EDA:</strong> examples of all three; <code>ggplot2</code> example of distributions</p>
+<ul>
+<li>Comparisons</li>
+<li>Distributions / Relationships</li>
+<li>Compositions</li>
+</ul></li>
+<li><p><strong>Wednesday’s lab</strong>: <code>ggplot2</code> practice of all three types</p></li>
+</ul>
 </section>
-<section id="preview-of-next-week" class="slide level2">
-<h2>Preview of next week</h2>
-<p>Add example of automating the statistics</p>
+<section id="preview-of-next-week-automation" class="slide level2">
+<h2>Preview of next week: automation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>all_perc <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"^perc"</span>, <span class="fu">colnames</span>(midwest), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-2"><a href=""></a>all_perc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+</section>
+<section id="preview-of-next-week-automation-output" class="slide level2 output-location-slide"><h2>Preview of next week: automation</h2><div class="cell output-location-slide">
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "percwhite"            "percblack"            "percamerindan"       
+ [4] "percasian"            "percother"            "perchsd"             
+ [7] "percollege"           "percprof"             "percpovertyknown"    
+[10] "percbelowpoverty"     "percchildbelowpovert" "percadultpoverty"    
+[13] "percelderlypoverty"  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a>plot_one_perc <span class="ot">&lt;-</span> <span class="cf">function</span>(input_data, x_category, y_outcome){</span>
+<span id="cb27-2"><a href=""></a>  <span class="do">## your code here </span></span>
+<span id="cb27-3"><a href=""></a>  </span>
+<span id="cb27-4"><a href=""></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></section><section id="preview-of-next-week-automation-1" class="slide level2">
+<h2>Preview of next week: automation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a>input_data <span class="ot">&lt;-</span> midwest </span>
+<span id="cb28-2"><a href=""></a>x_category <span class="ot">&lt;-</span> <span class="st">"metro_cat"</span></span>
+<span id="cb28-3"><a href=""></a>y_outcome <span class="ot">&lt;-</span> <span class="fu">as.character</span>(all_perc[<span class="dv">1</span>])</span>
+<span id="cb28-4"><a href=""></a><span class="fu">ggplot</span>(input_data,</span>
+<span id="cb28-5"><a href=""></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="sc">!!</span><span class="fu">sym</span>(x_category), <span class="at">y =</span> <span class="sc">!!</span><span class="fu">sym</span>(y_outcome))) <span class="sc">+</span></span>
+<span id="cb28-6"><a href=""></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb28-7"><a href=""></a>  <span class="fu">geom_boxplot</span>(<span class="at">width=</span><span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb28-8"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"What kind of area?"</span>) <span class="sc">+</span></span>
+<span id="cb28-9"><a href=""></a>  <span class="fu">ylab</span>(<span class="fu">sprintf</span>(<span class="st">"Distribution: %s"</span>, y_outcome)) <span class="sc">+</span></span>
+<span id="cb28-10"><a href=""></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">24</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
 </div>
 </div>
-</section></section>
+</section><section id="preview-of-next-week-automation-1-output" class="slide level2 output-location-slide"><h2>Preview of next week: automation</h2><div class="cell output-location-slide">
+<div class="cell-output-display">
+<div>
+<figure>
+<p><img data-src="session2_ggplot2refresher_files/figure-revealjs/unnamed-chunk-13-1.png" width="960"></p>
+</figure>
+</div>
+</div>
+</div></section></section>
 
     </div>
   </div>

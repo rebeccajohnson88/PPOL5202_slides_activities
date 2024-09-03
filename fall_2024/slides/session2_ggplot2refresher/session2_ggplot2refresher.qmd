@@ -21,12 +21,11 @@ editor: visual
 
 -   **Prepping data to plot**
 
--   **Four types of EDA**[^1]
+-   **Three types of EDA**[^1]
 
     -   Comparisons
     -   Distributions / Relationships
     -   Compositions
-    -   Maps / Networks / Hierarchies
 
 [^1]: Acknowledgements to Prof Pickens' Data visualization for exploratory data analysis lecture for this framework!
 
@@ -36,7 +35,7 @@ editor: visual
 
 -   **Prepping data to plot**
 
--   [Four types of EDA]{style="color:gray;"}
+-   [Three types of EDA]{style="color:gray;"}
 
 ## Example data
 
@@ -295,7 +294,7 @@ ggplot(midwest %>%
        aes(x = metro_cat, y = m)) +
   geom_bar(stat = "identity") +
   xlab("What kind of area?") +
-  ylab("Distribution: % children in poverty") +
+  ylab("Distribution: % \nchildren in poverty") +
   theme_bw() 
   
 
@@ -312,7 +311,7 @@ ggplot(midwest,
        aes(x = metro_cat, y = percchildbelowpovert)) +
   geom_violin() +
   xlab("What kind of area?") +
-  ylab("Distribution: % children in poverty") +
+  ylab("Distribution: %\nchildren in poverty") +
   theme_bw(base_size = 24) 
   
 
@@ -329,7 +328,7 @@ ggplot(midwest,
   geom_violin() +
   geom_boxplot(width=0.1) +
   xlab("What kind of area?") +
-  ylab("Distribution: % children in poverty") +
+  ylab("Distribution: %\nchildren in poverty") +
   theme_bw(base_size = 24) 
 ```
 
@@ -359,8 +358,55 @@ ggplot(midwest,
 
 ## Wrapping up and Wednesday's lab
 
-Add
+What we covered:
 
-## Preview of next week
+-   **Prepping data to plot**
 
-Add example of automating the statistics 
+-   **Three types of EDA:** examples of all three; `ggplot2` example of distributions
+
+    -   Comparisons
+    -   Distributions / Relationships
+    -   Compositions
+    
+- **Wednesday's lab**: `ggplot2` practice of all three types 
+
+
+## Preview of next week: automation 
+
+
+```{r}
+#| echo: true
+#| output-location: slide
+all_perc <- grep("^perc", colnames(midwest), value = TRUE)
+all_perc
+
+plot_one_perc <- function(input_data, x_category, y_outcome){
+  ## your code here 
+  
+}
+
+```
+
+
+## Preview of next week: automation 
+
+Variable names and non-standard evaluation (NSE)
+
+```{r}
+#| echo: true
+#| output-location: slide
+input_data <- midwest 
+x_category <- "metro_cat"
+y_outcome <- as.character(all_perc[1])
+ggplot(input_data,
+       aes(x = !!sym(x_category), y = !!sym(y_outcome))) +
+  geom_violin() +
+  geom_boxplot(width=0.1) +
+  xlab("What kind of area?") +
+  ylab(sprintf("Distribution: %s", y_outcome)) +
+  theme_bw(base_size = 24) 
+
+```
+
+
+
