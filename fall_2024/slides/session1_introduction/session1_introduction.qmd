@@ -1,0 +1,174 @@
+---
+title: "Session 1: Introduction"
+author: "Prof. Rebecca A. Johnson"
+date: "28 August 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+editor: visual
+---
+
+## Welcome, a few links to bookmark
+
+-   [Course GitHub repo](https://github.com/rebeccajohnson88/PPOL5202_slides_activities)
+-   [Running FAQ](https://docs.google.com/document/d/18C8lxQACGMRNAVI5lHPSCcd6QhKanVz0r7T0KOEULjk/edit?usp=sharing)
+-   [DSPP workspace](https://join.slack.com/t/msppdatascience/shared_invite/zt-2prrg1u8w-pf~cDnmg2KrVxW9LkINs7A)
+    -   DM Jiaqin Wu if have issues seeing the private course channel `ppol5202_fall2024_coursegeneral`
+
+## Welcome to PPOL 5202!
+
+Structure of today (tl;dr no coding / substantive content yet)
+
+-   👋 **Intros:** me + you all
+
+-   **📄 Review of syllabus**
+
+-   **📝 Class norms activity**
+
+-   **🗳️ Polls on course structure**
+
+# Intros
+
+## Where we are
+
+-   👋 **Intros:** me + you all
+
+-   [Review of Syllabus]{style="color:gray;"}
+
+-   [Class norms activity]{style="color:gray;"}
+
+-   [Polls on course structure]{style="color:gray;"}
+
+## Intros: Me
+
+-   Assistant Professor (AP) at McCourt in DSPP since Fall of 2022. Across 🇺🇸 before:
+
+    -   2020-2022: AP at Dartmouth College (New Hampshire; Vermont) 🏔️
+
+    -   2014-2020: Grad student at Princeton (New Jersey with stints in DC)
+
+    -   2012-2014: Pre-doc researcher at NIH Bioethics (DC/Maryland) 🏥
+
+    -   2007-2012: BA/MA at Stanford (California) 🌊
+
+    -   Pre 2007: Midwest 🌽
+
+## Intros: Me
+
+-   Focus on education 🏫 + health 🏥 but love learning about a variety of topics!
+
+-   More on current research here: [www.rebeccajohnson.io](https://www.rebeccajohnson.io/)
+
+-   **Coding journey:**
+
+    -   Undergrad: STATA
+
+    -   Grad school: R (social science/stats training) - \> Python (ML training; govt collaborations)
+
+    -   Now: 💌 both equally with slight preference for 🐍
+
+## Intros: Your TA Jiaqin Wu
+
+-   Graduated DSPP student - 2022 cohort (and an outstanding student in my Fall '22 DS1 class!)
+-   Policy Fields: Public Health, Housing, Criminal Justice
+-   From Jiaqin: "Feel free to reach out to me if you have any questions!"
+
+## Intros: from survey
+
+![Policy Areas of Interest](input/policy_barchart.png)
+
+## Ways to improve visualization?
+
+Discuss and (maybe) live code
+
+```{r}
+#| echo: true
+#| output-location: slide
+library(dplyr)
+policy_areas <- read.csv("input/policyareas_inputdata.csv")
+colnames(policy_areas) <- c("time", "policy_areas")
+head(policy_areas, 3)
+
+```
+
+## Intros: Your turn
+
+-   Around the room
+
+    -   Name
+
+    -   A few places you've lived (I know "where you're from" can get difficult!) 🌐
+
+    -   Favorite DSPP experience thus far 💻
+
+    -   Arcane hobby / interest
+
+    -   Your dream dataset 🦄
+
+# Review of Syllabus
+
+## Where we are
+
+-   [Intros]{style="color:gray;"}
+
+-   **📄** Review of Syllabus
+
+-   [Class norms activity]{style="color:gray;"}
+
+-   [Polls on course structure]{style="color:gray;"}
+
+## Link (also on Canvas)
+
+[Fall 2024 Syllabus](https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/ppol5202_fall24_syllabus.pdf)
+
+## Nuts and bolts
+
+-   **Slides + activities:** pull from course GitHub repo at beginning of class
+
+-   **Slack:** main mode of communication (preferred over email) 📧
+
+-   **Canvas:** major course announcements + assignments + grades; minimal content otherwise
+
+# Class Norms
+
+## Where we are
+
+-   [Intros]{style="color:gray;"}
+
+-   [Review of Syllabus]{style="color:gray;"}
+
+-   **📝 Class norms activity**
+
+-   [Polls on course structure]{style="color:gray;"}
+
+## Foundations example
+
+![Foundations Norms](input/foundations.png)
+
+## For us
+
+Some ideas to get us started:
+
+-   How to collect/give feedback on pace and structure of class?
+-   How to balance responsiveness by myself/Jiaqin without expectations of always online nights/weekends?
+-   How to overcome fear of "looking stupid" in front of cohortmates?
+-   How to avoid blank stares/silence in response to questions during lecture?
+-   *Later in semester*: Group norms for equitable contributions
+
+# Polls
+
+## Where we are
+
+-   [Intros]{style="color:gray;"}
+
+-   [Review of Syllabus]{style="color:gray;"}
+
+-   [Class norms activity]{style="color:gray;"}
+
+-   **🗳 Polls on course structure**
+
+## Two polls 🗳
+
+1.  Group formation for final project
+
+2.  Guest speakers
