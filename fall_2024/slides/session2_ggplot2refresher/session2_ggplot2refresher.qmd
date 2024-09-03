@@ -199,13 +199,13 @@ Source: Scott Berinato (2016), Good Charts
 
 ## Alluvial charts (Parallel sets)
 
-![Source: https://datavizproject.com/data-type/alluvial-diagram/](images/alluvial.png){fig-align="center"}
+![Source: https://datavizproject.com/data-type/alluvial-diagram/](input/alluvial.png){fig-align="center"}
 
 ## Sankey diagrams
 
 Flow diagram - width of the area is proportional to flow amount
 
-![Source: https://datavizproject.com/data-type/sankey-diagram/](images/sankey.png){fig-align="center"}
+![Source: https://datavizproject.com/data-type/sankey-diagram/](input/sankey.png){fig-align="center"}
 
 ## Violin plots
 
