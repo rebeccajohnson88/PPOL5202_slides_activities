@@ -2,6 +2,9 @@
 title: "ggplot2refresher"
 format: html
 editor: visual
+execute: 
+  warning: false
+  message: false
 ---
 
 # Exploratory Data Analysis
@@ -10,26 +13,28 @@ We'll practice various data preparation/plotting tasks for exploratory data anal
 
 ## Exercise 1: labeled violin plot for child poverty rates
 
-- Load ggplot2 and tidyverse 
-- Load the `midwest` data from the ggplot2 package
-- Produce a violin plot similar to the lecture slide example of the distribution of child poverty rates (`percchildbelowpovert`) for metro and non-metro counties but adding:
+-   Load ggplot2 and tidyverse
 
-  - A label with the county + state + poverty rate for the highest child poverty rate counties in each group (so one for metro areas; another for non-metro areas)
-  - A label with the county + state + poverty rate for the lowest child poverty rate counties in each group 
-  
+-   Load the `midwest` data from the ggplot2 package
+
+-   Produce a violin plot similar to the lecture slide example of the distribution of child poverty rates (`percchildbelowpovert`) for metro and non-metro counties but adding:
+
+    -   A label with the county + state + poverty rate for the highest child poverty rate counties in each group (so one for metro areas; another for non-metro areas)
+    -   A label with the county + state + poverty rate for the lowest child poverty rate counties in each group
+
 *Hint on finding max/min counties by group*: https://stackoverflow.com/questions/24237399/how-to-select-the-rows-with-maximum-values-in-each-group-with-dplyr
 
-*Bonus 1*: also add a text note with the county at / closest to the median poverty rate for each group 
+*Bonus 1*: also add a text note with the county at / closest to the median poverty rate for each group
 
-*Bonus 2*: repeat the exercise but include the facetting by state 
-  
-  
+*Bonus 2*: repeat the exercise but include the facetting by state
+
 ```{r}
+#| echo: false
 ## imports
 library(ggplot2)
 library(tidyverse)
-head(midwest)
-summary(midwest$percchildbelowpovert)
+#head(midwest)
+#summary(midwest$percchildbelowpovert)
 
 ## add metro categorical
 midwest <- midwest %>%
@@ -68,25 +73,26 @@ ggplot(midwest,
 
 ```
 
-
 ## Exercise 2: alluvial flow diagram for hate crimes in DC
 
-- Load the Hate Crimes open data file from DC's Metropolitan Police Department
-- Filter to the following type of hate crimes (as the sole coding; ignore ones that are multiple coded and feel free to ignore typos)
-  - Ethnicity/National Origin
-  - Religion
-  - Race 
-  
-- Create an alluvial flow chart where the left hand panel has the count of each different `Type of Hate Bias` and the right hand panel has flows into different `Targeted Groups`
+-   Load the Hate Crimes open data file from DC's Metropolitan Police Department
 
-- If it makes it easier to interpret, you can filter to the top 10-20 most frequent types of crimes/targets
+-   Filter to the following type of hate crimes (as the sole coding; ignore ones that are multiple coded and feel free to ignore typos)
 
-*Hint*: you'll want to do some aggregation to get counts before 
+    -   Ethnicity/National Origin
+    -   Religion
+    -   Race
 
-*Resource*: https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html 
+-   Create an alluvial flow chart where the left hand panel has the count of each different `Type of Hate Bias` and the right hand panel has flows into different `Targeted Groups`
 
+-   If it makes it easier to interpret, you can filter to the top 10-20 most frequent types of crimes/targets
+
+*Hint*: you'll want to do some aggregation to get counts before
+
+*Resource*: https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html
 
 ```{r}
+#| echo: false
 library(openxlsx)
 library(ggalluvial)
 
@@ -125,11 +131,18 @@ ggplot(hc_summarise,
 
 ## Exercise 3: square area chart
 
+-   Create a square area chart to compare two counties in Illinois in the `midwest` data:
 
-https://stackoverflow.com/questions/25457966/create-grid-and-color-cells-with-average-values-of-scatterplot-using-ggplot2
+    -   The county with the highest poverty rate
 
+    -   The county with the lowest poverty rate
+
+-   The square area chart should have 100 cells and color cells red to represent the count of children in poverty out of 100 (the rounded percentage) -- eg if the poverty rate is 31\\%, 31 out of the 100 squares should be red
+
+-   *Hint*: you may want to use `geom_tile()`
 
 ```{r}
+#| echo: false
 il_maxcounty <- midwest %>%
           filter(state == "IL") %>%
           slice(which.max(percchildbelowpovert)) 
@@ -159,22 +172,24 @@ sq_values$child_pov_min <- c(rep("In poverty",
 
 
 ggplot(sq_values, aes(x = Var1, y = Var2, fill = child_pov_max)) +
-  geom_tile(alpha = 0.8) +
+  geom_tile(alpha = 0.8, color = "black") +
   theme_minimal() +
   scale_fill_manual(values = color_map_pv) +
   theme(axis.ticks = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank()) +
-  labs(fill = "Category of children")
+  labs(fill = "Category of children") +
+  ggtitle(sprintf("Number of children in poverty per 100 children: %s county, IL; poverty rate: %s%%", str_to_title(il_maxcounty$county), round(il_maxcounty$percchildbelowpovert, 1)))
 
 ggplot(sq_values, aes(x = Var1, y = Var2, fill = child_pov_min)) +
-  geom_tile(alpha = 0.8) +
+  geom_tile(alpha = 0.8, color = "black") +
   theme_minimal() +
   scale_fill_manual(values = color_map_pv) +
   theme(axis.ticks = element_blank(),
         axis.text = element_blank(),
         axis.title = element_blank()) +
-  labs(fill = "Category of children")
+  labs(fill = "Category of children") +
+  ggtitle(sprintf("Number of children in poverty per 100 children: %s county, IL; poverty rate: %s%%", str_to_title(il_mincounty$county), round(il_mincounty$percchildbelowpovert, 1)))
 
 
 ```
