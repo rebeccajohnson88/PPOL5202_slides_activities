@@ -1,0 +1,180 @@
+---
+title: "ggplot2refresher"
+format: html
+editor: visual
+---
+
+# Exploratory Data Analysis
+
+We'll practice various data preparation/plotting tasks for exploratory data analysis (EDA).
+
+## Exercise 1: labeled violin plot for child poverty rates
+
+- Load ggplot2 and tidyverse 
+- Load the `midwest` data from the ggplot2 package
+- Produce a violin plot similar to the lecture slide example of the distribution of child poverty rates (`percchildbelowpovert`) for metro and non-metro counties but adding:
+
+  - A label with the county + state + poverty rate for the highest child poverty rate counties in each group (so one for metro areas; another for non-metro areas)
+  - A label with the county + state + poverty rate for the lowest child poverty rate counties in each group 
+  
+*Hint on finding max/min counties by group*: https://stackoverflow.com/questions/24237399/how-to-select-the-rows-with-maximum-values-in-each-group-with-dplyr
+
+*Bonus 1*: also add a text note with the county at / closest to the median poverty rate for each group 
+
+*Bonus 2*: repeat the exercise but include the facetting by state 
+  
+  
+```{r}
+## imports
+library(ggplot2)
+library(tidyverse)
+head(midwest)
+summary(midwest$percchildbelowpovert)
+
+## add metro categorical
+midwest <- midwest %>%
+    mutate(metro_cat = case_when(inmetro == 1 ~ "Metropolitan",
+                                 inmetro == 0 ~ "Non-metropolitan",
+                                 TRUE ~ NA_character_))
+
+## outside the plot, find the highest and median rate counties 
+max_county <- midwest %>% 
+            group_by(metro_cat) %>%
+            slice(which.max(percchildbelowpovert))
+min_county <- midwest %>%
+            group_by(metro_cat) %>%
+            slice(which.min(percchildbelowpovert))
+
+
+## create violin plot 
+ggplot(midwest,
+       aes(x = metro_cat, y = percchildbelowpovert)) +
+  geom_violin() +
+  geom_boxplot(width=0.1) +
+  xlab("What kind of area?") +
+  ylab("Distribution: %\nchildren in poverty") +
+  theme_bw(base_size = 24) +
+  geom_text(data = max_county, 
+            aes(x = metro_cat, y = percchildbelowpovert, 
+                label = sprintf("%s, %s: Poverty rate: %s",
+                                county, state, 
+                                round(percchildbelowpovert, 2)))) +
+  geom_text(data = min_county, 
+            aes(x = metro_cat, y = percchildbelowpovert, 
+                label = sprintf("%s, %s: Poverty rate: %s",
+                                county, state, 
+                                round(percchildbelowpovert, 2))))
+
+
+```
+
+
+## Exercise 2: alluvial flow diagram for hate crimes in DC
+
+- Load the Hate Crimes open data file from DC's Metropolitan Police Department
+- Filter to the following type of hate crimes (as the sole coding; ignore ones that are multiple coded and feel free to ignore typos)
+  - Ethnicity/National Origin
+  - Religion
+  - Race 
+  
+- Create an alluvial flow chart where the left hand panel has the count of each different `Type of Hate Bias` and the right hand panel has flows into different `Targeted Groups`
+
+- If it makes it easier to interpret, you can filter to the top 10-20 most frequent types of crimes/targets
+
+*Hint*: you'll want to do some aggregation to get counts before 
+
+*Resource*: https://cran.r-project.org/web/packages/ggalluvial/vignettes/ggalluvial.html 
+
+
+```{r}
+library(openxlsx)
+library(ggalluvial)
+
+hc <- read.xlsx("https://mpdc.dc.gov/sites/default/files/dc/sites/mpdc/publication/attachments/Hate%20Crimes%20Open%20Data_16.xlsx")
+
+hc_summarise <- hc %>% filter(Type.of.Hate.Bias %in% 
+                c("Ethnicity/National Origin", 
+                  "Race",
+                  "Religion")) %>%
+            mutate(tg_clean = trimws(Targeted.Group),
+                   tbias_clean = ifelse(Type.of.Hate.Bias == 
+                                    "Ethnicity/National Origin", 
+                                    "Ethnicity",
+                                    Type.of.Hate.Bias)) %>%
+            group_by(tbias_clean, tg_clean) %>%
+            summarise(freq = n()) %>%
+            ungroup() %>%
+            arrange(desc(freq)) %>%
+            slice(1:15)
+
+ggplot(hc_summarise,
+       aes(y = freq, 
+          axis1 = tbias_clean,
+          axis2 = tg_clean, 
+          fill = tg_clean)) +
+  geom_alluvium() +
+  geom_stratum(width = 1/12, alpha = 0.5) +
+  geom_text(stat = "stratum", aes(label = after_stat(stratum)),
+             size = 2) +
+  scale_x_discrete(limits = c("Type of Bias", "Target of Bias"),
+                   expand = c(.05, .05)) +
+  labs(fill = "Target of bias")
+
+
+```
+
+## Exercise 3: square area chart
+
+
+https://stackoverflow.com/questions/25457966/create-grid-and-color-cells-with-average-values-of-scatterplot-using-ggplot2
+
+
+```{r}
+il_maxcounty <- midwest %>%
+          filter(state == "IL") %>%
+          slice(which.max(percchildbelowpovert)) 
+il_mincounty <- midwest %>%
+          filter(state == "IL") %>%
+          slice(which.min(percchildbelowpovert)) 
+
+color_map_pv <- c("In poverty" = "firebrick",
+                  "Not in poverty" = "wheat4")
+
+sq_values <- data.frame(expand.grid(1:10, 1:10)) 
+sq_values$child_pov_max <- c(rep("In poverty",
+                                 each = 
+                                round(il_maxcounty$percchildbelowpovert,
+                                      0)), 
+                                rep("Not in poverty",
+                                each = 100- round(il_maxcounty$percchildbelowpovert,
+                                      0)))
+sq_values$child_pov_min <- c(rep("In poverty",
+                                 each = 
+                                round(il_mincounty$percchildbelowpovert,
+                                      0)), 
+                                rep("Not in poverty",
+                                each = 100- round(il_mincounty$percchildbelowpovert,
+                                      0)))
+
+
+
+ggplot(sq_values, aes(x = Var1, y = Var2, fill = child_pov_max)) +
+  geom_tile(alpha = 0.8) +
+  theme_minimal() +
+  scale_fill_manual(values = color_map_pv) +
+  theme(axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank()) +
+  labs(fill = "Category of children")
+
+ggplot(sq_values, aes(x = Var1, y = Var2, fill = child_pov_min)) +
+  geom_tile(alpha = 0.8) +
+  theme_minimal() +
+  scale_fill_manual(values = color_map_pv) +
+  theme(axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank()) +
+  labs(fill = "Category of children")
+
+
+```
