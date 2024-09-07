@@ -33,7 +33,7 @@ We'll practice various data preparation/plotting tasks for exploratory data anal
 ## imports
 library(ggplot2)
 library(tidyverse)
-#head(midwest)
+head(midwest)
 #summary(midwest$percchildbelowpovert)
 
 ## add metro categorical
@@ -49,6 +49,17 @@ max_county <- midwest %>%
 min_county <- midwest %>%
             group_by(metro_cat) %>%
             slice(which.min(percchildbelowpovert))
+
+## calculate the median poverty rate for each group
+median_poverty <- midwest %>%
+  group_by(metro_cat) %>%
+  summarize(median_poverty_rate = median(percchildbelowpovert, na.rm = TRUE))
+
+## find the county closest to the median poverty rate
+median_county <- midwest %>%
+  left_join(median_poverty, by = "metro_cat") %>% 
+  group_by(metro_cat) %>%
+  slice(which.min(abs(percchildbelowpovert - median_poverty_rate)))
 
 
 ## create violin plot 
@@ -68,8 +79,80 @@ ggplot(midwest,
             aes(x = metro_cat, y = percchildbelowpovert, 
                 label = sprintf("%s, %s: Poverty rate: %s",
                                 county, state, 
-                                round(percchildbelowpovert, 2))))
+                                round(percchildbelowpovert, 2)))) +
+  geom_text(data = median_county, 
+            aes(x = metro_cat, y = percchildbelowpovert, 
+                label = sprintf("%s, %s: Poverty rate: %s", 
+                                county, state, 
+                                round(percchildbelowpovert, 2)))) # Bonus 1
+# Bonus 2
+ggplot(midwest,
+       aes(x = metro_cat, y = percchildbelowpovert)) +
+  geom_violin() +
+  geom_boxplot(width=0.1) +
+  xlab("What kind of area?") +
+  ylab("Distribution: %\nchildren in poverty") +
+  theme_bw(base_size = 6) +
+  geom_text(data = max_county, 
+            aes(x = metro_cat, y = percchildbelowpovert, 
+                label = sprintf("%s, %s: Poverty rate: %s",
+                                county, state, 
+                                round(percchildbelowpovert, 2))),size = 2) +
+  geom_text(data = min_county, 
+            aes(x = metro_cat, y = percchildbelowpovert, 
+                label = sprintf("%s, %s: Poverty rate: %s",
+                                county, state, 
+                                round(percchildbelowpovert, 2))),size = 2) +
+  geom_text(data = median_county, 
+            aes(x = metro_cat, y = percchildbelowpovert, 
+                label = sprintf("%s, %s: Poverty rate: %s", 
+                                county, state, 
+                                round(percchildbelowpovert, 2))),size = 2) + 
+  facet_wrap(~state)
 
+
+
+# Alterative
+max_county1 <- midwest %>%
+  group_by(state, metro_cat) %>%
+  slice(which.max(percchildbelowpovert))
+
+min_county1 <- midwest %>%
+  group_by(state, metro_cat) %>%
+  slice(which.min(percchildbelowpovert))
+
+median_poverty1 <- midwest %>%
+  group_by(state, metro_cat) %>%
+  summarize(median_poverty_rate = median(percchildbelowpovert, na.rm = TRUE))
+
+median_county1 <- midwest %>%
+  left_join(median_poverty1, by = c("state", "metro_cat")) %>%  
+  group_by(state, metro_cat) %>%
+  slice(which.min(abs(percchildbelowpovert - median_poverty_rate)))
+
+# Combine max, min, and median into one dataframe
+annotations <- bind_rows(
+  max_county1 %>% mutate(label_type = "Max"),
+  min_county1 %>% mutate(label_type = "Min"),
+  median_county1 %>% mutate(label_type = "Median")
+)
+
+# Create violin plot with annotations
+ggplot(midwest, aes(x = metro_cat, y = percchildbelowpovert)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1) +
+  xlab("What kind of area?") +
+  ylab("Distribution: % children in poverty") +
+  theme_bw(base_size = 6) +
+  # Add text for max, min, and median poverty rate
+  geom_text(data = annotations, 
+            aes(x = metro_cat, y = percchildbelowpovert, 
+                label = sprintf("%s, %s: %s (%s)", 
+                                county, state, 
+                                round(percchildbelowpovert, 2), 
+                                label_type)),
+            size = 2, color = "black") +
+  facet_wrap(~state)
 
 ```
 
@@ -102,7 +185,7 @@ hc_summarise <- hc %>% filter(Type.of.Hate.Bias %in%
                 c("Ethnicity/National Origin", 
                   "Race",
                   "Religion")) %>%
-            mutate(tg_clean = trimws(Targeted.Group),
+            mutate(tg_clean = trimws(Targeted.Group), # trims any leading or trailing whitespace from the values
                    tbias_clean = ifelse(Type.of.Hate.Bias == 
                                     "Ethnicity/National Origin", 
                                     "Ethnicity",
