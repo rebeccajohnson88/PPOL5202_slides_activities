@@ -1,0 +1,95 @@
+---
+title: "Demographic Report"
+author: "PPOL 5202"
+format: html
+editor: visual
+params:
+  state: "IL"
+---
+
+# What Report Shows
+
+```{r}
+#| echo: false
+full_state <- state.name[state.abb == params$state]
+
+
+
+```
+
+Here, we present demographic statistics for `r full_state` separated into metropolitan areas and non-metropolitan areas.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false 
+library(ggplot2)
+library(tidyverse)
+
+
+## define function
+plot_onestat_onestate <- function(input_data,
+                                  state_abbrev,
+                                  var_x, 
+                                  var_y,
+                                  x_label, state_name = full_state){
+  
+  if(!state_abbrev %in% midwest$state){
+    stop(sprintf("Error; state not found in dataset; available states: %s",
+              paste(unique(input_data$state), collapse = "; ")))
+  }
+  
+  p <- ggplot(input_data %>% filter(state == state_abbrev),
+       aes(x = !!sym(var_x), y = !!sym(var_y))) +
+  geom_violin() +
+  geom_boxplot(width=0.1) +
+  xlab(x_label) +
+  ylab(sprintf("Distribution:\n%s in %s", 
+               title_maker(var_y),
+               state_name)) +
+  theme_bw(base_size = 16) +
+  ggtitle(sprintf("Demographic statistic:\n%s", title_maker(var_y))) +
+    theme(plot.title = element_text(size = 24))
+  return(p)
+  
+}
+
+title_maker <- function(onecol){
+  clean_perc <- gsub("perc", "Percent", onecol)
+  clean_str_perc <- paste(c(str_extract(clean_perc, "Percent"), 
+              str_to_title(str_remove(clean_perc, "Percent"))),
+              collapse = " ")
+  if(grepl("povert", clean_str_perc)){
+      clean_str_pov <- paste(c(str_remove(clean_str_perc,
+                                      "povert(y)?"),
+                      str_to_title(str_extract(clean_str_perc, 
+                                       "povert(y)?"))),
+              collapse = " ")
+      return(clean_str_pov)
+  } else{
+      return(clean_str_perc)
+  }
+}
+
+
+## read data 
+midwest <- midwest %>%
+    mutate(metro_cat = case_when(inmetro == 1 ~ "Metropolitan",
+                                 inmetro == 0 ~ "Non-metropolitan",
+                                 TRUE ~ NA_character_))
+
+## create plots
+all_stats <- grep("perc", colnames(midwest), value = TRUE)
+list_allp <- lapply(all_stats, plot_onestat_onestate,
+       input_data = midwest,
+       state_abbrev = params$state,
+       var_x = "metro_cat",
+       x_label = "What type of area?")
+names(list_allp) <- lapply(all_stats, title_maker)
+for(i in list_allp){
+  print(i)
+}
+
+rm(full_state)
+
+```
