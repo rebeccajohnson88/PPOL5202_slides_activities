@@ -12,7 +12,9 @@ params:
 
 ```{r}
 ## add code to pull state name and county name from parameters
+'r 
 
+ This table '
 ```
 
 Here, we are focusing on the following county within \[add R code for state\]: \[add R code for county name\].
@@ -33,7 +35,7 @@ This graph presents a visual description of where \[add R code for county name\]
 
 ```
 
-## Summary 
+## Summary
 
 ```{r}
 ## hint: for this part, you may want to modify the function to return both the plot and the input data for the plot 

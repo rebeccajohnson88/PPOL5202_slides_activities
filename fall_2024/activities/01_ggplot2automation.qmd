@@ -1,5 +1,5 @@
 ---
-title: "ggplot2 automation"
+title: "ggplot2 automation Vika"
 format: html
 editor: visual
 execute: 
@@ -26,7 +26,79 @@ In this activity, you'll work to produce the following:
 -   Adds a dot + label to that bar graph with the focal county's own statistics (at the rough height of where that statistic falls along the `y axis`) compared to the mean value
 
 ```{r}
-## your code here 
+library(tidyverse)
+library(ggplot2)
+```
+
+```{r}
+focal_county <- midwest %>%
+  filter(state== 'IL' & county == 'COOK')
+
+mean_values <- midwest %>%
+  filter(state =='IL' & !county %in% focal_county) %>%
+  summarize(
+    perchsd_mean = mean(perchsd, na.rm = TRUE),
+    percollege_mean = mean(percollege, na.rm = TRUE),
+    percprof_mean = mean(percprof, na.rm = TRUE)
+  )
+
+
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(reshape2)
+
+stats_comparison <- rbind.data.frame(midwest %>%
+            filter(state == "IL" & county != "COOK") %>%
+            summarise(hsd = mean(perchsd), college =  mean(percollege), 
+                      professional = mean(percprof)) %>%
+            mutate(category = "other"),
+            midwest %>%
+            filter(state == "IL" & county == "COOK") %>%
+            summarise(hsd = mean(perchsd), college =  mean(percollege), 
+                      professional = mean(percprof)) %>%
+            mutate(category = "COOK")) %>%
+            reshape2::melt(., id.vars = "category") %>%
+            mutate(variable_descriptive = 
+            factor(case_when(variable == "hsd" ~ "High school degree",
+                      variable == "college" ~ "College degree",
+                      variable == "professional" ~ "Professional school"),
+                levels = c("High school degree",
+                           "College degree",
+                           "Professional school"),
+                ordered = TRUE)) 
+
+stats_toplot <- stats_comparison %>%
+          left_join(stats_comparison %>% filter(category == "other") 
+                  %>% rename(mean_value = value) %>%
+                  select(variable, mean_value),
+                  by = "variable") 
+
+            
+ggplot(stats_toplot %>% filter(category == "other"), 
+       aes(x = variable_descriptive, 
+                            y = value)) +
+  geom_bar(stat = "identity", color = "black", 
+           fill = "wheat4") +
+  xlab("Highest level of educational attainment") +
+  ylab("Percentage in county (mean across other\nIllinois counties)") +
+  geom_point(data = stats_toplot %>% filter(category != "other"),
+             aes(x = variable_descriptive, 
+                 y = value),
+             color = "red", size = 4) +
+  geom_label(data = stats_toplot %>% filter(category != "other"),
+             aes(x = variable_descriptive, 
+                 y = value, 
+                 label = sprintf("Cook County's rate: %.2f\nMean rate: %.2f",
+                                 value, 
+                                 mean_value)),
+          color = "red",
+          size = 2,
+          nudge_y = 5) +
+  ylim(0, 100) +
+  ggtitle("Cook County compared to other Illinois counties")
 
 ```
 
@@ -36,6 +108,73 @@ Write a function that generalizes the plot from exercise 1 by: - Taking in two p
 
 ```{r}
 ## your code here
+library(tidyverse)
+library(ggplot2)
+library(stringr)
+
+comparison_plot <- function(state_name, county_name){
+  
+  stats_comparison <- rbind.data.frame(midwest %>%
+            filter(state == state_name & county != county_name) %>%
+            summarise(hsd = mean(perchsd), college =  mean(percollege), 
+                      professional = mean(percprof)) %>%
+            mutate(category = "other"),
+            midwest %>%
+            filter(state == state_name & county == county_name) %>%
+            summarise(hsd = mean(perchsd), college =  mean(percollege), 
+                      professional = mean(percprof)) %>%
+            mutate(category = county_name)) %>%
+            reshape2::melt(., id.vars = "category") %>%
+            mutate(variable_descriptive = 
+            factor(case_when(variable == "hsd" ~ "High school degree",
+                      variable == "college" ~ "College degree",
+                      variable == "professional" ~ "Professional school"),
+                levels = c("High school degree",
+                           "College degree",
+                           "Professional school"),
+                ordered = TRUE)) 
+  
+  stats_toplot <- stats_comparison %>%
+          left_join(stats_comparison %>% filter(category == "other") 
+                  %>% rename(mean_value = value) %>%
+                  select(variable, mean_value),
+                  by = "variable") 
+  
+  p <- ggplot(stats_toplot %>% filter(category == "other"), 
+       aes(x = variable_descriptive, 
+                            y = value)) +
+  geom_bar(stat = "identity", color = "black", 
+           fill = "wheat4") +
+  xlab("Highest level of educational attainment") +
+  ylab(sprintf("Percentage in county (mean across other\n%s counties)",
+      state.name[state.abb == state_name])) +
+  geom_point(data = stats_toplot %>% filter(category != "other"),
+             aes(x = variable_descriptive, 
+                 y = value),
+             color = "red", size = 4) +
+  geom_label(data = stats_toplot %>% filter(category != "other"),
+             aes(x = variable_descriptive, 
+                 y = value, 
+                 label = sprintf("%s county's rate: %.2f\nMean rate: %.2f",
+                                 str_to_title(county_name),
+                                 value, 
+                                 mean_value)),
+          color = "red",
+          size = 2,
+          nudge_y = 5) +
+  ylim(0, 100) +
+  ggtitle(sprintf("%s county compared to other %s counties",
+        str_to_title(county_name),
+        state.name[state.abb == state_name]))
+  
+  return(p)
+  
+}
+
+comparison_plot(state_name = "IL", county_name = "COOK")
+comparison_plot(state_name = "WI", county_name = "DANE")
+comparison_plot(state_name = "MI", county_name = "WASHTENAW")
+
 
 ```
 
