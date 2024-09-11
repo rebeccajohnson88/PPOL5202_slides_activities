@@ -7,6 +7,19 @@ execute:
   message: false
 ---
 
+```{r}
+
+# clear global environment
+rm(list = ls())
+
+# load packages
+library(tidyverse)
+library(knitr)
+library(assertr)
+library(kableExtra)
+
+```
+
 # Automation
 
 In this activity, you'll work to produce the following:
@@ -26,7 +39,38 @@ In this activity, you'll work to produce the following:
 -   Adds a dot + label to that bar graph with the focal county's own statistics (at the rough height of where that statistic falls along the `y axis`) compared to the mean value
 
 ```{r}
-## your code here 
+
+midwest_collapse <- midwest %>%
+  mutate(cook_county = case_when(county == "COOK" & state == "IL" ~ 1,
+                                 TRUE                             ~ 0)) %>%
+  select(perchsd, percollege,percprof,cook_county) %>%
+  group_by(cook_county) %>%
+  summarise(across(everything(), 
+            .fns = list(mean = ~mean(., na.rm = T)))) %>%
+  ungroup() %>%
+  pivot_longer(!cook_county,
+               names_to = "variable",
+               values_to = "values") %>%
+  mutate(variable = case_when(variable == "perchsd_mean" ~ "High school",
+                              variable == "percollege_mean" ~ "College",
+                              variable == "percprof_mean" ~ "Professional school")) %>%
+  mutate(order = case_when(variable == "High school" ~ 1,
+                           variable == "College" ~ 2,
+                           variable == "Professional school" ~ 3))
+
+ggplot(midwest_collapse, aes(x = reorder(variable,order), y = values)) +
+  geom_bar(data = midwest_collapse %>% filter(cook_county == 0), stat = "identity", 
+           fill = "lightblue", color = "black", linewidth = 1) +
+  geom_point(data = midwest_collapse %>% filter(cook_county == 1), color = "red", size = 1) +
+  geom_label(data = midwest_collapse %>% filter(cook_county == 1), 
+             aes(label = paste0("Mean for Cook: ",format(round(values,2),nsmall = 2),"%")), 
+             nudge_y = -4) +
+  geom_text(data = midwest_collapse %>% filter(cook_county == 0), y = -2,
+             aes(label = paste0("County mean: ",format(round(values,0.01),nsmall = 2),"%"))) +
+  labs(x = "Diploma type",
+       y = "Percentage with degree",
+       title = "Mean degree attainment in Cook county compared to all other midwest counties") +
+  theme_minimal()
 
 ```
 
@@ -35,7 +79,45 @@ In this activity, you'll work to produce the following:
 Write a function that generalizes the plot from exercise 1 by: - Taking in two parameters: county + state - Finding the remaining counties in that state - Creating the same plot as above (making sure to label the county-specific rate appropriately with the county's name) - Test the function on a few different counties from different states
 
 ```{r}
-## your code here
+
+county_comparison <- function(county_name,
+                              state_name) {
+
+  midwest_collapse <- midwest %>%
+    mutate(feat_county = case_when(county == county_name & state == state_name ~ 1,
+                                   TRUE                                        ~ 0)) %>%
+    select(perchsd, percollege,percprof,feat_county) %>%
+    group_by(feat_county) %>%
+    summarise(across(everything(), 
+              .fns = list(mean = ~mean(., na.rm = T)))) %>%
+    ungroup() %>%
+    pivot_longer(!feat_county,
+                 names_to = "variable",
+                 values_to = "values") %>%
+    mutate(variable = case_when(variable == "perchsd_mean" ~ "High school",
+                                variable == "percollege_mean" ~ "College",
+                                variable == "percprof_mean" ~ "Professional school")) %>%
+    mutate(order = case_when(variable == "High school" ~ 1,
+                             variable == "College" ~ 2,
+                             variable == "Professional school" ~ 3))
+  
+  ggplot(midwest_collapse, aes(x = reorder(variable,order), y = values)) +
+    geom_bar(data = midwest_collapse %>% filter(feat_county == 0), stat = "identity", 
+             fill = "lightblue", color = "black", linewidth = 1) +
+    geom_point(data = midwest_collapse %>% filter(feat_county == 1), color = "red", size = 1) +
+    geom_label(data = midwest_collapse %>% filter(feat_county == 1), 
+               aes(label = paste0("Mean for ",county_name,", ",state_name,": ",format(round(values,2),nsmall = 2),"%")), 
+               nudge_y = -4) +
+    geom_text(data = midwest_collapse %>% filter(feat_county == 0), y = -2,
+               aes(label = paste0("County mean: ",format(round(values,2),nsmall = 2),"%"))) +
+    labs(x = "Diploma type",
+         y = "Percentage with degree",
+         title = paste0("Mean degree attainment in ",county_name,", ",state_name," compared to all other midwest counties")) +
+    theme_minimal()
+    
+}
+
+county_comparison(county_name = "CHIPPEWA", state_name = "MI")
 
 ```
 

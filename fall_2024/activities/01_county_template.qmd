@@ -1,6 +1,6 @@
 ---
 title: "Educational Attainment Report"
-author: "PPOL 5202"
+author: "Maria Bartlett"
 format: html
 editor: visual
 params:
@@ -8,41 +8,127 @@ params:
   county: "COOK"
 ---
 
-# How does \[county name\] rank in educational attainment?
-
 ```{r}
-## add code to pull state name and county name from parameters
+#| message: FALSE
+#| warning: FALSE
+#| code-fold: TRUE
+
+library(tidyverse)
+library(kableExtra)
+
+state_name = params$state
+county_name = params$county
+
+n_states <- midwest %>%
+  filter(state == state_name) %>%
+  nrow(.)
+
+rank_focal <- midwest %>%
+  filter(state == state_name) %>%
+  arrange(-percollege) %>%
+  mutate(n = 1:n()) %>%
+  filter(county == county_name) %>%
+  select(n) %>%
+  pull()
 
 ```
 
-Here, we are focusing on the following county within \[add R code for state\]: \[add R code for county name\].
+# How does `r county_name` rank in educational attainment?
 
-This table shows where \[add R code for county name\] is ranked among \[add R code for state name\] in terms of rates of college degrees. We see that the county is ranked \[add R code for county rank\] out of \[add R code for total counties\] counties in the state.
+Here, we are focusing on the following county within `r state_name`: `r county_name`.
+
+This table shows where `r county_name` is ranked among `r state_name` in terms of rates of college degrees. We see that the county is ranked `r rank_focal` out of `r n_states` counties in the state.
 
 ```{r}
-## add code to create table 
-## may want to use kable() from package kableExtra
+
+midwest %>%
+  filter(state == state_name) %>%
+  arrange(-percollege) %>%
+  mutate(n = 1:n()) %>%
+  select(n,county,state,percollege) %>%
+  kbl() %>%
+  kable_styling(bootstrap_options = c("striped","hover"))
 
 ```
 
-This graph presents a visual description of where \[add R code for county name\] falls along rates of college degrees, along with two other statistics: rates of high school diplomas and rates of professional school completion.
+This graph presents a visual description of where `r county_name` falls along rates of college degrees, along with two other statistics: rates of high school diplomas and rates of professional school completion.
 
 ```{r}
-## add code to create plot 
+
+county_comparison <- function(county_name,
+                              state_name) {
+
+  midwest_collapse <- midwest %>%
+    mutate(feat_county = case_when(county == county_name & state == state_name ~ 1,
+                                   TRUE                                        ~ 0)) %>%
+    select(perchsd, percollege,percprof,feat_county) %>%
+    group_by(feat_county) %>%
+    summarise(across(everything(), 
+              .fns = list(mean = ~mean(., na.rm = T)))) %>%
+    ungroup() %>%
+    pivot_longer(!feat_county,
+                 names_to = "variable",
+                 values_to = "values") %>%
+    mutate(variable = case_when(variable == "perchsd_mean" ~ "High school",
+                                variable == "percollege_mean" ~ "College",
+                                variable == "percprof_mean" ~ "Professional school")) %>%
+    mutate(order = case_when(variable == "High school" ~ 1,
+                             variable == "College" ~ 2,
+                             variable == "Professional school" ~ 3))
+  
+  ggplot(midwest_collapse, aes(x = reorder(variable,order), y = values)) +
+    geom_bar(data = midwest_collapse %>% filter(feat_county == 0), stat = "identity", 
+             fill = "lightblue", color = "black", linewidth = 1) +
+    geom_point(data = midwest_collapse %>% filter(feat_county == 1), color = "red", size = 1) +
+    geom_label(data = midwest_collapse %>% filter(feat_county == 1), 
+               aes(label = paste0("Mean for ",county_name,", ",state_name,": ",format(round(values,2),nsmall = 2),"%")), 
+               nudge_y = -4) +
+    geom_text(data = midwest_collapse %>% filter(feat_county == 0), y = -2,
+               aes(label = paste0("County mean: ",format(round(values,2),nsmall = 2),"%"))) +
+    labs(x = "Diploma type",
+         y = "Percentage with degree",
+         title = paste0("Mean degree attainment in ",county_name,", ",state_name," compared to all other midwest counties")) +
+    theme_minimal()
+    
+}
+
+county_comparison(county_name = county_name, state_name = state_name)
+
 
 
 ```
 
-## Summary 
+## Summary
 
 ```{r}
-## hint: for this part, you may want to modify the function to return both the plot and the input data for the plot 
 
+midwest_collapse <- midwest %>%
+  filter(state == state_name) %>%
+  mutate(focal_county = case_when(county == county_name & state == state_name ~ 1,
+                                 TRUE                                         ~ 0)) %>%
+  select(perchsd, percollege,percprof,focal_county) %>%
+  group_by(focal_county) %>%
+  summarise(across(everything(), 
+            .fns = list(mean = ~mean(., na.rm = T)))) %>%
+  ungroup()
+
+focal_hs <- midwest_collapse %>% filter(focal_county == 1) %>% select(perchsd_mean) %>% pull()
+nonfocal_hs <- midwest_collapse %>% filter(focal_county == 0) %>% select(perchsd_mean) %>% pull()
+
+focal_coll <- midwest_collapse %>% filter(focal_county == 1) %>% select(percollege_mean) %>% pull()
+nonfocal_coll <- midwest_collapse %>% filter(focal_county == 0) %>% select(percollege_mean) %>% pull()
+
+focal_prof <- midwest_collapse %>% filter(focal_county == 1) %>% select(percprof_mean) %>% pull()
+nonfocal_prof <- midwest_collapse %>% filter(focal_county == 0) %>% select(percprof_mean) %>% pull()
+
+focal_hs_compare <- ifelse(focal_hs > nonfocal_hs, "higher","lower")
+focal_coll_compare <- ifelse(focal_coll > nonfocal_coll, "higher","lower")
+focal_prof_compare <- ifelse(focal_prof > nonfocal_prof, "higher","lower")
 
 ```
 
 We see that, for these statistics:
 
--   \[county name\] has \[higher or lower\] rates of high school diplomas than the state mean
--   \[county name\] has \[higher or lower\] rates of college degrees than the state mean
--   \[county name\] has \[higher or lower\] rates of professional school degrees than the state mean
+-   `r county_name` has `r focal_hs_compare` rates of high school diplomas than the state mean
+-   `r county_name` has `r focal_coll_compare` rates of college degrees than the state mean
+-   `r county_name` has `r focal_prof_compare` rates of professional school degrees than the state mean
