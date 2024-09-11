@@ -34,7 +34,80 @@ library(tidyverse)
 head(midwest)
 summary(midwest$percchildbelowpovert)
 
+```
 
+```{r}
+# Find the county with the minimum poverty rate in the metro group
+max_metro <- midwest %>%
+  filter(inmetro == 1) %>%
+  arrange(desc(percchildbelowpovert)) %>%
+  slice(1)
+
+# Find the county with the minimum poverty rate in the non-metro group
+max_non_metro <- midwest %>%
+  filter(inmetro == 0) %>%
+  arrange(desc(percchildbelowpovert)) %>%
+  slice(1)
+
+# Find the county with the minimum poverty rate in the metro group
+min_metro <- midwest %>%
+  filter(inmetro == 1) %>%
+  arrange(percchildbelowpovert) %>%
+  slice(1)
+
+# Find the county with the minimum poverty rate in the non-metro group
+min_non_metro <- midwest %>%
+  filter(inmetro == 0) %>%
+  arrange(percchildbelowpovert) %>%
+  slice(1)
+
+# Combine the results into a single data frame
+values <- bind_rows(
+  max_metro %>% mutate(type = "Max Metro"),
+  min_metro %>% mutate(type = "Min Metro"),
+  max_non_metro %>% mutate(type = "Max Non-Metro"),
+  min_non_metro %>% mutate(type = "Min Non-Metro")
+)
+
+max_min_df <- values %>%
+  select(county, state, type)
+
+midwest_joined <- midwest %>%
+  left_join(max_min_df, by = c("county", "state"))
+```
+
+```{r}
+library(dplyr)
+midwest$Metro = ifelse(midwest_joined$inmetro == 1, "Metro", "Non-Metro")
+
+# Find the county with the maximum poverty rate in each group
+max_points <- midwest %>%
+  group_by(Metro) %>%
+  slice(which.max(percchildbelowpovert)) %>%
+  ungroup()
+
+# Find the county with the minimum poverty rate in each group
+min_points <- midwest %>%
+  group_by(Metro) %>%
+  slice(which.min(percchildbelowpovert)) %>%
+  ungroup()
+# Create the violin plot
+p <- ggplot(midwest_joined, aes(x = Metro, y = percchildbelowpovert, fill = Metro)) +
+  geom_violin() +
+  geom_text(data = max_points,
+            aes(label = paste(county, state, percchildbelowpovert, sep = ", ")),
+            vjust = -1.5, color = "red", size = 3.5) +
+  # Add labels for min points
+  geom_text(data = min_points,
+            aes(label = paste(county, state, percchildbelowpovert, sep = ", ")),
+            vjust = 1.5, color = "blue", size = 3.5) +
+  labs(title = "Distribution of Child Poverty Rates by inmetro/Non-Metro Status",
+       x = "Metro Status",
+       y = "Child Poverty Rate (%)") +
+  theme_minimal()
+
+# Display the plot
+print(p)
 ```
 
 ## Exercise 2: alluvial flow diagram for hate crimes in DC
@@ -58,10 +131,46 @@ summary(midwest$percchildbelowpovert)
 ```{r}
 library(openxlsx)
 library(ggalluvial)
+library(ggrepel)
+
 
 hc <- read.xlsx("https://mpdc.dc.gov/sites/default/files/dc/sites/mpdc/publication/attachments/Hate%20Crimes%20Open%20Data_16.xlsx")
 
+```
 
+```{r}
+# Filter the hc dataset
+hc_filtered <- hc %>%
+  filter(Type.of.Hate.Bias %in% c("Ethnicity/National Origin", "Religion", "Race"))
+
+# Create a summarized dataset with counts of each combination
+hc_summary <- hc %>%
+  group_by(Type.of.Hate.Bias, Targeted.Group) %>%
+  summarize(count = n(), .groups = 'drop') %>%
+  top_n(10, wt = count) %>%  # Select the top 20 rows by count
+  arrange(desc(count)) 
+
+# Create the alluvial plot
+p <- ggplot(hc_summary,
+            aes(axis1 = Type.of.Hate.Bias, axis2 = Targeted.Group, y = count)) +
+  geom_alluvium(aes(fill = Type.of.Hate.Bias), width = 1/36) +
+  geom_stratum(width = 1/36, fill = "black", color = "white") +
+  geom_label_repel(stat = "stratum",
+                   aes(label = after_stat(stratum)),
+                   size = 3.5,
+                   box.padding = 0.5,
+                   point.padding = 0.5,
+                   segment.color = 'grey50',
+                   max.overlaps = 15) +
+  scale_x_discrete(limits = c("Type of Hate Bias", "Targeted Group"), expand = c(.1, .1)) +
+  scale_fill_brewer(type = "qual", palette = "Set3") +
+  labs(title = "Alluvial Flow Chart of Hate Crimes",
+       y = "Count of Hate Crimes",
+       x = "") +
+  theme_minimal()
+
+# Display the plot
+print(p)
 
 ```
 
@@ -78,6 +187,50 @@ hc <- read.xlsx("https://mpdc.dc.gov/sites/default/files/dc/sites/mpdc/publicati
 -   *Hint*: you may want to use `geom_tile()`
 
 ```{r}
+illinois_data <- midwest %>% 
+  filter(state == "IL")
 
+# Identify the county with the highest and lowest poverty rates
+highest_poverty_county <- illinois_data %>% 
+  filter(percbelowpoverty == max(percbelowpoverty, na.rm = TRUE))
+
+lowest_poverty_county <- illinois_data %>% 
+  filter(percbelowpoverty == min(percbelowpoverty, na.rm = TRUE))
+
+# Function to create a data frame with 100 cells
+create_square_data <- function(poverty_rate, county_name) {
+  count_red_cells <- round(poverty_rate)
+  data.frame(
+    x = rep(1:10, each = 10),
+    y = rep(10:1, times = 10),
+    fill = c(rep("red", count_red_cells), rep("gray", 100 - count_red_cells)),
+    county = county_name
+  )
+}
+
+# Create datasets for the highest and lowest poverty counties
+highest_poverty_data <- create_square_data(highest_poverty_county$percchildbelowpovert, highest_poverty_county$county)
+lowest_poverty_data <- create_square_data(lowest_poverty_county$percchildbelowpovert, lowest_poverty_county$county)
+
+# Combine datasets
+plot_data <- rbind(highest_poverty_data, lowest_poverty_data)
+
+# Create the plot
+p <- ggplot(plot_data, aes(x = x, y = y, fill = fill)) +
+  geom_tile() +
+  facet_wrap(~ county) +
+  scale_fill_identity() +
+  labs(title = "Comparison of Poverty Rates in Two Illinois Counties",
+       x = NULL, y = NULL,
+       fill = "Poverty Rate") +
+  theme_minimal() +
+  theme(aspect.ratio = 1,
+        panel.grid = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none")
+
+# Display the plot
+print(p)
 
 ```

@@ -143,6 +143,39 @@ Two suggestions from last time:
 
 ```{r}
 #| echo: true
+ggplot(policydf_long %>%
+      filter(!is.na(value)) %>%
+      group_by(value) %>%
+      summarise(count = n()),
+      aes(x = reorder(value, count), y = count, fill = count)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = count), hjust = -0.2, size = 6) +
+  scale_y_continuous(breaks = 1:10) +
+  scale_fill_gradient(low = "lightblue", high = "darkblue") +
+  xlab("Policy area") +
+  ylab("Count of students interested (non-unique)") +
+  coord_flip() +
+  theme_bw(base_size = 24) +
+  theme(legend.position = "none")
+
+```
+```{R}
+policydf_summary <- policydf_long %>%
+  filter(!is.na(value)) %>%
+  group_by(value) %>%
+  summarise(count = n()) %>%
+  mutate(category = ifelse(rank(-count) <= 3, "Top 3", "Others"))
+
+ggplot(policydf_summary, aes(x = reorder(value, count), y = count, fill = category)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = count), hjust = -0.2, size = 6) +
+  scale_y_continuous(breaks = 1:10) +
+  scale_fill_manual(values = c("Top 3" = "darkblue", "Others" = "lightblue")) +
+  xlab("Policy area") +
+  ylab("Count of students interested (non-unique)") +
+  coord_flip() +
+  theme_bw(base_size = 24) +
+  theme(legend.position = "none")
 
 ```
 
@@ -160,8 +193,8 @@ Two suggestions from last time:
 
 ## Comparisons: keywords and chart types
 
--  **Keywords:** before/after, categories, compare, contrast, over time, peaks, rank, trend, types, valleys
-- **Chart types:** Bars (grouped, stacked), **dot plots,** line graphs, **slope graphs**, small multiples, heat maps, connected scatterplots, pyramid plots, ridgeline plots
+-   **Keywords:** before/after, categories, compare, contrast, over time, peaks, rank, trend, types, valleys
+-   **Chart types:** Bars (grouped, stacked), **dot plots,** line graphs, **slope graphs**, small multiples, heat maps, connected scatterplots, pyramid plots, ridgeline plots
 
 ::: aside
 Source: Scott Berinato (2016), Good Charts
@@ -179,18 +212,18 @@ Source: Scott Berinato (2016), Good Charts
 
 ## Where we are
 
-- [Prepping data to plot]{style="color:gray;"}
+-   [Prepping data to plot]{style="color:gray;"}
 
-- **Three types of EDA**: example plots 
+-   **Three types of EDA**: example plots
 
-  - [Comparisons]{style="color:gray;"}
-  - **Distributions / Relationships**
-  - [Compositions]{style="color:gray;"}
-  
+    -   [Comparisons]{style="color:gray;"}
+    -   **Distributions / Relationships**
+    -   [Compositions]{style="color:gray;"}
+
 ## Distributions: keywords and chart types
 
--  **Keywords**: alluvial, cluster, distributed, from/to, plotted, points, spread, spread over, relative to, transfer
-- **Chart types**: **Alluvial charts (parallel sets)**, bubble charts, histograms, **Sankey diagrams**, scatterplots, density plots, cumulative density plots, quantile-quantile (q-q) plots, **violin plots,** boxplots, **strip charts**, sina plots, ridgeline plots, paired scatterplot, contour lines, 2D bins, hex bins, **correlogram**, stacked area plots
+-   **Keywords**: alluvial, cluster, distributed, from/to, plotted, points, spread, spread over, relative to, transfer
+-   **Chart types**: **Alluvial charts (parallel sets)**, bubble charts, histograms, **Sankey diagrams**, scatterplots, density plots, cumulative density plots, quantile-quantile (q-q) plots, **violin plots,** boxplots, **strip charts**, sina plots, ridgeline plots, paired scatterplot, contour lines, 2D bins, hex bins, **correlogram**, stacked area plots
 
 ::: aside
 Source: Scott Berinato (2016), Good Charts
@@ -222,16 +255,15 @@ Note: the data in this plot has been jittered to avoid overplotting.
 
 ## Where we are
 
-- [Prepping data to plot]{style="color:gray;"}
+-   [Prepping data to plot]{style="color:gray;"}
 
-- **Three types of EDA**: example plots 
+-   **Three types of EDA**: example plots
 
-  - [Comparisons]{style="color:gray;"}
-  - [Distributions / Relationships]{style="color:gray;"}
-  - **Compositions**
-  
-  
-## Compositions: keywords and chart types 
+    -   [Comparisons]{style="color:gray;"}
+    -   [Distributions / Relationships]{style="color:gray;"}
+    -   **Compositions**
+
+## Compositions: keywords and chart types
 
 -   **Keywords**: components, divvied up, group, makes up, of the whole, parts, percentage, pieces, portion, proportion, slices, subsections, total
 -   **Chart types**: Pie charts, stacked area charts, stacked bar charts, treemaps, **mosaic plots,** **unit plots (waffle charts)**
@@ -244,7 +276,6 @@ Source: Scott Berinato (2016), Good Charts
 
 ![Source: Wilke Figure 11-3](input/wilke-11-3-mosaic.png)
 
-
 ## Unit Plots
 
 ![Source: https://www.storytellingwithdata.com/blog/what-is-a-unit-chart](input/unit-chart.png){fig-align="center"}
@@ -255,19 +286,17 @@ Source: Scott Berinato (2016), Good Charts
 
 ## Where we are
 
-- [Prepping data to plot]{style="color:gray;"}
+-   [Prepping data to plot]{style="color:gray;"}
 
-- **Three types of EDA**: in `ggplot2` 
+-   **Three types of EDA**: in `ggplot2`
 
-  - ✅ Comparisons
-  - **Distributions / Relationships**
-  - Compositions
-  
-  
+    -   ✅ Comparisons
+    -   **Distributions / Relationships**
+    -   Compositions
+
 ## Example
 
 Child poverty rates across metropolitan versus non-metropolitan areas in different Midwestern states
-
 
 ```{r}
 #| echo: true
@@ -281,7 +310,7 @@ midwest <- midwest %>%
                                  TRUE ~ NA_character_))
 table(midwest$inmetro, midwest$metro_cat)
 ```
-  
+
 ## Less informative visualization: mean values in metro versus outside of metro
 
 ```{r}
@@ -303,7 +332,6 @@ ggplot(midwest %>%
 
 ## More informative 1: violin plot w/ no summary stats
 
-
 ```{r}
 #| echo: true
 #| output-location: slide
@@ -319,7 +347,6 @@ ggplot(midwest,
 
 ## More informative 2: violin plot w/ median + quartile
 
-
 ```{r}
 #| echo: true
 #| output-location: slide
@@ -333,7 +360,6 @@ ggplot(midwest,
 ```
 
 ## More informative 3: violin plot w/ median + quartile faceted by state
-
 
 ```{r}
 #| echo: true
@@ -355,7 +381,6 @@ ggplot(midwest,
                                "Non-metropolitan" = "darkgreen")) 
 ```
 
-
 ## Wrapping up and Wednesday's lab
 
 What we covered:
@@ -367,12 +392,10 @@ What we covered:
     -   Comparisons
     -   Distributions / Relationships
     -   Compositions
-    
-- **Wednesday's lab**: `ggplot2` practice of all three types 
 
+-   **Wednesday's lab**: `ggplot2` practice of all three types
 
-## Preview of next week: automation 
-
+## Preview of next week: automation
 
 ```{r}
 #| echo: true
@@ -387,8 +410,7 @@ plot_one_perc <- function(input_data, x_category, y_outcome){
 
 ```
 
-
-## Preview of next week: automation 
+## Preview of next week: automation
 
 Variable names and non-standard evaluation (NSE)
 
@@ -407,6 +429,3 @@ ggplot(input_data,
   theme_bw(base_size = 24) 
 
 ```
-
-
-

@@ -12,12 +12,13 @@ params:
 
 ```{r}
 ## add code to pull state name and county name from parameters
-
+state = params$state
+county = params$county
 ```
 
-Here, we are focusing on the following county within \[add R code for state\]: \[add R code for county name\].
+Here, we are focusing on the following county within `r state`: `r county`.
 
-This table shows where \[add R code for county name\] is ranked among \[add R code for state name\] in terms of rates of college degrees. We see that the county is ranked \[add R code for county rank\] out of \[add R code for total counties\] counties in the state.
+This table shows where `r county` is ranked among `r state`\] in terms of rates of college degrees. We see that the county is ranked \[add R code for county rank\] out of \[add R code for total counties\] counties in the state.
 
 ```{r}
 ## add code to create table 
@@ -33,7 +34,7 @@ This graph presents a visual description of where \[add R code for county name\]
 
 ```
 
-## Summary 
+## Summary
 
 ```{r}
 ## hint: for this part, you may want to modify the function to return both the plot and the input data for the plot 

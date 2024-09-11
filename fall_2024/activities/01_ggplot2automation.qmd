@@ -27,7 +27,46 @@ In this activity, you'll work to produce the following:
 
 ```{r}
 ## your code here 
+il_counties <- midwest %>%
+  filter(state == "IL" & county != "COOK")
 
+mean_values_IL <- il_counties %>%
+  summarise(
+    perchsd = mean(perchsd, na.rm = TRUE),
+    percollege = mean(percollege, na.rm = TRUE),
+    percprof = mean(percprof, na.rm = TRUE)
+  ) %>%
+  pivot_longer(cols = everything(), names_to = "statistic", values_to = "mean_value")
+
+cook_means <- midwest %>%
+  filter(state == "IL" & county == "COOK") %>%
+  select(perchsd, percollege, percprof) %>%
+  pivot_longer(cols = everything(), names_to = "statistic", values_to = "cook_value")
+
+all_IL <- left_join(mean_values_IL, cook_means, by = "statistic")
+all_IL$label = ifelse(all_IL$statistic == 'perchsd', "percent with a high school diploma",
+              ifelse(all_IL$statistic == 'percollege', "percent with a college degree", "percent with a professional school degree"))
+
+ggplot(all_IL, aes(x = label, y = mean_value)) +
+  geom_bar(stat = "identity", fill = "lightblue") +
+  geom_point(aes(y = cook_value), color = "red", size = 3) +
+  geom_text(aes(y = cook_value, label = round(cook_value, 2)), vjust = -1) +
+  labs(
+    title = "Comparison of Education Statistics (Cook vs Other Illinois Counties)",
+    x = "Statistic",
+    y = "Percent"
+  ) +
+  ylim(0, 100) +
+  theme_minimal() +
+  geom_label(all,
+             aes(x = variable_descriptive, 
+                 y = cook_value, 
+                 label = sprintf("Cook County's rate: %.2f\nMean rate: %.2f",
+                                 cook_value, 
+                                 mean_value)),
+          color = "black",
+          size = 2,
+          nudge_y = 5)
 ```
 
 ## Exercise 2: generalize to create a county comparison function
@@ -36,7 +75,46 @@ Write a function that generalizes the plot from exercise 1 by: - Taking in two p
 
 ```{r}
 ## your code here
+county_comp_func = function(STATE1, COUNTY1) {
 
+
+  other_counties <- midwest %>%
+  filter(state == STATE1 & county != COUNTY1)
+
+  mean_values <- other_counties %>%
+    summarise(
+      perchsd = mean(perchsd, na.rm = TRUE),
+      percollege = mean(percollege, na.rm = TRUE),
+      percprof = mean(percprof, na.rm = TRUE)
+    ) %>%
+    pivot_longer(cols = everything(), names_to = "statistic", values_to = "mean_value")
+  
+  county_means <- midwest %>%
+    filter(state == STATE1 & county == COUNTY1) %>%
+    select(perchsd, percollege, percprof) %>%
+    pivot_longer(cols = everything(), names_to = "statistic", values_to = "county_value")
+  
+  all <- left_join(mean_values, county_means, by = "statistic")
+  all$label = ifelse(all$statistic == 'perchsd', "high school diploma",
+              ifelse(all$statistic == 'percollege', "college degree", "professional school degree"))
+  
+  ggplot(all, aes(x = label, y = mean_value)) +
+    geom_bar(stat = "identity", fill = "lightblue") +
+    geom_point(aes(y = county_value), color = "red", size = 3) +
+    geom_text(aes(y = county_value, label = round(county_value, 2)), vjust = -1) +
+    labs(
+      title = c("Comparison of Education Statistics of", COUNTY1, "vs Other", STATE1, "Counties"),
+      x = "Statistic",
+      y = "Percent"
+    ) +
+    ylim(0, 100) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+}
+```
+
+```{r}
+county_comp_func("IL", "JASPER")
 ```
 
 ## Exercise 3: use that function to create a county-specific report
