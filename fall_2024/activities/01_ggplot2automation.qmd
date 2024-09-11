@@ -1,0 +1,52 @@
+---
+title: "ggplot2 automation"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Automation
+
+In this activity, you'll work to produce the following:
+
+1)  A template that can be used to compare a focal county's demographic statistics to other counties in that state
+
+2)  Use that template to create a separate report for 3 distinct counties
+
+## Exercise 1: create a plot for a single county
+
+-   Use the `midwest` data
+-   Focus on `county == "COOK"` within `state == "IL"` as the focal county
+-   Create a bar graph where the bars represent the mean value of the following statistics for all the remaining counties in Illinois (so counties minus Cook):
+    -   `perchsd`: percent with a high school diploma
+    -   `percollege`: percent with a college degree
+    -   `percprof`: percent with a professional school degree
+-   Adds a dot + label to that bar graph with the focal county's own statistics (at the rough height of where that statistic falls along the `y axis`) compared to the mean value
+
+```{r}
+## your code here 
+
+```
+
+## Exercise 2: generalize to create a county comparison function
+
+Write a function that generalizes the plot from exercise 1 by: - Taking in two parameters: county + state - Finding the remaining counties in that state - Creating the same plot as above (making sure to label the county-specific rate appropriately with the county's name) - Test the function on a few different counties from different states
+
+```{r}
+## your code here
+
+```
+
+## Exercise 3: use that function to create a county-specific report
+
+-   Modify the `county_template.qmd` file to add in the missing components
+
+-   Write and execute a bash script to generate reports for the following counties within Illinois:
+
+    -   "COOK"
+    -   "CHAMPAIGN"
+    -   "LAKE"
+
+    See other file for solutions
