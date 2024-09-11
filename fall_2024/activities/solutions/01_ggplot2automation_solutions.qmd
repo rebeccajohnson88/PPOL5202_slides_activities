@@ -80,7 +80,8 @@ ggplot(stats_toplot %>% filter(category == "other"),
           color = "red",
           size = 2,
           nudge_y = 5) +
-  ylim(0, 100)
+  ylim(0, 100) +
+  ggtitle("Cook County compared to other Illinois counties")
 
 ```
 
@@ -95,6 +96,8 @@ Write a function that generalizes the plot from exercise 1 by:
 
 
 ```{r}
+#| echo: false
+#| output: true
 library(tidyverse)
 library(ggplot2)
 library(stringr)
@@ -149,7 +152,10 @@ comparison_plot <- function(state_name, county_name){
           color = "red",
           size = 2,
           nudge_y = 5) +
-  ylim(0, 100)
+  ylim(0, 100) +
+  ggtitle(sprintf("%s county compared to other %s counties",
+        str_to_title(county_name),
+        state.name[state.abb == state_name]))
   
   return(p)
   
