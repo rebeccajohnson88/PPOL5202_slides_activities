@@ -33,8 +33,29 @@ library(ggplot2)
 library(tidyverse)
 head(midwest)
 summary(midwest$percchildbelowpovert)
+midwest <- midwest %>%
+    mutate(metro_cat = case_when(inmetro == 1 ~ "Metropolitan",
+                                 inmetro == 0 ~ "Non-metropolitan",
+                                 TRUE ~ NA_character_))
+table(midwest$inmetro, midwest$metro_cat)
 
+```
 
+```{r}
+childpov_mins= midwest %>% group_by(metro_cat) %>% slice_min(order_by = percchildbelowpovert)
+childpov_max = midwest %>% group_by(metro_cat) %>% slice_max(order_by = percchildbelowpovert)
+childpov_labels = rbind(childpov_max, childpov_mins)
+```
+
+```{r}
+ggplot(midwest,
+       aes(x = metro_cat, y = percchildbelowpovert)) +
+  geom_violin() +
+  xlab("What kind of area?") +
+  ylab("Distribution: % children in poverty") +
+  theme_bw(base_size = 24) +
+  geom_text(data = childpov_labels, aes(label = paste(state, county, percchildbelowpovert)), position = position_dodge(0.9), vjust = 0.5) 
+ 
 ```
 
 ## Exercise 2: alluvial flow diagram for hate crimes in DC
@@ -61,7 +82,17 @@ library(ggalluvial)
 
 hc <- read.xlsx("https://mpdc.dc.gov/sites/default/files/dc/sites/mpdc/publication/attachments/Hate%20Crimes%20Open%20Data_16.xlsx")
 
+hc_filtered = hc %>% filter(Type.of.Hate.Bias %in% c("Ethnicity/National Origin", "Race", "Religion"))
+hc_toptargets = hc_filtered %>% group_by(Targeted.Group) %>% summarise(crime_count = n()) %>% top_n(crime_count, n = 15)
+hc_filtered_agg = hc_filtered %>% filter(Targeted.Group %in% unique(hc_toptargets$Targeted.Group)) %>% group_by(Type.of.Hate.Bias, Targeted.Group) %>% summarise(count = n())
 
+is_alluvia_form(as.data.frame(hc_filtered_agg), axes = 1:2, silent = TRUE)
+
+ggplot(hc_filtered_agg,
+       aes(y = count, axis1 = Type.of.Hate.Bias, axis2 = Targeted.Group)) +
+  geom_alluvium(aes(fill = Type.of.Hate.Bias), width = 1/12) +
+  geom_stratum(width = 1/12, fill = "black", color = "grey") +
+  geom_label(stat = "stratum", aes(label = after_stat(stratum)))
 
 ```
 
