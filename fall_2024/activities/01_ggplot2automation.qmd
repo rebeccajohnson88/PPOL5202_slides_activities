@@ -26,17 +26,128 @@ In this activity, you'll work to produce the following:
 -   Adds a dot + label to that bar graph with the focal county's own statistics (at the rough height of where that statistic falls along the `y axis`) compared to the mean value
 
 ```{r}
-## your code here 
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
 
+head(midwest)
 ```
 
+```{r}
+# Filter with two conditions
+remaining_county = midwest %>%
+  filter(state == "IL", county != "COOK")
+
+# Calculate the mean for remaining counties
+key_stats = remaining_county %>%
+  summarise(mean_perchsd = mean(perchsd),
+            mean_percollege = mean(percollege),
+            mean_percprof = mean(percprof))
+
+# Convert to a long format for easier plotting
+key_stats_long = tidyr::pivot_longer(key_stats, cols = everything(),
+                                        names_to = "Statistic", 
+                                        values_to = "Mean")
+
+# Create bar graph
+ggplot(key_stats_long, aes(x = Statistic, y = Mean, fill = Statistic)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Mean Values for Illinois Counties (Excluding Cook)",
+       x = "Statistic",
+       y = "Mean Percentage") +
+  scale_fill_brewer(palette = "Set2")
+```
+
+```{r}
+# Extract the focal county statistics
+focal_county = midwest %>%
+  filter(county == "COOK") %>%
+  select(perchsd, percollege, percprof) %>%
+  rename_with(~ c("mean_perchsd", "mean_percollege", "mean_percprof"))
+
+# Convert to long format to match the mean data
+focal_county_long = tidyr::pivot_longer(focal_county, cols = everything(),
+                                         names_to = "Statistic", 
+                                         values_to = "Value")
+
+# Add a label for the focal county
+focal_county_long$Label = "COOK"
+
+# Create the bar graph with mean values, focal county points, and labels
+ggplot(key_stats_long, aes(x = Statistic, y = Mean, fill = Statistic)) +
+  geom_bar(stat = "identity", width = 0.6) +  # Bar for the mean values
+  geom_point(data = focal_county_long, aes(x = Statistic, y = Value), color = "red", size = 3) +  # Add dots for the focal county
+  geom_text(data = focal_county_long, aes(x = Statistic, y = Value, label = Label), 
+            vjust = -1, color = "red", fontface = "bold") +  # Add labels
+  theme_minimal() +
+  labs(title = "Mean Values for Illinois Counties (Excluding Cook) and Cook County Comparison",
+       x = "Statistic",
+       y = "Percentage") +
+  scale_fill_brewer(palette = "Set2")
+```
 ## Exercise 2: generalize to create a county comparison function
 
 Write a function that generalizes the plot from exercise 1 by: - Taking in two parameters: county + state - Finding the remaining counties in that state - Creating the same plot as above (making sure to label the county-specific rate appropriately with the county's name) - Test the function on a few different counties from different states
 
 ```{r}
-## your code here
+# Define the function
+create_county_comparison_plot = function(county, state, data) {
+  
+  # Filter data for the selected state
+  state_data = data %>%
+    filter(state == state)
+  
+  # Ensure the focal county exists in the dataset
+  if(!(county %in% state_data$county)) {
+    stop("The specified county is not in the dataset for the selected state.")
+  }
+  
+  # Get focal county statistics
+  focal_county = state_data %>%
+    filter(county == county) %>%
+    select(perchsd, percollege, percprof) %>%
+    rename_with(~ c("mean_perchsd", "mean_percollege", "mean_percprof"))
+  
+  # Calculate the mean values for the remaining counties (excluding the focal county)
+  remaining_counties = state_data %>%
+    filter(county != county) %>%
+    summarise(
+      mean_perchsd = mean(perchsd, na.rm = TRUE),
+      mean_percollege = mean(percollege, na.rm = TRUE),
+      mean_percprof = mean(percprof, na.rm = TRUE)
+    ) 
+  
+  # Convert the data to long format for plotting
+  remaining_counties_long = tidyr::pivot_longer(remaining_counties, cols = everything(),
+                                                 names_to = "Statistic", 
+                                                 values_to = "Mean")
+  
+  focal_county_long = tidyr::pivot_longer(focal_county, cols = everything(),
+                                           names_to = "Statistic", 
+                                           values_to = "Value")
+  
+  # Add labels to the focal county
+  focal_county_long$Label = county
+  
+  # Create the bar graph with the focal county and mean statistics for other counties
+  plot = ggplot(remaining_counties_long, aes(x = Statistic, y = Mean, fill = Statistic)) +
+    geom_bar(stat = "identity", width = 0.6) +  # Bar for the mean values
+    geom_point(data = focal_county_long, aes(x = Statistic, y = Value), color = "red", size = 3) +  # Dots for the focal county
+    geom_text(data = focal_county_long, aes(x = Statistic, y = Value, label = Label), 
+              vjust = -1, color = "red", fontface = "bold") +  # Labels for the focal county
+    theme_minimal() +
+    labs(title = paste("Comparison of", county, "with Other Counties in", state),
+         x = "Statistic",
+         y = "Percentage") +
+    scale_fill_brewer(palette = "Set2")
+  
+  # Print the plot
+  print(plot)
+}
 
+# Test the function on a few different counties and states
+create_county_comparison_plot("COOK", "IL", midwest)
 ```
 
 ## Exercise 3: use that function to create a county-specific report
