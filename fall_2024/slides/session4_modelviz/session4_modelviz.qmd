@@ -37,7 +37,9 @@ editor: visual
 ## Example model
 
 **Data**: ANES social media study in 2020
-**Question**: climate change
+
+
+![Climate change question](climatechange_q.png)
 
 
 ## Pre-modeling cleaning 
@@ -47,9 +49,8 @@ editor: visual
 #| output: false
 library(tidyverse)
 library(ggplot2)
-library(devtools)
-install_github("jamesmartherus/anesr")
-
+#library(devtools)
+#install_github("jamesmartherus/anesr")
 library(anesr)
 
 data("socialmedia_2020")
@@ -170,11 +171,11 @@ p <- ggplot(vote_v_climate, aes(x = derived_vote,
       y = perc)) +
   geom_bar(stat = "identity") +
   xlab("2020 vote choice") +
-  ylab("Proportion view no human role in\nclimate change") +
+  ylab("Proportion view no human role\n in climate change") +
   geom_label(aes(x = derived_vote,
             y = perc, 
             label = round(perc, 2))) +
-  theme_bw() +
+  theme_bw(base_size = 20) +
   ylim(0, 0.5)
             
 ```
@@ -312,7 +313,7 @@ p <- ggplot(aug_result, aes(x = factor(derived_educ),
   labs(color = "2020 vote") +
   scale_color_manual(values = c("Trump" = "red",
                                 "Biden" = "blue")) +
-  theme_bw() +
+  theme_bw(base_size = 24) +
   theme(legend.position = c(0.5, 0.5),
         legend.background = element_blank())  
 
@@ -355,6 +356,8 @@ p
 Predict college graduation rate using all other variables in the data
 
 ```{r}
+#| echo: true
+#| output: true 
 library(glmnet)
 library(ISLR2)
 
@@ -375,6 +378,8 @@ cv_lasso <- cv.glmnet(x_covar,
 ## Built-in plot
 
 ```{r}
+#| echo: false
+#| output: true 
 plot(cv_lasso)
 ```
 
@@ -390,6 +395,8 @@ plot(cv_lasso)
 Which coefficients are regularized to zero at the minimum value of $\lambda$? 
 
 ```{r}
+#| echo: true
+#| output: true 
 coef_atmin <- coef(cv_lasso, se = "lambda.min")
 coef_atmin 
 
@@ -400,8 +407,15 @@ coef_atmin_df <- as.data.frame(as.matrix(coef_atmin)) %>%
                               "Remains a predictor"))
 coef_atmin_df$predictor <- rownames(coef_atmin_df)
 
+```
+
+## What else can we visualize?
+
+```{r}
+#| echo: true
+#| output: true 
 ## visualize
-ggplot(coef_atmin_df %>%
+p <- ggplot(coef_atmin_df %>%
     filter(!grepl("Intercept", predictor)),
     aes(x = reorder(predictor, s1), y = s1)) +
   geom_bar(stat = "identity") +
@@ -409,9 +423,22 @@ ggplot(coef_atmin_df %>%
   ylab("Coefficient in LASSO") +
   facet_wrap(~regularized, scales = "free_y") +
   coord_flip() +
-  theme_bw() 
+  theme_bw(base_size = 24) 
 
 ```
+
+## What else can we visualize
+
+```{r}
+#| echo: false
+#| output: true 
+
+p
+
+
+```
+
+
 ## What else can we visualize?
 
 In Wednesday activity, practice visualizing the $\lambda$ at which a given coefficient gets regularized to 0 
@@ -430,7 +457,7 @@ In Wednesday activity, practice visualizing the $\lambda$ at which a given coeff
 
 - Many different performance metrics for classification and regression
 - Not going to review all of them--- instead, focus on two, commonly-used ones:
-    - Confusion matrix: refresher on the `square area chart` plot
+    - Confusion matrix: refresher on the `area chart` plot type from the EDA week 
     - ROC Curve 
     
 ## Confusion matrixes
@@ -446,6 +473,9 @@ In Wednesday activity, practice visualizing the $\lambda$ at which a given coeff
 ## Step 1: Model estimation
 
 ```{r}
+#| echo: true
+#| output: true 
+
 ## example 
 College <- College %>%
       mutate(grad_rate_overmedian = 
@@ -466,6 +496,9 @@ fit <- cv.glmnet(x_covar, y,
 ## Step 2: Extract predictions
 
 ```{r}
+#| echo: true
+#| output: true 
+
 all_predictions <- data.frame(class = predict(fit, x_covar, 
                         type = "class",
                         s = "lambda.min"),
@@ -481,6 +514,10 @@ all_predictions$true_class <- y
 
 
 ```{r}
+#| echo: true
+#| output: true 
+
+
 all_predictions <- all_predictions %>%
           mutate(error_cat = 
               case_when(true_class == 1 & 
@@ -495,13 +532,52 @@ all_predictions <- all_predictions %>%
 table(all_predictions$error_cat)
 ```
 
-## Visualize using square area chart
+## Visualize using area chart
 
 ```{r}
-## add code 
+#| echo: true
+#| output: true 
+
+## calculate as count over 1000 
+prop_errorcat <- all_predictions %>%
+            group_by(error_cat) %>%
+            summarise(prop = n()/nrow(all_predictions),
+                      count_1000 = round(prop*1000))
+
+## create vector
+category_vec <- unlist(lapply(1:nrow(prop_errorcat), 
+                function(x) rep(prop_errorcat[x,
+                        "error_cat"],
+                  each = 
+                  as.numeric(prop_errorcat[x,
+                  "count_1000"])))) 
+
+area_grid <- data.frame(expand.grid(1:10, 1:100)) 
+area_grid$error_cat <- category_vec
+
+error_area <- ggplot(area_grid, aes(x = Var1, y = Var2, fill = error_cat)) +
+  geom_tile(alpha = 0.8, color = "black") +
+  theme_minimal() +
+  scale_fill_manual(values = 
+                  c("True positive" = "darkgreen",
+                    "True negative" = "green",
+                    "False positive" = "red",
+                    "False negative" = "pink")) +
+  theme(axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank()) +
+  labs(fill = "Errors in graduation\nrate prediction") 
 
 ```
 
+## Visualize using area chart
+
+```{r}
+#| echo: false
+#| output: true 
+error_area 
+
+```
 
 ## Precision-recall curve
 
@@ -509,26 +585,41 @@ table(all_predictions$error_cat)
 - Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)
 
 
-## First: visualizing the distribution of probabilities relative to class
+## First: visualizing the distribution of probabilities relative to predicted class
 
 ```{r}
-
-
+#| echo: true
+#| output: true 
 all_predictions <- all_predictions %>%
             mutate(true_class = factor(true_class))
 
-ggplot(all_predictions, aes(x = predict_prob,
-                            group = true_class,
-                            fill = true_class)) +
+p <- ggplot(all_predictions, aes(x = predict_prob,
+                            group = predict_class,
+                            fill = predict_class)) +
   geom_histogram(alpha = 0.5, bins = 50) +
   theme_bw() 
 
 ```
 
+
+## Distribution of predicted probabilities relative to predicted class
+
+```{r}
+#| echo: false
+#| output: true 
+p 
+
+```
+
+
+
+
 ## Then, plotting the values at different thresholds
 
 
 ```{r}
+#| echo: true
+#| output: true 
 library(pROC)
 
 roc_res <- roc(response = all_predictions$true_class,
@@ -545,21 +636,36 @@ roc_df <- data.frame(sensitivity = roc_res$sensitivities,
 ## Then, plotting the values at different thresholds
 
 ```{r}
-## classic ROC
-ggplot(roc_df, aes(x = fpr, y = sensitivity)) +
+#| echo: true
+#| output: true 
+p <- ggplot(roc_df, aes(x = fpr, y = sensitivity)) +
   geom_path() +
   geom_abline(intercept = 0, slope = 1,
               linetype = "dashed",
               color = "red") +
   xlab("False positive rate\n(1 - specificity)") +
   ylab("True positive rate") +
-  theme_bw() 
+  theme_bw(base_size = 24) 
 
 ```
 
 ## Then, plotting the values at different thresholds
 
 ```{r}
+#| echo: false
+#| output: true 
+## classic ROC
+p 
+
+```
+
+
+
+## Then, plotting the values at different thresholds
+
+```{r}
+#| echo: true
+#| output: true 
 library(reshape2)
 ## create long form
 roc_long <- roc_df %>%
@@ -569,7 +675,7 @@ roc_long <- roc_df %>%
                               "False positive rate",
                               "True positive rate"))
 
-ggplot(roc_long, aes(x = thresholds, y = value,
+p <- ggplot(roc_long, aes(x = thresholds, y = value,
                    group = group, 
                    color = group)) +
   geom_path() +
@@ -577,7 +683,33 @@ ggplot(roc_long, aes(x = thresholds, y = value,
   ylab("Rate") +
   scale_color_manual(values = c("False positive rate" = "red",
                                 "True positive rate" = "green")) +
-  theme_bw() 
+  theme_bw(base_size = 24) 
 
 
 ```
+
+## Then, plotting the values at different thresholds
+
+```{r}
+#| echo: false
+#| output: true 
+p 
+
+```
+
+
+## Wrapping up
+
+-   **Statistical models and uncertainty**
+
+    - Coefficient plots: exploratory; can prompt deeper digging into relationships 
+    - Predicted probabilities or values: useful for illustrating hypothetical cases
+
+-   **Machine learning models and hyperparameters**
+
+    - Example of $\lambda$ penalty parameter; not only visualizing MSE but also which coefficients regularized to zero 
+
+-   **Machine learning models and performance**
+
+    - More visual representation of a confusion matrix
+    - Different ways of exploring tradeoffs at different thresholds for converting predicted probabilities to class labels

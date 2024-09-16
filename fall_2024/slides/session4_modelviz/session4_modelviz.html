@@ -436,42 +436,42 @@ Prof.&nbsp;Rebecca A. Johnson
 </section>
 <section id="example-model" class="slide level2">
 <h2>Example model</h2>
-<p><strong>Data</strong>: ANES social media study in 2020 <strong>Question</strong>: climate change</p>
-</section>
+<p><strong>Data</strong>: ANES social media study in 2020</p>
+
+<img data-src="climatechange_q.png" class="r-stretch quarto-figure-center"><p class="caption">Climate change question</p></section>
 <section id="pre-modeling-cleaning" class="slide level2">
 <h2>Pre-modeling cleaning</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href=""></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-3"><a href=""></a><span class="fu">library</span>(devtools)</span>
-<span id="cb1-4"><a href=""></a><span class="fu">install_github</span>(<span class="st">"jamesmartherus/anesr"</span>)</span>
-<span id="cb1-5"><a href=""></a></span>
-<span id="cb1-6"><a href=""></a><span class="fu">library</span>(anesr)</span>
-<span id="cb1-7"><a href=""></a></span>
-<span id="cb1-8"><a href=""></a><span class="fu">data</span>(<span class="st">"socialmedia_2020"</span>)</span>
-<span id="cb1-9"><a href=""></a>socialmedia_2020 <span class="ot">&lt;-</span> socialmedia_2020 <span class="sc">%&gt;%</span></span>
-<span id="cb1-10"><a href=""></a>          <span class="fu">mutate</span>(<span class="at">derived_climate_nohuman =</span> </span>
-<span id="cb1-11"><a href=""></a>            <span class="fu">case_when</span>(c_self <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>) <span class="sc">~</span> <span class="cn">TRUE</span>, </span>
-<span id="cb1-12"><a href=""></a>                      c_self <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>) <span class="sc">~</span> <span class="cn">FALSE</span>, </span>
-<span id="cb1-13"><a href=""></a>                      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA</span>),</span>
-<span id="cb1-14"><a href=""></a>            <span class="at">derived_age =</span> <span class="fu">case_when</span>(profile_age <span class="sc">==</span> <span class="st">"80+"</span> <span class="sc">~</span> <span class="dv">80</span>, </span>
-<span id="cb1-15"><a href=""></a>                                  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(profile_age)),</span>
-<span id="cb1-16"><a href=""></a>            <span class="at">derived_female =</span> profile_gender <span class="sc">==</span> <span class="dv">2</span>,</span>
-<span id="cb1-17"><a href=""></a>            <span class="at">derived_raceth =</span> </span>
-<span id="cb1-18"><a href=""></a>          <span class="fu">case_when</span>(profile_racethnicity <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"White non-Hispanic"</span>,</span>
-<span id="cb1-19"><a href=""></a>                  profile_racethnicity <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Black non-Hispanic"</span>,</span>
-<span id="cb1-20"><a href=""></a>                  profile_racethnicity <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Other non-Hispanic"</span>,</span>
-<span id="cb1-21"><a href=""></a>                  profile_racethnicity <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Hispanic"</span>),</span>
-<span id="cb1-22"><a href=""></a>            <span class="at">derived_educ =</span> </span>
-<span id="cb1-23"><a href=""></a>        <span class="fu">case_when</span>(profile_educ5 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"&lt; High School"</span>,</span>
-<span id="cb1-24"><a href=""></a>                  profile_educ5 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"HS grad"</span>,</span>
-<span id="cb1-25"><a href=""></a>                  profile_educ5 <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Some college"</span>,</span>
-<span id="cb1-26"><a href=""></a>                  profile_educ5 <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"College"</span>,</span>
-<span id="cb1-27"><a href=""></a>                  profile_educ5 <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Professional school"</span>),</span>
-<span id="cb1-28"><a href=""></a>    <span class="at">derived_vote =</span> <span class="fu">case_when</span>(vote20d1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Trump"</span>,</span>
-<span id="cb1-29"><a href=""></a>                             vote20d1 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Biden"</span>,</span>
-<span id="cb1-30"><a href=""></a>                             vote20d1 <span class="sc">!=</span> <span class="sc">-</span><span class="dv">7</span> <span class="sc">~</span> <span class="st">"Other"</span>,</span>
-<span id="cb1-31"><a href=""></a>                             <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href=""></a><span class="co">#library(devtools)</span></span>
+<span id="cb1-4"><a href=""></a><span class="co">#install_github("jamesmartherus/anesr")</span></span>
+<span id="cb1-5"><a href=""></a><span class="fu">library</span>(anesr)</span>
+<span id="cb1-6"><a href=""></a></span>
+<span id="cb1-7"><a href=""></a><span class="fu">data</span>(<span class="st">"socialmedia_2020"</span>)</span>
+<span id="cb1-8"><a href=""></a>socialmedia_2020 <span class="ot">&lt;-</span> socialmedia_2020 <span class="sc">%&gt;%</span></span>
+<span id="cb1-9"><a href=""></a>          <span class="fu">mutate</span>(<span class="at">derived_climate_nohuman =</span> </span>
+<span id="cb1-10"><a href=""></a>            <span class="fu">case_when</span>(c_self <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>) <span class="sc">~</span> <span class="cn">TRUE</span>, </span>
+<span id="cb1-11"><a href=""></a>                      c_self <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>) <span class="sc">~</span> <span class="cn">FALSE</span>, </span>
+<span id="cb1-12"><a href=""></a>                      <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA</span>),</span>
+<span id="cb1-13"><a href=""></a>            <span class="at">derived_age =</span> <span class="fu">case_when</span>(profile_age <span class="sc">==</span> <span class="st">"80+"</span> <span class="sc">~</span> <span class="dv">80</span>, </span>
+<span id="cb1-14"><a href=""></a>                                  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(profile_age)),</span>
+<span id="cb1-15"><a href=""></a>            <span class="at">derived_female =</span> profile_gender <span class="sc">==</span> <span class="dv">2</span>,</span>
+<span id="cb1-16"><a href=""></a>            <span class="at">derived_raceth =</span> </span>
+<span id="cb1-17"><a href=""></a>          <span class="fu">case_when</span>(profile_racethnicity <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"White non-Hispanic"</span>,</span>
+<span id="cb1-18"><a href=""></a>                  profile_racethnicity <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Black non-Hispanic"</span>,</span>
+<span id="cb1-19"><a href=""></a>                  profile_racethnicity <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Other non-Hispanic"</span>,</span>
+<span id="cb1-20"><a href=""></a>                  profile_racethnicity <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Hispanic"</span>),</span>
+<span id="cb1-21"><a href=""></a>            <span class="at">derived_educ =</span> </span>
+<span id="cb1-22"><a href=""></a>        <span class="fu">case_when</span>(profile_educ5 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"&lt; High School"</span>,</span>
+<span id="cb1-23"><a href=""></a>                  profile_educ5 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"HS grad"</span>,</span>
+<span id="cb1-24"><a href=""></a>                  profile_educ5 <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"Some college"</span>,</span>
+<span id="cb1-25"><a href=""></a>                  profile_educ5 <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"College"</span>,</span>
+<span id="cb1-26"><a href=""></a>                  profile_educ5 <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Professional school"</span>),</span>
+<span id="cb1-27"><a href=""></a>    <span class="at">derived_vote =</span> <span class="fu">case_when</span>(vote20d1 <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"Trump"</span>,</span>
+<span id="cb1-28"><a href=""></a>                             vote20d1 <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Biden"</span>,</span>
+<span id="cb1-29"><a href=""></a>                             vote20d1 <span class="sc">!=</span> <span class="sc">-</span><span class="dv">7</span> <span class="sc">~</span> <span class="st">"Other"</span>,</span>
+<span id="cb1-30"><a href=""></a>                             <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="modeling" class="slide level2">
@@ -588,11 +588,11 @@ F-statistic: 139.3 on 11 and 5712 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb8-8"><a href=""></a>      <span class="at">y =</span> perc)) <span class="sc">+</span></span>
 <span id="cb8-9"><a href=""></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
 <span id="cb8-10"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"2020 vote choice"</span>) <span class="sc">+</span></span>
-<span id="cb8-11"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Proportion view no human role in</span><span class="sc">\n</span><span class="st">climate change"</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Proportion view no human role</span><span class="sc">\n</span><span class="st"> in climate change"</span>) <span class="sc">+</span></span>
 <span id="cb8-12"><a href=""></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x =</span> derived_vote,</span>
 <span id="cb8-13"><a href=""></a>            <span class="at">y =</span> perc, </span>
 <span id="cb8-14"><a href=""></a>            <span class="at">label =</span> <span class="fu">round</span>(perc, <span class="dv">2</span>))) <span class="sc">+</span></span>
-<span id="cb8-15"><a href=""></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb8-15"><a href=""></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">20</span>) <span class="sc">+</span></span>
 <span id="cb8-16"><a href=""></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -766,7 +766,7 @@ $residual.scale
 <span id="cb21-11"><a href=""></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"2020 vote"</span>) <span class="sc">+</span></span>
 <span id="cb21-12"><a href=""></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Trump"</span> <span class="ot">=</span> <span class="st">"red"</span>,</span>
 <span id="cb21-13"><a href=""></a>                                <span class="st">"Biden"</span> <span class="ot">=</span> <span class="st">"blue"</span>)) <span class="sc">+</span></span>
-<span id="cb21-14"><a href=""></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb21-14"><a href=""></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">24</span>) <span class="sc">+</span></span>
 <span id="cb21-15"><a href=""></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>),</span>
 <span id="cb21-16"><a href=""></a>        <span class="at">legend.background =</span> <span class="fu">element_blank</span>())  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -805,6 +805,21 @@ $residual.scale
 <section id="example---lasso-one-form-of-penalized-regression" class="slide level2">
 <h2>Example - Lasso (one form of penalized regression)</h2>
 <p>Predict college graduation rate using all other variables in the data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a><span class="fu">library</span>(glmnet)</span>
+<span id="cb22-2"><a href=""></a><span class="fu">library</span>(ISLR2)</span>
+<span id="cb22-3"><a href=""></a></span>
+<span id="cb22-4"><a href=""></a>x_covar <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(Grad.Rate <span class="sc">~</span> ., </span>
+<span id="cb22-5"><a href=""></a>          College)[, <span class="sc">-</span><span class="dv">1</span>] </span>
+<span id="cb22-6"><a href=""></a>y <span class="ot">&lt;-</span> College <span class="sc">%&gt;%</span></span>
+<span id="cb22-7"><a href=""></a>    <span class="fu">select</span>(Grad.Rate) <span class="sc">%&gt;%</span></span>
+<span id="cb22-8"><a href=""></a>    <span class="fu">unlist</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb22-9"><a href=""></a>    <span class="fu">as.numeric</span>() </span>
+<span id="cb22-10"><a href=""></a></span>
+<span id="cb22-11"><a href=""></a>cv_lasso <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(x_covar, </span>
+<span id="cb22-12"><a href=""></a>                      y,</span>
+<span id="cb22-13"><a href=""></a>                      <span class="at">alpha =</span> <span class="dv">1</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="built-in-plot" class="slide level2">
 <h2>Built-in plot</h2>
@@ -822,6 +837,8 @@ $residual.scale
 <h2>What else can we visualize?</h2>
 <p>Which coefficients are regularized to zero at the minimum value of <span class="math inline">\(\lambda\)</span>?</p>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>coef_atmin <span class="ot">&lt;-</span> <span class="fu">coef</span>(cv_lasso, <span class="at">se =</span> <span class="st">"lambda.min"</span>)</span>
+<span id="cb23-2"><a href=""></a>coef_atmin </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>18 x 1 sparse Matrix of class "dgCMatrix"
                        s1
@@ -844,10 +861,34 @@ S.F.Ratio    .
 perc.alumni  2.075078e-01
 Expend       .           </code></pre>
 </div>
-
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a><span class="do">## convert from sparse matrix to dataframe</span></span>
+<span id="cb25-2"><a href=""></a>coef_atmin_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">as.matrix</span>(coef_atmin)) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href=""></a>            <span class="fu">mutate</span>(<span class="at">regularized =</span> <span class="fu">ifelse</span>(s1 <span class="sc">==</span> <span class="dv">0</span>, </span>
+<span id="cb25-4"><a href=""></a>                              <span class="st">"Regularized to 0"</span>,</span>
+<span id="cb25-5"><a href=""></a>                              <span class="st">"Remains a predictor"</span>))</span>
+<span id="cb25-6"><a href=""></a>coef_atmin_df<span class="sc">$</span>predictor <span class="ot">&lt;-</span> <span class="fu">rownames</span>(coef_atmin_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
+</section>
 <section id="what-else-can-we-visualize-1" class="slide level2">
+<h2>What else can we visualize?</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href=""></a><span class="do">## visualize</span></span>
+<span id="cb26-2"><a href=""></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(coef_atmin_df <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href=""></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">grepl</span>(<span class="st">"Intercept"</span>, predictor)),</span>
+<span id="cb26-4"><a href=""></a>    <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(predictor, s1), <span class="at">y =</span> s1)) <span class="sc">+</span></span>
+<span id="cb26-5"><a href=""></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb26-6"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"Predictors"</span>) <span class="sc">+</span></span>
+<span id="cb26-7"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Coefficient in LASSO"</span>) <span class="sc">+</span></span>
+<span id="cb26-8"><a href=""></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>regularized, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb26-9"><a href=""></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb26-10"><a href=""></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">24</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="what-else-can-we-visualize-2" class="slide level2">
+<h2>What else can we visualize</h2>
+
+<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
+<section id="what-else-can-we-visualize-3" class="slide level2">
 <h2>What else can we visualize?</h2>
 <p>In Wednesday activity, practice visualizing the <span class="math inline">\(\lambda\)</span> at which a given coefficient gets regularized to 0</p>
 </section>
@@ -870,7 +911,7 @@ Expend       .           </code></pre>
 <li>Many different performance metrics for classification and regression</li>
 <li>Not going to review all of them— instead, focus on two, commonly-used ones:
 <ul>
-<li>Confusion matrix: refresher on the <code>square area chart</code> plot</li>
+<li>Confusion matrix: refresher on the <code>area chart</code> plot type from the EDA week</li>
 <li>ROC Curve</li>
 </ul></li>
 </ul>
@@ -887,13 +928,50 @@ Expend       .           </code></pre>
 </section>
 <section id="step-1-model-estimation" class="slide level2">
 <h2>Step 1: Model estimation</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href=""></a><span class="do">## example </span></span>
+<span id="cb27-2"><a href=""></a>College <span class="ot">&lt;-</span> College <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href=""></a>      <span class="fu">mutate</span>(<span class="at">grad_rate_overmedian =</span> </span>
+<span id="cb27-4"><a href=""></a>          Grad.Rate <span class="sc">&gt;</span> <span class="fu">quantile</span>(College<span class="sc">$</span>Grad.Rate,</span>
+<span id="cb27-5"><a href=""></a>                               <span class="at">probs =</span> <span class="fl">0.5</span>))</span>
+<span id="cb27-6"><a href=""></a></span>
+<span id="cb27-7"><a href=""></a>y <span class="ot">&lt;-</span> College <span class="sc">%&gt;%</span></span>
+<span id="cb27-8"><a href=""></a>    <span class="fu">select</span>(grad_rate_overmedian) <span class="sc">%&gt;%</span></span>
+<span id="cb27-9"><a href=""></a>    <span class="fu">unlist</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb27-10"><a href=""></a>    <span class="fu">as.numeric</span>() </span>
+<span id="cb27-11"><a href=""></a></span>
+<span id="cb27-12"><a href=""></a>fit <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(x_covar, y, </span>
+<span id="cb27-13"><a href=""></a>              <span class="at">family =</span> <span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="step-2-extract-predictions" class="slide level2">
 <h2>Step 2: Extract predictions</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href=""></a>all_predictions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">class =</span> <span class="fu">predict</span>(fit, x_covar, </span>
+<span id="cb28-2"><a href=""></a>                        <span class="at">type =</span> <span class="st">"class"</span>,</span>
+<span id="cb28-3"><a href=""></a>                        <span class="at">s =</span> <span class="st">"lambda.min"</span>),</span>
+<span id="cb28-4"><a href=""></a>                        <span class="at">prob =</span> <span class="fu">predict</span>(fit, x_covar, </span>
+<span id="cb28-5"><a href=""></a>                        <span class="at">type =</span> <span class="st">"response"</span>,</span>
+<span id="cb28-6"><a href=""></a>                        <span class="at">s =</span> <span class="st">"lambda.min"</span>))</span>
+<span id="cb28-7"><a href=""></a><span class="fu">colnames</span>(all_predictions) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"predict_class"</span>, <span class="st">"predict_prob"</span>)</span>
+<span id="cb28-8"><a href=""></a>all_predictions<span class="sc">$</span>true_class <span class="ot">&lt;-</span> y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="step-3-compare-true-class-to-predicted-class" class="slide level2">
 <h2>Step 3: Compare true class to predicted class</h2>
 <div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href=""></a>all_predictions <span class="ot">&lt;-</span> all_predictions <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href=""></a>          <span class="fu">mutate</span>(<span class="at">error_cat =</span> </span>
+<span id="cb29-3"><a href=""></a>              <span class="fu">case_when</span>(true_class <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> </span>
+<span id="cb29-4"><a href=""></a>                        predict_class <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"True positive"</span>,</span>
+<span id="cb29-5"><a href=""></a>                        true_class <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> </span>
+<span id="cb29-6"><a href=""></a>                       predict_class <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"False negative"</span>,</span>
+<span id="cb29-7"><a href=""></a>                       true_class <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb29-8"><a href=""></a>                        predict_class <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"True negative"</span>,</span>
+<span id="cb29-9"><a href=""></a>                       true_class <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb29-10"><a href=""></a>                        predict_class <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"False positive"</span>))</span>
+<span id="cb29-11"><a href=""></a></span>
+<span id="cb29-12"><a href=""></a><span class="fu">table</span>(all_predictions<span class="sc">$</span>error_cat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 False negative False positive  True negative  True positive 
@@ -901,9 +979,44 @@ False negative False positive  True negative  True positive
 </div>
 </div>
 </section>
-<section id="visualize-using-square-area-chart" class="slide level2">
-<h2>Visualize using square area chart</h2>
+<section id="visualize-using-area-chart" class="slide level2">
+<h2>Visualize using area chart</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a><span class="do">## calculate as count over 1000 </span></span>
+<span id="cb31-2"><a href=""></a>prop_errorcat <span class="ot">&lt;-</span> all_predictions <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href=""></a>            <span class="fu">group_by</span>(error_cat) <span class="sc">%&gt;%</span></span>
+<span id="cb31-4"><a href=""></a>            <span class="fu">summarise</span>(<span class="at">prop =</span> <span class="fu">n</span>()<span class="sc">/</span><span class="fu">nrow</span>(all_predictions),</span>
+<span id="cb31-5"><a href=""></a>                      <span class="at">count_1000 =</span> <span class="fu">round</span>(prop<span class="sc">*</span><span class="dv">1000</span>))</span>
+<span id="cb31-6"><a href=""></a></span>
+<span id="cb31-7"><a href=""></a><span class="do">## create vector</span></span>
+<span id="cb31-8"><a href=""></a>category_vec <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(prop_errorcat), </span>
+<span id="cb31-9"><a href=""></a>                <span class="cf">function</span>(x) <span class="fu">rep</span>(prop_errorcat[x,</span>
+<span id="cb31-10"><a href=""></a>                        <span class="st">"error_cat"</span>],</span>
+<span id="cb31-11"><a href=""></a>                  <span class="at">each =</span> </span>
+<span id="cb31-12"><a href=""></a>                  <span class="fu">as.numeric</span>(prop_errorcat[x,</span>
+<span id="cb31-13"><a href=""></a>                  <span class="st">"count_1000"</span>])))) </span>
+<span id="cb31-14"><a href=""></a></span>
+<span id="cb31-15"><a href=""></a>area_grid <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">expand.grid</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>)) </span>
+<span id="cb31-16"><a href=""></a>area_grid<span class="sc">$</span>error_cat <span class="ot">&lt;-</span> category_vec</span>
+<span id="cb31-17"><a href=""></a></span>
+<span id="cb31-18"><a href=""></a>error_area <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(area_grid, <span class="fu">aes</span>(<span class="at">x =</span> Var1, <span class="at">y =</span> Var2, <span class="at">fill =</span> error_cat)) <span class="sc">+</span></span>
+<span id="cb31-19"><a href=""></a>  <span class="fu">geom_tile</span>(<span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb31-20"><a href=""></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb31-21"><a href=""></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> </span>
+<span id="cb31-22"><a href=""></a>                  <span class="fu">c</span>(<span class="st">"True positive"</span> <span class="ot">=</span> <span class="st">"darkgreen"</span>,</span>
+<span id="cb31-23"><a href=""></a>                    <span class="st">"True negative"</span> <span class="ot">=</span> <span class="st">"green"</span>,</span>
+<span id="cb31-24"><a href=""></a>                    <span class="st">"False positive"</span> <span class="ot">=</span> <span class="st">"red"</span>,</span>
+<span id="cb31-25"><a href=""></a>                    <span class="st">"False negative"</span> <span class="ot">=</span> <span class="st">"pink"</span>)) <span class="sc">+</span></span>
+<span id="cb31-26"><a href=""></a>  <span class="fu">theme</span>(<span class="at">axis.ticks =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb31-27"><a href=""></a>        <span class="at">axis.text =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb31-28"><a href=""></a>        <span class="at">axis.title =</span> <span class="fu">element_blank</span>()) <span class="sc">+</span></span>
+<span id="cb31-29"><a href=""></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Errors in graduation</span><span class="sc">\n</span><span class="st">rate prediction"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
+<section id="visualize-using-area-chart-1" class="slide level2">
+<h2>Visualize using area chart</h2>
+
+<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section>
 <section id="precision-recall-curve" class="slide level2">
 <h2>Precision-recall curve</h2>
 <ul>
@@ -911,21 +1024,100 @@ False negative False positive  True negative  True positive
 <li>Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)</li>
 </ul>
 </section>
-<section id="first-visualizing-the-distribution-of-probabilities-relative-to-class" class="slide level2">
-<h2>First: visualizing the distribution of probabilities relative to class</h2>
+<section id="first-visualizing-the-distribution-of-probabilities-relative-to-predicted-class" class="slide level2">
+<h2>First: visualizing the distribution of probabilities relative to predicted class</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href=""></a>all_predictions <span class="ot">&lt;-</span> all_predictions <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href=""></a>            <span class="fu">mutate</span>(<span class="at">true_class =</span> <span class="fu">factor</span>(true_class))</span>
+<span id="cb32-3"><a href=""></a></span>
+<span id="cb32-4"><a href=""></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(all_predictions, <span class="fu">aes</span>(<span class="at">x =</span> predict_prob,</span>
+<span id="cb32-5"><a href=""></a>                            <span class="at">group =</span> predict_class,</span>
+<span id="cb32-6"><a href=""></a>                            <span class="at">fill =</span> predict_class)) <span class="sc">+</span></span>
+<span id="cb32-7"><a href=""></a>  <span class="fu">geom_histogram</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">bins =</span> <span class="dv">50</span>) <span class="sc">+</span></span>
+<span id="cb32-8"><a href=""></a>  <span class="fu">theme_bw</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="distribution-of-predicted-probabilities-relative-to-predicted-class" class="slide level2">
+<h2>Distribution of predicted probabilities relative to predicted class</h2>
 
-<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-21-1.png" width="960" class="r-stretch"></section>
+<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section>
 <section id="then-plotting-the-values-at-different-thresholds" class="slide level2">
 <h2>Then, plotting the values at different thresholds</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href=""></a><span class="fu">library</span>(pROC)</span>
+<span id="cb33-2"><a href=""></a></span>
+<span id="cb33-3"><a href=""></a>roc_res <span class="ot">&lt;-</span> <span class="fu">roc</span>(<span class="at">response =</span> all_predictions<span class="sc">$</span>true_class,</span>
+<span id="cb33-4"><a href=""></a>               <span class="at">predictor =</span> all_predictions<span class="sc">$</span>predict_prob)</span>
+<span id="cb33-5"><a href=""></a></span>
+<span id="cb33-6"><a href=""></a>roc_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">sensitivity =</span> roc_res<span class="sc">$</span>sensitivities,</span>
+<span id="cb33-7"><a href=""></a>                     <span class="at">specificity =</span> roc_res<span class="sc">$</span>specificities,</span>
+<span id="cb33-8"><a href=""></a>                     <span class="at">thresholds =</span> roc_res<span class="sc">$</span>thresholds) <span class="sc">%&gt;%</span></span>
+<span id="cb33-9"><a href=""></a>          <span class="fu">mutate</span>(<span class="at">fpr =</span> <span class="dv">1</span><span class="sc">-</span>specificity) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="then-plotting-the-values-at-different-thresholds-1" class="slide level2">
 <h2>Then, plotting the values at different thresholds</h2>
-
-<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href=""></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(roc_df, <span class="fu">aes</span>(<span class="at">x =</span> fpr, <span class="at">y =</span> sensitivity)) <span class="sc">+</span></span>
+<span id="cb34-2"><a href=""></a>  <span class="fu">geom_path</span>() <span class="sc">+</span></span>
+<span id="cb34-3"><a href=""></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>,</span>
+<span id="cb34-4"><a href=""></a>              <span class="at">linetype =</span> <span class="st">"dashed"</span>,</span>
+<span id="cb34-5"><a href=""></a>              <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb34-6"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"False positive rate</span><span class="sc">\n</span><span class="st">(1 - specificity)"</span>) <span class="sc">+</span></span>
+<span id="cb34-7"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"True positive rate"</span>) <span class="sc">+</span></span>
+<span id="cb34-8"><a href=""></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">24</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="then-plotting-the-values-at-different-thresholds-2" class="slide level2">
 <h2>Then, plotting the values at different thresholds</h2>
 
-<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"><div class="quarto-auto-generated-content">
+<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-28-1.png" width="960" class="r-stretch"></section>
+<section id="then-plotting-the-values-at-different-thresholds-3" class="slide level2">
+<h2>Then, plotting the values at different thresholds</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href=""></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb35-2"><a href=""></a><span class="do">## create long form</span></span>
+<span id="cb35-3"><a href=""></a>roc_long <span class="ot">&lt;-</span> roc_df <span class="sc">%&gt;%</span></span>
+<span id="cb35-4"><a href=""></a>        <span class="fu">select</span>(thresholds, fpr, sensitivity) <span class="sc">%&gt;%</span></span>
+<span id="cb35-5"><a href=""></a>        reshape2<span class="sc">::</span><span class="fu">melt</span>(., <span class="at">id.vars =</span> <span class="st">"thresholds"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-6"><a href=""></a>        <span class="fu">mutate</span>(<span class="at">group =</span> <span class="fu">ifelse</span>(variable <span class="sc">==</span> <span class="st">"fpr"</span>,</span>
+<span id="cb35-7"><a href=""></a>                              <span class="st">"False positive rate"</span>,</span>
+<span id="cb35-8"><a href=""></a>                              <span class="st">"True positive rate"</span>))</span>
+<span id="cb35-9"><a href=""></a></span>
+<span id="cb35-10"><a href=""></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(roc_long, <span class="fu">aes</span>(<span class="at">x =</span> thresholds, <span class="at">y =</span> value,</span>
+<span id="cb35-11"><a href=""></a>                   <span class="at">group =</span> group, </span>
+<span id="cb35-12"><a href=""></a>                   <span class="at">color =</span> group)) <span class="sc">+</span></span>
+<span id="cb35-13"><a href=""></a>  <span class="fu">geom_path</span>() <span class="sc">+</span></span>
+<span id="cb35-14"><a href=""></a>  <span class="fu">xlab</span>(<span class="st">"Thresholds for converting</span><span class="sc">\n</span><span class="st">predicted probability to binary label"</span>) <span class="sc">+</span></span>
+<span id="cb35-15"><a href=""></a>  <span class="fu">ylab</span>(<span class="st">"Rate"</span>) <span class="sc">+</span></span>
+<span id="cb35-16"><a href=""></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"False positive rate"</span> <span class="ot">=</span> <span class="st">"red"</span>,</span>
+<span id="cb35-17"><a href=""></a>                                <span class="st">"True positive rate"</span> <span class="ot">=</span> <span class="st">"green"</span>)) <span class="sc">+</span></span>
+<span id="cb35-18"><a href=""></a>  <span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">24</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="then-plotting-the-values-at-different-thresholds-4" class="slide level2">
+<h2>Then, plotting the values at different thresholds</h2>
+
+<img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-30-1.png" width="960" class="r-stretch"></section>
+<section id="wrapping-up" class="slide level2">
+<h2>Wrapping up</h2>
+<ul>
+<li><p><strong>Statistical models and uncertainty</strong></p>
+<ul>
+<li>Coefficient plots: exploratory; can prompt deeper digging into relationships</li>
+<li>Predicted probabilities or values: useful for illustrating hypothetical cases</li>
+</ul></li>
+<li><p><strong>Machine learning models and hyperparameters</strong></p>
+<ul>
+<li>Example of <span class="math inline">\(\lambda\)</span> penalty parameter; not only visualizing MSE but also which coefficients regularized to zero</li>
+</ul></li>
+<li><p><strong>Machine learning models and performance</strong></p>
+<ul>
+<li>More visual representation of a confusion matrix</li>
+<li>Different ways of exploring tradeoffs at different thresholds for converting predicted probabilities to class labels</li>
+</ul></li>
+</ul>
+<div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
 </div>
