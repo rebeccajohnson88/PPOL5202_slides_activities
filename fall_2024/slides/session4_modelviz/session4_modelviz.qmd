@@ -1,0 +1,715 @@
+---
+title: "Session 4: Model Visualization"
+author: "Prof. Rebecca A. Johnson"
+date: "16 September 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+    highlight-style: arrow-dark
+    code-block-background: true
+    slide-number: true
+editor: visual
+---
+
+# Intro
+
+## Overview: three forms of model visualization 
+
+-   **Statistical models and uncertainty**
+
+-   **Machine learning models and hyperparameters**
+
+-   **Machine learning models and performance**
+
+
+# Statistical models and uncertainty
+
+## Motivation
+
+- Important to represent not only point estimates from models but also the uncertainty around that point estimate 
+
+- Two general techniques:
+  1. Visualizing the coefficients themselves + confidence intervals around the coefficient
+  2. Using the coefficients to generate predicted values for different hypothetical cases
+  
+- Throughout, can also show the raw data to supplement the statistical summaries 
+
+## Example model
+
+**Data**: ANES social media study in 2020
+
+
+![Climate change question](climatechange_q.png)
+
+
+## Pre-modeling cleaning 
+
+```{r}
+#| echo: true
+#| output: false
+library(tidyverse)
+library(ggplot2)
+#library(devtools)
+#install_github("jamesmartherus/anesr")
+library(anesr)
+
+data("socialmedia_2020")
+socialmedia_2020 <- socialmedia_2020 %>%
+          mutate(derived_climate_nohuman = 
+            case_when(c_self %in% c(1, 2) ~ TRUE, 
+                      c_self %in% c(3, 4) ~ FALSE, 
+                      TRUE ~ NA),
+            derived_age = case_when(profile_age == "80+" ~ 80, 
+                                  TRUE ~ as.numeric(profile_age)),
+            derived_female = profile_gender == 2,
+            derived_raceth = 
+          case_when(profile_racethnicity == 1 ~ "White non-Hispanic",
+                  profile_racethnicity == 2 ~ "Black non-Hispanic",
+                  profile_racethnicity == 3 ~ "Other non-Hispanic",
+                  profile_racethnicity == 4 ~ "Hispanic"),
+            derived_educ = 
+        case_when(profile_educ5 == 1 ~ "< High School",
+                  profile_educ5 == 2 ~ "HS grad",
+                  profile_educ5 == 3 ~ "Some college",
+                  profile_educ5 == 4 ~ "College",
+                  profile_educ5 == 5 ~ "Professional school"),
+    derived_vote = case_when(vote20d1 == 1 ~ "Trump",
+                             vote20d1 == 2 ~ "Biden",
+                             vote20d1 != -7 ~ "Other",
+                             TRUE ~ NA))
+
+```
+
+## Modeling
+
+
+```{r}
+#| echo: true
+#| output: false
+dv <- "derived_climate_nohuman"
+covars <- setdiff(grep("derived", colnames(socialmedia_2020), 
+               value = TRUE),
+               dv)
+               
+
+
+climate_attitudes <- lm(formula(sprintf("%s ~ %s",
+                    dv, paste(covars, collapse = "+"))),
+                    data = socialmedia_2020) 
+
+```
+
+
+
+
+
+## Comparing two summaries
+
+1. Raw summary
+2. `tidy` summary via `broom`: can be easier for accessing column names to plot
+
+```{r}
+#| echo: true
+#| output: true
+library(broom)
+library(tidyverse)
+
+summary(climate_attitudes)
+
+tidy(climate_attitudes) 
+
+```
+
+
+## Plotting the result
+
+
+```{r}
+#| echo: true
+#| output: true
+cl_toplot <- tidy(climate_attitudes, conf.int = TRUE) %>%
+          mutate(term_clean = gsub("derived\\_", "", term)) %>%
+          filter(!grepl("Intercept", term_clean))
+
+p <- ggplot(cl_toplot,
+       aes(x = reorder(term_clean, estimate), y = estimate, 
+           ymin = conf.low, 
+           ymax = conf.high)) +
+  geom_pointrange() +
+  ylab("Estimate from OLS model\n(positive = more likely to view no human role\nin climate change)") +
+  xlab("Predictor") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  coord_flip() +
+  theme_bw() 
+
+```
+
+
+## Plotting the result
+
+
+```{r}
+#| echo: false
+#| output: true
+p
+
+```
+
+## Exploring the raw relationships
+
+
+```{r}
+#| echo: true
+#| output: slide
+vote_v_climate <- socialmedia_2020 %>%
+            filter(!is.na(derived_climate_nohuman) &
+                  !is.na(derived_vote)) %>%
+            group_by(derived_vote) %>%
+            summarise(perc = mean(derived_climate_nohuman))
+
+p <- ggplot(vote_v_climate, aes(x = derived_vote, 
+      y = perc)) +
+  geom_bar(stat = "identity") +
+  xlab("2020 vote choice") +
+  ylab("Proportion view no human role\n in climate change") +
+  geom_label(aes(x = derived_vote,
+            y = perc, 
+            label = round(perc, 2))) +
+  theme_bw(base_size = 20) +
+  ylim(0, 0.5)
+            
+```
+
+## Exploring the raw relationships
+
+```{r}
+#| echo: false
+#| output: true
+p
+
+
+```
+
+## Where we are
+
+-   **Statistical models and uncertainty**
+    - [Raw coefficient plots]{style="color:gray;"}
+    - **Predicting for different hypotheticals**
+
+## Terminology
+
+- **Predicted values**: regression models; not necessarily bounded within 0-1 range
+- **Predicted probabilities**: logistic regression; always bounded within 0-1 range
+
+
+## Logit model of same outcome 
+
+
+```{r}
+#| echo: true
+#| output: true
+climate_attitudes_glm <- glm(formula(sprintf("%s ~ %s",
+                    dv, paste(covars, collapse = "+"))),
+                    data = socialmedia_2020,
+                    family = "binomial")  
+
+tidy(climate_attitudes_glm) %>%
+  mutate_if(is.numeric, round, digits = 2) 
+
+```
+## Creating hypothetical values
+
+Important to ensure within the bounds of the data!
+
+
+```{r}
+#| echo: true
+#| output: true
+table(socialmedia_2020$derived_vote,
+      socialmedia_2020$derived_educ)
+
+mode <- function(codes){
+  which.max(tabulate(codes))
+}
+
+## compare college trump v biden voters to hs trump voter
+## others at their median or median values either 
+## within group or across the full sample
+data_topredict <- data.frame(derived_vote = 
+                        c(rep("Trump", 2),
+                          rep("Biden", 2)),
+                        derived_educ = 
+                        rep(c("College", 
+                              "HS grad"),
+                              2)) %>%
+            mutate(derived_female = TRUE, 
+                   derived_raceth = "White non-Hispanic",
+                   derived_age = round(mean(socialmedia_2020$derived_age, na.rm = TRUE)))
+
+data_topredict
+
+```
+
+## Generating predictions with uncertainty: base R
+
+
+```{r}
+#| echo: true
+#| output: true
+
+## base R - list with predictions, se.fit, etc.
+predicted_val <- predict(climate_attitudes_glm,
+                         newdata = data_topredict,
+                         se.fit = TRUE,
+                         type = "response") 
+predicted_val
+
+## cleaning up
+data_topredict_wpred <- data_topredict %>%
+            mutate(predict_prob = predicted_val$fit, 
+                   predict_se = predicted_val$se.fit,
+                   lower = predict_prob - 1.96*predict_se,
+                   upper = predict_prob + 1.96*predict_se)
+
+data_topredict_wpred %>%
+  select(derived_vote, derived_educ,
+         predict_prob, lower, upper) 
+```
+
+## Generating predictions with uncertainty: `augment` in `broom`
+
+
+```{r}
+#| echo: true
+#| output: true
+
+aug_result <- augment(climate_attitudes_glm,
+                      newdata = data_topredict,
+                      type.predict = "response",
+                      se_fit = TRUE) %>%
+              mutate(lower = .fitted-1.96*.se.fit,
+                     upper = .fitted+1.96*.se.fit) 
+aug_result %>%
+  select(derived_vote, derived_educ,
+         .fitted, lower, upper) 
+
+```
+
+## Plotting the result
+
+```{r}
+#| echo: true
+#| output: false
+p <- ggplot(aug_result, aes(x = factor(derived_educ),
+                       y = .fitted,
+                       group = derived_vote,
+                       color = derived_vote)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower, 
+                    ymax = upper),
+                width = 0.1) +
+  ylab("Predicted probability\nagree that no human role\nclimate change") +
+  xlab("Level of education") +
+  labs(color = "2020 vote") +
+  scale_color_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  theme_bw(base_size = 24) +
+  theme(legend.position = c(0.5, 0.5),
+        legend.background = element_blank())  
+
+
+```
+
+## Plotting the result
+
+
+```{r}
+#| echo: false
+#| output: true 
+p
+```
+
+## Ways to increase transparency of previous plots
+
+- For coefficient plots, showing the reference values for categorical variables
+
+- For predicted probability plots, showing the values to which other covariates are set 
+
+## Where we are
+
+-   [Statistical models and uncertainty]{style="color:gray;"}
+
+-   **Machine learning models and hyperparameters**
+
+-   [Machine learning models and performance]{style="color:gray;"}
+
+
+# ML and hyperparameters
+
+## Goal: transparency within modeling process 
+
+- If the choice of the final model involved some form of hyperparameter selection, helping readers/consumers of the result understand that process
+- Some packages have built-in visualization for hyperparameters (example `glmnet`); important to understand the inputs to these/be able to create ourselves
+
+## Example - Lasso (one form of penalized regression)
+
+Predict college graduation rate using all other variables in the data
+
+```{r}
+#| echo: true
+#| output: true 
+library(glmnet)
+library(ISLR2)
+
+x_covar <- model.matrix(Grad.Rate ~ ., 
+          College)[, -1] 
+y <- College %>%
+    select(Grad.Rate) %>%
+    unlist() %>%
+    as.numeric() 
+
+cv_lasso <- cv.glmnet(x_covar, 
+                      y,
+                      alpha = 1) 
+
+```
+
+
+## Built-in plot
+
+```{r}
+#| echo: false
+#| output: true 
+plot(cv_lasso)
+```
+
+## Built-in plot
+
+- X axis shows the log($\lambda$) value 
+- Y axis shows the mean squared error (smaller = better)
+- Vertical lines show the value for lambda that minimizes the mean squared error (first line) as well as the value within 1 standard error of the minimum lambda that regularizes the coefficients the most 
+
+
+## What else can we visualize?
+
+Which coefficients are regularized to zero at the minimum value of $\lambda$? 
+
+```{r}
+#| echo: true
+#| output: true 
+coef_atmin <- coef(cv_lasso, se = "lambda.min")
+coef_atmin 
+
+## convert from sparse matrix to dataframe
+coef_atmin_df <- as.data.frame(as.matrix(coef_atmin)) %>%
+            mutate(regularized = ifelse(s1 == 0, 
+                              "Regularized to 0",
+                              "Remains a predictor"))
+coef_atmin_df$predictor <- rownames(coef_atmin_df)
+
+```
+
+## What else can we visualize?
+
+```{r}
+#| echo: true
+#| output: true 
+## visualize
+p <- ggplot(coef_atmin_df %>%
+    filter(!grepl("Intercept", predictor)),
+    aes(x = reorder(predictor, s1), y = s1)) +
+  geom_bar(stat = "identity") +
+  xlab("Predictors") +
+  ylab("Coefficient in LASSO") +
+  facet_wrap(~regularized, scales = "free_y") +
+  coord_flip() +
+  theme_bw(base_size = 24) 
+
+```
+
+## What else can we visualize
+
+```{r}
+#| echo: false
+#| output: true 
+
+p
+
+
+```
+
+
+## What else can we visualize?
+
+In Wednesday activity, practice visualizing the $\lambda$ at which a given coefficient gets regularized to 0 
+
+## Where we are
+
+-   [Statistical models and uncertainty]{style="color:gray;"}
+
+-   [Machine learning models and hyperparameters]{style="color:gray;"}
+
+-   **Machine learning models and performance**
+
+# ML models and performance
+
+## Motivation
+
+- Many different performance metrics for classification and regression
+- Not going to review all of them--- instead, focus on two, commonly-used ones:
+    - Confusion matrix: refresher on the `area chart` plot type from the EDA week 
+    - ROC Curve 
+    
+## Confusion matrixes
+
+4 mutually exclusive categories:
+
+- True positive
+- False positive
+- True negative
+- False negative 
+
+
+## Step 1: Model estimation
+
+```{r}
+#| echo: true
+#| output: true 
+
+## example 
+College <- College %>%
+      mutate(grad_rate_overmedian = 
+          Grad.Rate > quantile(College$Grad.Rate,
+                               probs = 0.5))
+
+y <- College %>%
+    select(grad_rate_overmedian) %>%
+    unlist() %>%
+    as.numeric() 
+
+fit <- cv.glmnet(x_covar, y, 
+              family = "binomial")
+
+```
+
+
+## Step 2: Extract predictions
+
+```{r}
+#| echo: true
+#| output: true 
+
+all_predictions <- data.frame(class = predict(fit, x_covar, 
+                        type = "class",
+                        s = "lambda.min"),
+                        prob = predict(fit, x_covar, 
+                        type = "response",
+                        s = "lambda.min"))
+colnames(all_predictions) <- c("predict_class", "predict_prob")
+all_predictions$true_class <- y
+
+```
+    
+## Step 3: Compare true class to predicted class
+
+
+```{r}
+#| echo: true
+#| output: true 
+
+
+all_predictions <- all_predictions %>%
+          mutate(error_cat = 
+              case_when(true_class == 1 & 
+                        predict_class == 1 ~ "True positive",
+                        true_class == 1 & 
+                       predict_class == 0 ~ "False negative",
+                       true_class == 0 &
+                        predict_class == 0 ~ "True negative",
+                       true_class == 0 &
+                        predict_class == 1 ~ "False positive"))
+
+table(all_predictions$error_cat)
+```
+
+## Visualize using area chart
+
+```{r}
+#| echo: true
+#| output: true 
+
+## calculate as count over 1000 
+prop_errorcat <- all_predictions %>%
+            group_by(error_cat) %>%
+            summarise(prop = n()/nrow(all_predictions),
+                      count_1000 = round(prop*1000))
+
+## create vector
+category_vec <- unlist(lapply(1:nrow(prop_errorcat), 
+                function(x) rep(prop_errorcat[x,
+                        "error_cat"],
+                  each = 
+                  as.numeric(prop_errorcat[x,
+                  "count_1000"])))) 
+
+area_grid <- data.frame(expand.grid(1:10, 1:100)) 
+area_grid$error_cat <- category_vec
+
+error_area <- ggplot(area_grid, aes(x = Var1, y = Var2, fill = error_cat)) +
+  geom_tile(alpha = 0.8, color = "black") +
+  theme_minimal() +
+  scale_fill_manual(values = 
+                  c("True positive" = "darkgreen",
+                    "True negative" = "green",
+                    "False positive" = "red",
+                    "False negative" = "pink")) +
+  theme(axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        axis.title = element_blank()) +
+  labs(fill = "Errors in graduation\nrate prediction") 
+
+```
+
+## Visualize using area chart
+
+```{r}
+#| echo: false
+#| output: true 
+error_area 
+
+```
+
+## Precision-recall curve
+
+- Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class
+- Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)
+
+
+## First: visualizing the distribution of probabilities relative to predicted class
+
+```{r}
+#| echo: true
+#| output: true 
+all_predictions <- all_predictions %>%
+            mutate(true_class = factor(true_class))
+
+p <- ggplot(all_predictions, aes(x = predict_prob,
+                            group = predict_class,
+                            fill = predict_class)) +
+  geom_histogram(alpha = 0.5, bins = 50) +
+  theme_bw() 
+
+```
+
+
+## Distribution of predicted probabilities relative to predicted class
+
+```{r}
+#| echo: false
+#| output: true 
+p 
+
+```
+
+
+
+
+## Then, plotting the values at different thresholds
+
+
+```{r}
+#| echo: true
+#| output: true 
+library(pROC)
+
+roc_res <- roc(response = all_predictions$true_class,
+               predictor = all_predictions$predict_prob)
+
+roc_df <- data.frame(sensitivity = roc_res$sensitivities,
+                     specificity = roc_res$specificities,
+                     thresholds = roc_res$thresholds) %>%
+          mutate(fpr = 1-specificity) 
+
+```
+
+
+## Then, plotting the values at different thresholds
+
+```{r}
+#| echo: true
+#| output: true 
+p <- ggplot(roc_df, aes(x = fpr, y = sensitivity)) +
+  geom_path() +
+  geom_abline(intercept = 0, slope = 1,
+              linetype = "dashed",
+              color = "red") +
+  xlab("False positive rate\n(1 - specificity)") +
+  ylab("True positive rate") +
+  theme_bw(base_size = 24) 
+
+```
+
+## Then, plotting the values at different thresholds
+
+```{r}
+#| echo: false
+#| output: true 
+## classic ROC
+p 
+
+```
+
+
+
+## Then, plotting the values at different thresholds
+
+```{r}
+#| echo: true
+#| output: true 
+library(reshape2)
+## create long form
+roc_long <- roc_df %>%
+        select(thresholds, fpr, sensitivity) %>%
+        reshape2::melt(., id.vars = "thresholds") %>%
+        mutate(group = ifelse(variable == "fpr",
+                              "False positive rate",
+                              "True positive rate"))
+
+p <- ggplot(roc_long, aes(x = thresholds, y = value,
+                   group = group, 
+                   color = group)) +
+  geom_path() +
+  xlab("Thresholds for converting\npredicted probability to binary label") +
+  ylab("Rate") +
+  scale_color_manual(values = c("False positive rate" = "red",
+                                "True positive rate" = "green")) +
+  theme_bw(base_size = 24) 
+
+
+```
+
+## Then, plotting the values at different thresholds
+
+```{r}
+#| echo: false
+#| output: true 
+p 
+
+```
+
+
+## Wrapping up
+
+-   **Statistical models and uncertainty**
+
+    - Coefficient plots: exploratory; can prompt deeper digging into relationships 
+    - Predicted probabilities or values: useful for illustrating hypothetical cases
+
+-   **Machine learning models and hyperparameters**
+
+    - Example of $\lambda$ penalty parameter; not only visualizing MSE but also which coefficients regularized to zero 
+
+-   **Machine learning models and performance**
+
+    - More visual representation of a confusion matrix
+    - Different ways of exploring tradeoffs at different thresholds for converting predicted probabilities to class labels

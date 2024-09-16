@@ -9,3 +9,5 @@ Course slides, activities, and assignments for Georgetown McCourt School of Publ
 
 - [Session 3: ggplot2 Automation](https://html-preview.github.io/?url=https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/slides/session3_ggplot2_automation/session3_ggplot2_automation.html)
 
+- [Session 4: Model Visualization](https://html-preview.github.io/?url=https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/slides/session4_modelviz/session4_modelviz.html)
+

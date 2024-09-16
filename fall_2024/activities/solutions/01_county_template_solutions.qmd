@@ -1,0 +1,154 @@
+---
+title: "Educational Attainment Report"
+author: "PPOL 5202"
+format: html
+editor: visual
+params:
+  state: "IL"
+  county: "COOK"
+execute:
+  warning: false
+  message: false 
+---
+
+```{r}
+#| echo: false
+#| output: false
+library(stringr)
+library(tidyverse)
+
+county_name <- paste(str_to_title(params$county), "County")
+state_fullname <- state.name[state.abb == params$state]
+
+## find ranking
+rank_allcounties <- midwest %>% filter(state == params$state) %>%
+          arrange(desc(percollege)) %>%
+          mutate(rank = 1:n()) %>%
+          select(county, rank, percollege) 
+
+rank_focalcounty <- rank_allcounties %>% filter(county == params$county) %>% pull(rank)
+
+head(rank_allcounties)
+rank_focalcounty
+
+```
+
+
+# How does `r county_name` rank in educational attainment?
+
+Here, we are focusing on the following county within `r state_fullname`: `r county_name`.
+
+This table shows where `r county_name` is ranked among `r state_fullname` in terms of rates of college degrees. We see that the county is ranked `r sprintf("%sth", rank_focalcounty)` out of `r length(unique(rank_allcounties$county))` counties in the state.
+
+```{r}
+#| echo: false
+#| output: true
+library(kableExtra)
+rank_allcounties %>%
+  kable(booktabs = T) %>%
+  kable_styling() %>%
+  row_spec(rank_focalcounty, bold = T, color = "white", background = "green")
+
+```
+
+This graph presents a visual description of where `r county_name` falls along rates of college degrees, along with two other statistics: rates of high school diplomas and rates of professional school completion.
+
+```{r}
+#| echo: false
+#| output: true
+## add code to create plot 
+library(ggplot2)
+
+comparison_plot <- function(state_name, county_name){
+  
+  stats_comparison <- rbind.data.frame(midwest %>%
+            filter(state == state_name & county != county_name) %>%
+            summarise(hsd = mean(perchsd), college =  mean(percollege), 
+                      professional = mean(percprof)) %>%
+            mutate(category = "other"),
+            midwest %>%
+            filter(state == state_name & county == county_name) %>%
+            summarise(hsd = mean(perchsd), college =  mean(percollege), 
+                      professional = mean(percprof)) %>%
+            mutate(category = county_name)) %>%
+            reshape2::melt(., id.vars = "category") %>%
+            mutate(variable_descriptive = 
+            factor(case_when(variable == "hsd" ~ "High school degree",
+                      variable == "college" ~ "College degree",
+                      variable == "professional" ~ "Professional school"),
+                levels = c("High school degree",
+                           "College degree",
+                           "Professional school"),
+                ordered = TRUE)) 
+  
+  stats_toplot <- stats_comparison %>%
+          left_join(stats_comparison %>% filter(category == "other") 
+                  %>% rename(mean_value = value) %>%
+                  select(variable, mean_value),
+                  by = "variable") 
+  
+  p <- ggplot(stats_toplot %>% filter(category == "other"), 
+       aes(x = variable_descriptive, 
+                            y = value)) +
+  geom_bar(stat = "identity", color = "black", 
+           fill = "wheat4") +
+  xlab("Level of educational attainment") +
+  ylab(sprintf("Percentage in county (mean across other\n%s counties)",
+      state.name[state.abb == state_name])) +
+  geom_point(data = stats_toplot %>% filter(category != "other"),
+             aes(x = variable_descriptive, 
+                 y = value),
+             color = "red", size = 4) +
+  geom_label(data = stats_toplot %>% filter(category != "other"),
+             aes(x = variable_descriptive, 
+                 y = value, 
+                 label = sprintf("%s county's rate: %.2f\nMean rate: %.2f",
+                                 str_to_title(county_name),
+                                 value, 
+                                 mean_value)),
+          color = "red",
+          size = 3,
+          nudge_y = 5) +
+  ylim(0, 100)
+  
+  return(list(plot = p, comparison_df = stats_toplot))
+  
+}
+
+p_and_summary <- comparison_plot(state_name = params$state, county_name = params$county)
+p_and_summary$p
+
+```
+
+
+# Summary 
+
+```{r}
+#| echo: false
+#| output: false
+p_and_summary$comparison_df
+
+
+compare_tomean <- p_and_summary$comparison_df %>%
+                      filter(category != "other") 
+
+hs_compare <- ifelse(compare_tomean %>% filter(variable == "hsd") %>% pull(mean_value) >
+                    compare_tomean %>% filter(variable == "hsd") %>% pull(value),
+                    "lower", "higher") 
+c_compare <- ifelse(compare_tomean %>% filter(variable == "college") %>% pull(mean_value) >
+                    compare_tomean %>% filter(variable == "college") %>% pull(value),
+                    "lower", "higher") 
+
+prof_compare <- ifelse(compare_tomean %>% filter(variable == "professional") %>% pull(mean_value) >
+                    compare_tomean %>% filter(variable == "professional") %>% pull(value),
+                    "lower", "higher") 
+
+c_compare
+```
+
+
+We see that, for these statistics:
+
+-   `r county_name` has `r hs_compare` rates of high school diplomas than the state mean
+-   `r county_name` has `r c_compare` rates of college degrees than the state mean
+-   `r county_name` has `r prof_compare` rates of professional school degrees than the state mean
