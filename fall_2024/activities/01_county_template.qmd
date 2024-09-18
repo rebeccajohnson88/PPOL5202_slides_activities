@@ -13,16 +13,36 @@ params:
 ```{r}
 ## add code to pull state name and county name from parameters
 
+library(tidyverse)
+state_name = params$state
+county_name = params$county
+
+state_name
+county_name
+
+table_data = midwest %>% 
+        filter(state == state_name)%>%
+        arrange(desc(percollege))
+
+county_ranking = which(table_data$county == county_name)
 ```
 
-Here, we are focusing on the following county within \[add R code for state\]: \[add R code for county name\].
+Here, we are focusing on the following county within `r state_name`: `r county_name`.
 
-This table shows where \[add R code for county name\] is ranked among \[add R code for state name\] in terms of rates of college degrees. We see that the county is ranked \[add R code for county rank\] out of \[add R code for total counties\] counties in the state.
+This table shows where `r county_name` is ranked among `r state_name` in terms of rates of college degrees. We see that the county is ranked `r sprintf("%s th", county_ranking)`out of \[add R code for total counties\] counties in the state.
 
 ```{r}
 ## add code to create table 
 ## may want to use kable() from package kableExtra
+#install.packages("kableExtra")
 
+library(kableExtra)
+
+
+
+kable(table_data) %>%
+  kable_styling() %>%
+  row_spec(which(table_data$county == county_name), bold = T, color = "white", background = "blue")
 ```
 
 This graph presents a visual description of where \[add R code for county name\] falls along rates of college degrees, along with two other statistics: rates of high school diplomas and rates of professional school completion.
@@ -33,7 +53,7 @@ This graph presents a visual description of where \[add R code for county name\]
 
 ```
 
-## Summary 
+## Summary
 
 ```{r}
 ## hint: for this part, you may want to modify the function to return both the plot and the input data for the plot 

@@ -13,7 +13,7 @@ editor: visual
 
 # Intro
 
-## Overview: three forms of model visualization 
+## Overview: three forms of model visualization
 
 -   **Statistical models and uncertainty**
 
@@ -21,36 +21,34 @@ editor: visual
 
 -   **Machine learning models and performance**
 
-
 # Statistical models and uncertainty
 
 ## Motivation
 
-- Important to represent not only point estimates from models but also the uncertainty around that point estimate 
+-   Important to represent not only point estimates from models but also the uncertainty around that point estimate
 
-- Two general techniques:
-  1. Visualizing the coefficients themselves + confidence intervals around the coefficient
-  2. Using the coefficients to generate predicted values for different hypothetical cases
-  
-- Throughout, can also show the raw data to supplement the statistical summaries 
+-   Two general techniques:
+
+    1.  Visualizing the coefficients themselves + confidence intervals around the coefficient
+    2.  Using the coefficients to generate predicted values for different hypothetical cases
+
+-   Throughout, can also show the raw data to supplement the statistical summaries
 
 ## Example model
 
 **Data**: ANES social media study in 2020
 
-
 ![Climate change question](climatechange_q.png)
 
-
-## Pre-modeling cleaning 
+## Pre-modeling cleaning
 
 ```{r}
 #| echo: true
 #| output: false
 library(tidyverse)
 library(ggplot2)
-#library(devtools)
-#install_github("jamesmartherus/anesr")
+library(fastmap)
+install_github("jamesmartherus/anesr")
 library(anesr)
 
 data("socialmedia_2020")
@@ -78,10 +76,13 @@ socialmedia_2020 <- socialmedia_2020 %>%
                              vote20d1 != -7 ~ "Other",
                              TRUE ~ NA))
 
+
+# cleaning up demographic variables
+# factors with informative labels
+
 ```
 
 ## Modeling
-
 
 ```{r}
 #| echo: true
@@ -99,14 +100,10 @@ climate_attitudes <- lm(formula(sprintf("%s ~ %s",
 
 ```
 
-
-
-
-
 ## Comparing two summaries
 
-1. Raw summary
-2. `tidy` summary via `broom`: can be easier for accessing column names to plot
+1.  Raw summary
+2.  `tidy` summary via `broom`: can be easier for accessing column names to plot
 
 ```{r}
 #| echo: true
@@ -118,11 +115,14 @@ summary(climate_attitudes)
 
 tidy(climate_attitudes) 
 
+# more intuitive titles
+# color names
+# broom creates tidy summaries
+# the p value column doesn't really ahve a great name for calling via $ so we use broom which makes better names
+
 ```
 
-
 ## Plotting the result
-
 
 ```{r}
 #| echo: true
@@ -144,9 +144,7 @@ p <- ggplot(cl_toplot,
 
 ```
 
-
 ## Plotting the result
-
 
 ```{r}
 #| echo: false
@@ -156,7 +154,6 @@ p
 ```
 
 ## Exploring the raw relationships
-
 
 ```{r}
 #| echo: true
@@ -193,17 +190,15 @@ p
 ## Where we are
 
 -   **Statistical models and uncertainty**
-    - [Raw coefficient plots]{style="color:gray;"}
-    - **Predicting for different hypotheticals**
+    -   [Raw coefficient plots]{style="color:gray;"}
+    -   **Predicting for different hypotheticals**
 
 ## Terminology
 
-- **Predicted values**: regression models; not necessarily bounded within 0-1 range
-- **Predicted probabilities**: logistic regression; always bounded within 0-1 range
+-   **Predicted values**: regression models; not necessarily bounded within 0-1 range
+-   **Predicted probabilities**: logistic regression; always bounded within 0-1 range
 
-
-## Logit model of same outcome 
-
+## Logit model of same outcome
 
 ```{r}
 #| echo: true
@@ -217,10 +212,10 @@ tidy(climate_attitudes_glm) %>%
   mutate_if(is.numeric, round, digits = 2) 
 
 ```
+
 ## Creating hypothetical values
 
 Important to ensure within the bounds of the data!
-
 
 ```{r}
 #| echo: true
@@ -252,7 +247,6 @@ data_topredict
 
 ## Generating predictions with uncertainty: base R
 
-
 ```{r}
 #| echo: true
 #| output: true
@@ -277,7 +271,6 @@ data_topredict_wpred %>%
 ```
 
 ## Generating predictions with uncertainty: `augment` in `broom`
-
 
 ```{r}
 #| echo: true
@@ -322,7 +315,6 @@ p <- ggplot(aug_result, aes(x = factor(derived_educ),
 
 ## Plotting the result
 
-
 ```{r}
 #| echo: false
 #| output: true 
@@ -331,9 +323,9 @@ p
 
 ## Ways to increase transparency of previous plots
 
-- For coefficient plots, showing the reference values for categorical variables
+-   For coefficient plots, showing the reference values for categorical variables
 
-- For predicted probability plots, showing the values to which other covariates are set 
+-   For predicted probability plots, showing the values to which other covariates are set
 
 ## Where we are
 
@@ -343,13 +335,12 @@ p
 
 -   [Machine learning models and performance]{style="color:gray;"}
 
-
 # ML and hyperparameters
 
-## Goal: transparency within modeling process 
+## Goal: transparency within modeling process
 
-- If the choice of the final model involved some form of hyperparameter selection, helping readers/consumers of the result understand that process
-- Some packages have built-in visualization for hyperparameters (example `glmnet`); important to understand the inputs to these/be able to create ourselves
+-   If the choice of the final model involved some form of hyperparameter selection, helping readers/consumers of the result understand that process
+-   Some packages have built-in visualization for hyperparameters (example `glmnet`); important to understand the inputs to these/be able to create ourselves
 
 ## Example - Lasso (one form of penalized regression)
 
@@ -374,7 +365,6 @@ cv_lasso <- cv.glmnet(x_covar,
 
 ```
 
-
 ## Built-in plot
 
 ```{r}
@@ -385,14 +375,13 @@ plot(cv_lasso)
 
 ## Built-in plot
 
-- X axis shows the log($\lambda$) value 
-- Y axis shows the mean squared error (smaller = better)
-- Vertical lines show the value for lambda that minimizes the mean squared error (first line) as well as the value within 1 standard error of the minimum lambda that regularizes the coefficients the most 
-
+-   X axis shows the log($\lambda$) value
+-   Y axis shows the mean squared error (smaller = better)
+-   Vertical lines show the value for lambda that minimizes the mean squared error (first line) as well as the value within 1 standard error of the minimum lambda that regularizes the coefficients the most
 
 ## What else can we visualize?
 
-Which coefficients are regularized to zero at the minimum value of $\lambda$? 
+Which coefficients are regularized to zero at the minimum value of $\lambda$?
 
 ```{r}
 #| echo: true
@@ -438,10 +427,9 @@ p
 
 ```
 
-
 ## What else can we visualize?
 
-In Wednesday activity, practice visualizing the $\lambda$ at which a given coefficient gets regularized to 0 
+In Wednesday activity, practice visualizing the $\lambda$ at which a given coefficient gets regularized to 0
 
 ## Where we are
 
@@ -455,20 +443,19 @@ In Wednesday activity, practice visualizing the $\lambda$ at which a given coeff
 
 ## Motivation
 
-- Many different performance metrics for classification and regression
-- Not going to review all of them--- instead, focus on two, commonly-used ones:
-    - Confusion matrix: refresher on the `area chart` plot type from the EDA week 
-    - ROC Curve 
-    
+-   Many different performance metrics for classification and regression
+-   Not going to review all of them--- instead, focus on two, commonly-used ones:
+    -   Confusion matrix: refresher on the `area chart` plot type from the EDA week
+    -   ROC Curve
+
 ## Confusion matrixes
 
 4 mutually exclusive categories:
 
-- True positive
-- False positive
-- True negative
-- False negative 
-
+-   True positive
+-   False positive
+-   True negative
+-   False negative
 
 ## Step 1: Model estimation
 
@@ -492,7 +479,6 @@ fit <- cv.glmnet(x_covar, y,
 
 ```
 
-
 ## Step 2: Extract predictions
 
 ```{r}
@@ -509,9 +495,8 @@ colnames(all_predictions) <- c("predict_class", "predict_prob")
 all_predictions$true_class <- y
 
 ```
-    
-## Step 3: Compare true class to predicted class
 
+## Step 3: Compare true class to predicted class
 
 ```{r}
 #| echo: true
@@ -581,9 +566,8 @@ error_area
 
 ## Precision-recall curve
 
-- Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class
-- Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)
-
+-   Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class
+-   Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)
 
 ## First: visualizing the distribution of probabilities relative to predicted class
 
@@ -601,7 +585,6 @@ p <- ggplot(all_predictions, aes(x = predict_prob,
 
 ```
 
-
 ## Distribution of predicted probabilities relative to predicted class
 
 ```{r}
@@ -611,11 +594,7 @@ p
 
 ```
 
-
-
-
 ## Then, plotting the values at different thresholds
-
 
 ```{r}
 #| echo: true
@@ -631,7 +610,6 @@ roc_df <- data.frame(sensitivity = roc_res$sensitivities,
           mutate(fpr = 1-specificity) 
 
 ```
-
 
 ## Then, plotting the values at different thresholds
 
@@ -658,8 +636,6 @@ p <- ggplot(roc_df, aes(x = fpr, y = sensitivity)) +
 p 
 
 ```
-
-
 
 ## Then, plotting the values at different thresholds
 
@@ -697,19 +673,18 @@ p
 
 ```
 
-
 ## Wrapping up
 
 -   **Statistical models and uncertainty**
 
-    - Coefficient plots: exploratory; can prompt deeper digging into relationships 
-    - Predicted probabilities or values: useful for illustrating hypothetical cases
+    -   Coefficient plots: exploratory; can prompt deeper digging into relationships
+    -   Predicted probabilities or values: useful for illustrating hypothetical cases
 
 -   **Machine learning models and hyperparameters**
 
-    - Example of $\lambda$ penalty parameter; not only visualizing MSE but also which coefficients regularized to zero 
+    -   Example of $\lambda$ penalty parameter; not only visualizing MSE but also which coefficients regularized to zero
 
 -   **Machine learning models and performance**
 
-    - More visual representation of a confusion matrix
-    - Different ways of exploring tradeoffs at different thresholds for converting predicted probabilities to class labels
+    -   More visual representation of a confusion matrix
+    -   Different ways of exploring tradeoffs at different thresholds for converting predicted probabilities to class labels
