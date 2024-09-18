@@ -1,0 +1,126 @@
+---
+title: "Model Visualization"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Model Visualization
+
+## Exercise 1: improve the climate change coefficients plot
+
+-   Begin with the coefficients plot from the lecture activity (we reproduce the cleaning / model estimation below)
+-   Improve the coefficients plot in two ways:
+    -   For each of the categorical variables, add the reference category
+    -   Color the coefficients by type of category
+
+```{r}
+#| echo: false
+#| output: true 
+library(tidyverse)
+library(ggplot2)
+#library(devtools)
+#install_github("jamesmartherus/anesr")
+library(anesr)
+library(broom)
+
+data("socialmedia_2020")
+socialmedia_2020 <- socialmedia_2020 %>%
+          mutate(derived_climate_nohuman = 
+            case_when(c_self %in% c(1, 2) ~ TRUE, 
+                      c_self %in% c(3, 4) ~ FALSE, 
+                      TRUE ~ NA),
+            derived_age = case_when(profile_age == "80+" ~ 80, 
+                                  TRUE ~ as.numeric(profile_age)),
+            derived_female = profile_gender == 2,
+            derived_raceth = 
+          case_when(profile_racethnicity == 1 ~ "White non-Hispanic",
+                  profile_racethnicity == 2 ~ "Black non-Hispanic",
+                  profile_racethnicity == 3 ~ "Other non-Hispanic",
+                  profile_racethnicity == 4 ~ "Hispanic"),
+            derived_educ = 
+        case_when(profile_educ5 == 1 ~ "< High School",
+                  profile_educ5 == 2 ~ "HS grad",
+                  profile_educ5 == 3 ~ "Some college",
+                  profile_educ5 == 4 ~ "College",
+                  profile_educ5 == 5 ~ "Professional school"),
+    derived_vote = case_when(vote20d1 == 1 ~ "Trump",
+                             vote20d1 == 2 ~ "Biden",
+                             vote20d1 != -7 ~ "Other",
+                             TRUE ~ NA))
+
+dv <- "derived_climate_nohuman"
+covars <- setdiff(grep("derived", colnames(socialmedia_2020), 
+               value = TRUE),
+               dv)
+climate_attitudes <- lm(formula(sprintf("%s ~ %s",
+                    dv, paste(covars, collapse = "+"))),
+                    data = socialmedia_2020) 
+
+## your code here 
+
+```
+
+## Exercise 2: predicted probabilities with more continuous predictor
+
+Create plots that examines the following contrast:
+
+-   Age values ranging from 20 to 60 incrementing by 1 year
+-   For each age value, Biden v. Trump voters
+-   Other values at: female, some college, and white non-Hispanic
+
+For the plot, have the x axis be age, y axis be the predicted probability of endorsing no human role in climate change, and group/color by intended vote choice
+
+Create two plots:
+
+1.  One plot using `geom_point()` and `geom_errorbar()` to illustrate the point estimates + uncertainty
+2.  Another plot using `geom_line()` and `geom_ribbon()` to illustrate the point estimates + uncertainty
+
+```{r}
+#| echo: false
+#| output: true 
+## model for reference
+climate_attitudes_glm <- glm(formula(sprintf("%s ~ %s",
+                    dv, paste(covars, collapse = "+"))),
+                    data = socialmedia_2020,
+                    family = "binomial")  
+
+## your code here
+
+```
+
+
+## Exercise 3: showing when lasso regularizes a coefficient to zero
+
+Create a plot where:
+
+-   The `x axis` is each value of $\lambda$ used in `cv.glmnet` predicting college graduation (provided in code)
+-   The `y axis` is each predictor in the dataset
+-   There is a dot/point for each value of $\lambda$ where that particular predictor remains non-zero
+
+**Hint**: see this Stack Overflow post for how to get coefficients at a specific lambda value - <https://stackoverflow.com/questions/66718416/how-to-get-the-coefficents-of-a-cross-validated-lasso-for-a-specific-lambda-not>
+
+```{r}
+#| echo: false
+#| output: true 
+library(glmnet)
+library(ISLR2)
+
+## model estimation
+x_covar <- model.matrix(Grad.Rate ~ ., 
+          College)[, -1] 
+y <- College %>%
+    select(Grad.Rate) %>%
+    unlist() %>%
+    as.numeric() 
+
+set.seed(040484)
+cv_lasso <- cv.glmnet(x_covar, 
+                      y,
+                      alpha = 1) 
+
+
+## your code here 
+```
