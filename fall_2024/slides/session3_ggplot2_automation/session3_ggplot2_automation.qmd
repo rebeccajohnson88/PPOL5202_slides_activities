@@ -78,9 +78,8 @@ ggplot(midwest %>% filter(state == "IL"),
 1.  `.data[[varname]]` syntax
 2.  `!!sym(varname)` syntax
 
-## Solution 1: subsetting using string
 
-the .data knows to pull from the dataset referenced earlier
+## Solution 1: subsetting using string 
 
 ```{r}
 #| echo: true
@@ -93,11 +92,9 @@ p1 <- ggplot(midwest %>% filter(state == "IL"),
 
 ```
 
-## Solution 2: sym wrapper
+## Solution to: sym wrapper 
 
 `sym` documentation: https://www.rdocumentation.org/packages/rlang/versions/1.1.4/topics/sym
-
-will create identical set of plots for previous .data example
 
 ```{r}
 #| echo: true
@@ -131,21 +128,19 @@ ggplot(midwest %>% filter(state == "IL"),
 
 ## For strings: placeholder syntax
 
-`sprintf`: structure is `sprintf("Fixed part: this varies %s and this varies %s", vary_1, vary_2)` with different options for the placeholder. after the comma you indicate the placeholders in the appropriate order (they are position dependent).
+`sprintf`: structure is `sprintf("Fixed part: this varies %s and this varies %s", vary_1, vary_2)` with different options for the placeholder:
 
--   `%s`: placeholder for string
+  -   `%s`: string
 
--   `%d`: placeholder for integer (e.g., 42)
+  -   `%d`: integer (e.g., 42)
 
--   `%f`: floating point number (e.g., 42.524)
+  -   `%f`: floating point number (e.g., 42.524)
 
--   `%.xf`: floating point number with `x` digits in the float, indicates rounding of decimal, %.2f would round it 2 two decimals
+  -   `%.xf`: floating point number with `x` digits in the float
 
 More details here: [sprintf details](https://www.gastonsanchez.com/r4strings/c-style-formatting.html)
 
 ## Developing the labels
-
-variable label below would create a string that included the arguments statistic and state
 
 ```{r}
 #| echo: true
@@ -168,9 +163,6 @@ variable_label
 #| echo: true
 #| output: true
 title_maker <- function(onecol){
-  #function is taking the "perc" from the name and making it "percent" 
-  #strremove line is removing the "perc" from the variable name and changing it to title case
-  #pasting the things together as a single string with a space as the deliminator
   clean_perc <- gsub("perc", "Percent", onecol)
   clean_str_perc <- paste(c(str_extract(clean_perc, "Percent"), 
               str_to_title(str_remove(clean_perc, "Percent"))),
@@ -195,8 +187,6 @@ title_maker <- function(onecol){
               str_to_title(str_remove(clean_perc, "Percent"))),
               collapse = " ")
   if(grepl("povert", clean_str_perc)){
-      #creates a conditional statement that detects whether povert is in the string 
-      #and make it "poverty" similar to treatment of perc
       clean_str_pov <- paste(c(str_remove(clean_str_perc,
                                       "povert(y)?"),
                       str_to_title(str_extract(clean_str_perc, 
@@ -213,8 +203,6 @@ title_maker("percadultpoverty")
 ```
 
 ## For the state labels
-
-R has a built-in state name/state abbreviation that we can use to identify the abbreviation based on name and vise versa
 
 ```{r}
 #| echo: true
@@ -237,12 +225,10 @@ plot_onestat_onestate <- function(input_data,
                                   x_label){
   
 ## adding error handling
-  if(!state_abbrev %in% input_data$state){
+  if(!state_abbrev %in% midwest$state){
     stop(sprintf("Error; state not found in dataset; available states: %s",
               paste(unique(input_data$state), collapse = "; ")))
   }
-  #if statement causes an error/stops the function if the state abbreviation is not in the 
-  #input dataset and provides a list of the available states in the dataset
   
   p <- ggplot(input_data %>% filter(state == state_abbrev),
        aes(x = !!sym(var_x), y = !!sym(var_y))) +
@@ -261,8 +247,6 @@ plot_onestat_onestate <- function(input_data,
 
 ## Executing the function with one state/one outcome
 
-provides an error because DC is not in the dataset
-
 ```{r}
 #| echo: true
 #| output: true
@@ -276,9 +260,8 @@ plot_onestat_onestate(input_data = midwest,
 
 ```
 
-## Executing the function with one state/one outcome
 
-feeding in the state abbreviate and the variable names
+## Executing the function with one state/one outcome
 
 ```{r}
 #| echo: true
@@ -297,18 +280,14 @@ plot_onestat_onestate(input_data = midwest,
 
 ## Executing the function with multiple states / outcomes
 
--   Example: compare Illinois and Wisconsin; different types of poverty (child; adult; elderly- three distinct columns)
--   `mapply` as useful for iterating over multiple parameters (`state` and `var_y`)
+- Example: compare Illinois and Wisconsin; different types of poverty (child; adult; elderly- three distinct columns)
+- `mapply` as useful for iterating over multiple parameters (`state` and `var_y`)
 
 `mapply(function, param1_varying, param2_varying, MoreArgs = list(static_param1 = x, ...))`
 
-iterates over two states and two outcome variables
-
-mapply iterates over multiple parameters, utilizes a function as first parameter, next is the parameter (list) you want to iterate through. moreargs is specifically a list and keeps the remaining items the same in the function.
-
-mapply needs to know all combinations; varying parameters need to be the same size; does not automatically do all the combinations; varying parameters need to be structured like how a nested for loop would go through the different options.
 
 ## Executing the function with multiple states / outcomes
+
 
 ```{r}
 #| echo: true
@@ -328,17 +307,9 @@ p_compare <- mapply(plot_onestat_onestate,
                                     var_x = "metro_cat",
                                     x_label = "What kind of area?"),
                     SIMPLIFY = FALSE)
-
-#function creates a list of plots. 
-#simplify = false stops mapply from returning a data frame
-
 ```
 
 ## How do we plot the list of plots?
-
-do.call(function, list) applies a function over a list. our list in this case is p_compare, which is a list of plots. grid.arrange plots different plots on a grid.
-
-do.call does need to be fed a list as an argument
 
 ```{r}
 #| echo: true
@@ -348,6 +319,7 @@ do.call does need to be fed a list as an argument
 do.call(grid.arrange, p_compare)
 
 ```
+
 
 ## How do we plot the list of plots?
 
@@ -368,10 +340,10 @@ grid.arrange(p_compare$IL_percchildbelowpovert,
              p_compare$WI_percelderlypoverty,
              nrow = 3)
 
-#specifies 3 rows for the grid arrange and order of plots to make it easy to compare the 
-#same stat for the two states across rows
 
 ```
+
+
 
 ## Where we are
 
@@ -392,10 +364,11 @@ grid.arrange(p_compare$IL_percchildbelowpovert,
 
 ## Document-level parameters in Quarto
 
--   For document header (can set \>1 parameter too)
--   Within `.qmd`: `params$state`
+- For document header (can set >1 parameter too)
+- Within `.qmd`: `params$state` 
 
 ![Header](input/params_header.png)
+
 
 ## Play around with example
 
@@ -405,15 +378,15 @@ grid.arrange(p_compare$IL_percchildbelowpovert,
 
 Goal: avoid copying that same document 5 times (one per state) and manually editing the parameter
 
-1.  `R` script
-2.  `bash` script
+1. `R` script 
+2. `bash` script 
 
 ## R script to generate reports
 
--   `quarto_render` command + iterating over list of parameters to evaluate - command to basically render a given .qmd file (the raw code input files)
--   One thing to note is that we need to create a state-specific qmd to avoid things defaulting to last state we iterate over
--   the way that quarto works we need to copy the state_template and create a state-specific qmd for each state; renders to a html file; we can't just have a single qmd the renders into several different html files that represent different entities.
--   [Guide](https://www.carlosivanrodriguez.com/guides/workflow/parameterized-and-parallelized-quarto-reports/)
+- `quarto_render` command + iterating over list of parameters to evaluate
+- One thing to note is that we need to create a state-specific qmd to avoid things defaulting to last state we iterate over
+- [Guide](https://www.carlosivanrodriguez.com/guides/workflow/parameterized-and-parallelized-quarto-reports/)
+
 
 ## R script to generate reports (scroll down on code)
 
@@ -449,18 +422,16 @@ render_one_report <- function(one_state){
     )
   }
 
-#creating list of all states in data and apply the render function on all states in the list. 
+
 all_states <- unique(midwest$state)
 lapply(all_states, render_one_report)
 ```
 
 ## Bash script to generate reports
 
--   Key is calling the parameter `$state` in various places
--   `-P` flag in quarto render to provide parameters
--   Execute: `bash render_allstates.sh`
-
-similar to what the R script is doing but in bash
+- Key is calling the parameter `$state` in various places
+- `-P` flag in quarto render to provide parameters
+- Execute: `bash render_allstates.sh`
 
 ```{bash}
 #| echo: true
@@ -474,12 +445,13 @@ do
 done 
 ```
 
-## Wrapping up
+## Wrapping up 
 
 -   **Functions within a script**
-    -   Start by plotting one example
-    -   Think abut what to parametrize
-    -   Parametrization might require regex/string cleaning functions
+    - Start by plotting one example
+    - Think abut what to parametrize 
+    - Parametrization might require regex/string cleaning functions 
+
 -   **Document-level parameters**
-    -   Useful for automating report generation
-    -   Can also incorporate parameters into the text of the report itself
+    - Useful for automating report generation 
+    - Can also incorporate parameters into the text of the report itself 

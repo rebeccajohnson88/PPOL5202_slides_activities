@@ -4,25 +4,14 @@ author: "PPOL 5202"
 format: html
 editor: visual
 params:
-  stateabbr: "IL"
+  state: "IL"
   county: "COOK"
 ---
 
-# How does `R str_to_title(params$county)` rank in educational attainment?
+# How does \[county name\] rank in educational attainment?
 
 ```{r}
-#| echo: false
-
-library(stringr)
-library(ggplot2)
-library(tidyverse)
-
-full_state <- state.name[state.abb == params$stateabbr]
-countyname = str_to_title(params$county)
-
-
-sortedstatedata = midwest %>% filter(state == params$stateabbr) %>% arrange(desc(percollege)) 
-
+## add code to pull state name and county name from parameters
 
 library(tidyverse)
 state_name = params$state
@@ -38,11 +27,9 @@ table_data = midwest %>%
 county_ranking = which(table_data$county == county_name)
 ```
 
-ksl84
-Here, we are focusing on the following county within `R full_state`: `R countyname`.
+Here, we are focusing on the following county within `r state_name`: `r county_name`.
 
-This table shows where `R countyname` is ranked among `R full_state` in terms of rates of college degrees. We see that the county is ranked \[add R code for county rank\] out of \[add R code for total counties\] counties in the state.
-
+This table shows where `r county_name` is ranked among `r state_name` in terms of rates of college degrees. We see that the county is ranked `r sprintf("%s th", county_ranking)`out of \[add R code for total counties\] counties in the state.
 
 ```{r}
 ## add code to create table 
