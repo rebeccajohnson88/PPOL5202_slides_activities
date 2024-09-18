@@ -24,16 +24,38 @@ countyname = str_to_title(params$county)
 sortedstatedata = midwest %>% filter(state == params$stateabbr) %>% arrange(desc(percollege)) 
 
 
+library(tidyverse)
+state_name = params$state
+county_name = params$county
+
+state_name
+county_name
+
+table_data = midwest %>% 
+        filter(state == state_name)%>%
+        arrange(desc(percollege))
+
+county_ranking = which(table_data$county == county_name)
 ```
 
+ksl84
 Here, we are focusing on the following county within `R full_state`: `R countyname`.
 
 This table shows where `R countyname` is ranked among `R full_state` in terms of rates of college degrees. We see that the county is ranked \[add R code for county rank\] out of \[add R code for total counties\] counties in the state.
 
+
 ```{r}
 ## add code to create table 
 ## may want to use kable() from package kableExtra
+#install.packages("kableExtra")
 
+library(kableExtra)
+
+
+
+kable(table_data) %>%
+  kable_styling() %>%
+  row_spec(which(table_data$county == county_name), bold = T, color = "white", background = "blue")
 ```
 
 This graph presents a visual description of where \[add R code for county name\] falls along rates of college degrees, along with two other statistics: rates of high school diplomas and rates of professional school completion.

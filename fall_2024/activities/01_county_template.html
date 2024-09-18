@@ -1,0 +1,3523 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="PPOL 5202">
+
+<title>Educational Attainment Report</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="01_county_template_files/libs/clipboard/clipboard.min.js"></script>
+<script src="01_county_template_files/libs/quarto-html/quarto.js"></script>
+<script src="01_county_template_files/libs/quarto-html/popper.min.js"></script>
+<script src="01_county_template_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="01_county_template_files/libs/quarto-html/anchor.min.js"></script>
+<link href="01_county_template_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="01_county_template_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="01_county_template_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="01_county_template_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="01_county_template_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+<script src="01_county_template_files/libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="01_county_template_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Educational Attainment Report</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>PPOL 5202 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="how-does-county-name-rank-in-educational-attainment" class="level1">
+<h1>How does [county name] rank in educational attainment?</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## add code to pull state name and county name from parameters</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.3     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>state_name <span class="ot">=</span> params<span class="sc">$</span>state</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>county_name <span class="ot">=</span> params<span class="sc">$</span>county</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>state_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "IL"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>county_name</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "COOK"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>table_data <span class="ot">=</span> midwest <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(state <span class="sc">==</span> state_name)<span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">arrange</span>(<span class="fu">desc</span>(percollege))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>county_ranking <span class="ot">=</span> <span class="fu">which</span>(table_data<span class="sc">$</span>county <span class="sc">==</span> county_name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here, we are focusing on the following county within IL: COOK.</p>
+<p>This table shows where COOK is ranked among IL in terms of rates of college degrees. We see that the county is ranked 9 thout of [add R code for total counties] counties in the state.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">## add code to create table </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="do">## may want to use kable() from package kableExtra</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("kableExtra")</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'kableExtra' was built under R version 4.3.3</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'kableExtra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    group_rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(table_data) <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="fu">which</span>(table_data<span class="sc">$</span>county <span class="sc">==</span> county_name), <span class="at">bold =</span> T, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">PID</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">county</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">state</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">area</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">poptotal</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">popdensity</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">popwhite</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">popblack</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">popamerindian</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">popasian</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">popother</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percwhite</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percblack</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percamerindan</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percasian</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percother</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">popadults</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">perchsd</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percollege</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percprof</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">poppovertyknown</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percpovertyknown</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percbelowpoverty</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percchildbelowpovert</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percadultpoverty</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">percelderlypoverty</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">inmetro</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">category</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">582</td>
+<td style="text-align: left;">DU PAGE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.020</td>
+<td style="text-align: right;">781666</td>
+<td style="text-align: right;">39083.3000</td>
+<td style="text-align: right;">714905</td>
+<td style="text-align: right;">15462</td>
+<td style="text-align: right;">962</td>
+<td style="text-align: right;">39634</td>
+<td style="text-align: right;">10703</td>
+<td style="text-align: right;">91.45914</td>
+<td style="text-align: right;">1.9780827</td>
+<td style="text-align: right;">0.1230705</td>
+<td style="text-align: right;">5.0704521</td>
+<td style="text-align: right;">1.3692549</td>
+<td style="text-align: right;">502321</td>
+<td style="text-align: right;">88.57683</td>
+<td style="text-align: right;">42.76887</td>
+<td style="text-align: right;">11.963266</td>
+<td style="text-align: right;">771641</td>
+<td style="text-align: right;">98.71748</td>
+<td style="text-align: right;">2.714734</td>
+<td style="text-align: right;">2.945252</td>
+<td style="text-align: right;">2.399064</td>
+<td style="text-align: right;">3.838249</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HLU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">570</td>
+<td style="text-align: left;">CHAMPAIGN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.058</td>
+<td style="text-align: right;">173025</td>
+<td style="text-align: right;">2983.1897</td>
+<td style="text-align: right;">146506</td>
+<td style="text-align: right;">16559</td>
+<td style="text-align: right;">331</td>
+<td style="text-align: right;">8033</td>
+<td style="text-align: right;">1596</td>
+<td style="text-align: right;">84.67331</td>
+<td style="text-align: right;">9.5702933</td>
+<td style="text-align: right;">0.1913018</td>
+<td style="text-align: right;">4.6426817</td>
+<td style="text-align: right;">0.9224101</td>
+<td style="text-align: right;">95971</td>
+<td style="text-align: right;">87.49935</td>
+<td style="text-align: right;">41.29581</td>
+<td style="text-align: right;">17.757448</td>
+<td style="text-align: right;">154934</td>
+<td style="text-align: right;">89.54429</td>
+<td style="text-align: right;">15.572437</td>
+<td style="text-align: right;">14.132234</td>
+<td style="text-align: right;">17.562728</td>
+<td style="text-align: right;">8.105017</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">609</td>
+<td style="text-align: left;">LAKE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">516418</td>
+<td style="text-align: right;">18443.5000</td>
+<td style="text-align: right;">450666</td>
+<td style="text-align: right;">34771</td>
+<td style="text-align: right;">1198</td>
+<td style="text-align: right;">12588</td>
+<td style="text-align: right;">17195</td>
+<td style="text-align: right;">87.26768</td>
+<td style="text-align: right;">6.7331116</td>
+<td style="text-align: right;">0.2319826</td>
+<td style="text-align: right;">2.4375603</td>
+<td style="text-align: right;">3.3296670</td>
+<td style="text-align: right;">318475</td>
+<td style="text-align: right;">84.72690</td>
+<td style="text-align: right;">37.83405</td>
+<td style="text-align: right;">11.464008</td>
+<td style="text-align: right;">495312</td>
+<td style="text-align: right;">95.91300</td>
+<td style="text-align: right;">5.159778</td>
+<td style="text-align: right;">6.767125</td>
+<td style="text-align: right;">4.191939</td>
+<td style="text-align: right;">6.164430</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HLU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">599</td>
+<td style="text-align: left;">JACKSON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: right;">61067</td>
+<td style="text-align: right;">1696.3056</td>
+<td style="text-align: right;">51991</td>
+<td style="text-align: right;">6342</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">2178</td>
+<td style="text-align: right;">447</td>
+<td style="text-align: right;">85.13764</td>
+<td style="text-align: right;">10.3853145</td>
+<td style="text-align: right;">0.1784925</td>
+<td style="text-align: right;">3.5665744</td>
+<td style="text-align: right;">0.7319829</td>
+<td style="text-align: right;">32172</td>
+<td style="text-align: right;">78.76725</td>
+<td style="text-align: right;">36.64367</td>
+<td style="text-align: right;">14.089892</td>
+<td style="text-align: right;">54230</td>
+<td style="text-align: right;">88.80410</td>
+<td style="text-align: right;">28.371750</td>
+<td style="text-align: right;">26.392211</td>
+<td style="text-align: right;">32.458483</td>
+<td style="text-align: right;">13.815301</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AHR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">617</td>
+<td style="text-align: left;">MCLEAN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.068</td>
+<td style="text-align: right;">129180</td>
+<td style="text-align: right;">1899.7059</td>
+<td style="text-align: right;">121057</td>
+<td style="text-align: right;">5563</td>
+<td style="text-align: right;">203</td>
+<td style="text-align: right;">1624</td>
+<td style="text-align: right;">733</td>
+<td style="text-align: right;">93.71187</td>
+<td style="text-align: right;">4.3063942</td>
+<td style="text-align: right;">0.1571451</td>
+<td style="text-align: right;">1.2571606</td>
+<td style="text-align: right;">0.5674253</td>
+<td style="text-align: right;">72957</td>
+<td style="text-align: right;">84.67179</td>
+<td style="text-align: right;">33.81855</td>
+<td style="text-align: right;">9.003934</td>
+<td style="text-align: right;">117663</td>
+<td style="text-align: right;">91.08453</td>
+<td style="text-align: right;">11.875441</td>
+<td style="text-align: right;">10.010509</td>
+<td style="text-align: right;">13.715404</td>
+<td style="text-align: right;">7.266603</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HAU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">579</td>
+<td style="text-align: left;">DE KALB</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.038</td>
+<td style="text-align: right;">77932</td>
+<td style="text-align: right;">2050.8421</td>
+<td style="text-align: right;">72968</td>
+<td style="text-align: right;">2069</td>
+<td style="text-align: right;">123</td>
+<td style="text-align: right;">1751</td>
+<td style="text-align: right;">1021</td>
+<td style="text-align: right;">93.63034</td>
+<td style="text-align: right;">2.6548786</td>
+<td style="text-align: right;">0.1578299</td>
+<td style="text-align: right;">2.2468306</td>
+<td style="text-align: right;">1.3101165</td>
+<td style="text-align: right;">41817</td>
+<td style="text-align: right;">83.87976</td>
+<td style="text-align: right;">32.83593</td>
+<td style="text-align: right;">11.150967</td>
+<td style="text-align: right;">69127</td>
+<td style="text-align: right;">88.70169</td>
+<td style="text-align: right;">13.544635</td>
+<td style="text-align: right;">8.678238</td>
+<td style="text-align: right;">17.047419</td>
+<td style="text-align: right;">6.453908</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">644</td>
+<td style="text-align: left;">SANGAMON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.051</td>
+<td style="text-align: right;">178386</td>
+<td style="text-align: right;">3497.7647</td>
+<td style="text-align: right;">162013</td>
+<td style="text-align: right;">14364</td>
+<td style="text-align: right;">290</td>
+<td style="text-align: right;">1377</td>
+<td style="text-align: right;">342</td>
+<td style="text-align: right;">90.82159</td>
+<td style="text-align: right;">8.0522014</td>
+<td style="text-align: right;">0.1625688</td>
+<td style="text-align: right;">0.7719216</td>
+<td style="text-align: right;">0.1917191</td>
+<td style="text-align: right;">117686</td>
+<td style="text-align: right;">81.77098</td>
+<td style="text-align: right;">28.98815</td>
+<td style="text-align: right;">8.169196</td>
+<td style="text-align: right;">175796</td>
+<td style="text-align: right;">98.54809</td>
+<td style="text-align: right;">9.888166</td>
+<td style="text-align: right;">13.700858</td>
+<td style="text-align: right;">8.212677</td>
+<td style="text-align: right;">9.764429</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HAU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">616</td>
+<td style="text-align: left;">MCHENRY</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: right;">183241</td>
+<td style="text-align: right;">5090.0278</td>
+<td style="text-align: right;">178895</td>
+<td style="text-align: right;">310</td>
+<td style="text-align: right;">299</td>
+<td style="text-align: right;">1293</td>
+<td style="text-align: right;">2444</td>
+<td style="text-align: right;">97.62826</td>
+<td style="text-align: right;">0.1691761</td>
+<td style="text-align: right;">0.1631731</td>
+<td style="text-align: right;">0.7056281</td>
+<td style="text-align: right;">1.3337626</td>
+<td style="text-align: right;">114721</td>
+<td style="text-align: right;">84.50763</td>
+<td style="text-align: right;">28.05415</td>
+<td style="text-align: right;">6.417308</td>
+<td style="text-align: right;">181636</td>
+<td style="text-align: right;">99.12410</td>
+<td style="text-align: right;">3.491599</td>
+<td style="text-align: right;">4.069647</td>
+<td style="text-align: right;">2.870246</td>
+<td style="text-align: right;">5.064473</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HLU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">576</td>
+<td style="text-align: left; font-weight: bold; color: white !important; background-color: blue !important;">COOK</td>
+<td style="text-align: left; font-weight: bold; color: white !important; background-color: blue !important;">IL</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">0.058</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">5105067</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">88018.3966</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">3204947</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">1317147</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">10289</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">188565</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">384119</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">62.77972</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">25.8007779</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">0.2015449</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">3.6936832</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">7.5242695</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">3291995</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">73.40582</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">28.01812</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">8.329964</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">5023523</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">98.40269</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">14.198303</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">22.293497</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">11.665542</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">10.825269</td>
+<td style="text-align: right; font-weight: bold; color: white !important; background-color: blue !important;">1</td>
+<td style="text-align: left; font-weight: bold; color: white !important; background-color: blue !important;">AAU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">615</td>
+<td style="text-align: left;">MCDONOUGH</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.034</td>
+<td style="text-align: right;">35244</td>
+<td style="text-align: right;">1036.5882</td>
+<td style="text-align: right;">32992</td>
+<td style="text-align: right;">1254</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">802</td>
+<td style="text-align: right;">131</td>
+<td style="text-align: right;">93.61026</td>
+<td style="text-align: right;">3.5580524</td>
+<td style="text-align: right;">0.1844286</td>
+<td style="text-align: right;">2.2755646</td>
+<td style="text-align: right;">0.3716945</td>
+<td style="text-align: right;">18784</td>
+<td style="text-align: right;">80.30239</td>
+<td style="text-align: right;">27.92802</td>
+<td style="text-align: right;">10.359881</td>
+<td style="text-align: right;">28821</td>
+<td style="text-align: right;">81.77562</td>
+<td style="text-align: right;">19.052080</td>
+<td style="text-align: right;">16.009317</td>
+<td style="text-align: right;">22.403382</td>
+<td style="text-align: right;">12.884384</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">HHR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">605</td>
+<td style="text-align: left;">KANE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.029</td>
+<td style="text-align: right;">317471</td>
+<td style="text-align: right;">10947.2759</td>
+<td style="text-align: right;">269675</td>
+<td style="text-align: right;">19006</td>
+<td style="text-align: right;">620</td>
+<td style="text-align: right;">4474</td>
+<td style="text-align: right;">23696</td>
+<td style="text-align: right;">84.94477</td>
+<td style="text-align: right;">5.9866886</td>
+<td style="text-align: right;">0.1952934</td>
+<td style="text-align: right;">1.4092626</td>
+<td style="text-align: right;">7.4639888</td>
+<td style="text-align: right;">191807</td>
+<td style="text-align: right;">77.71927</td>
+<td style="text-align: right;">27.59388</td>
+<td style="text-align: right;">7.013300</td>
+<td style="text-align: right;">310740</td>
+<td style="text-align: right;">97.87981</td>
+<td style="text-align: right;">6.846560</td>
+<td style="text-align: right;">9.590403</td>
+<td style="text-align: right;">5.551679</td>
+<td style="text-align: right;">6.313803</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">ALU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">632</td>
+<td style="text-align: left;">PEORIA</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.038</td>
+<td style="text-align: right;">182827</td>
+<td style="text-align: right;">4811.2368</td>
+<td style="text-align: right;">154298</td>
+<td style="text-align: right;">24892</td>
+<td style="text-align: right;">312</td>
+<td style="text-align: right;">2225</td>
+<td style="text-align: right;">1100</td>
+<td style="text-align: right;">84.39563</td>
+<td style="text-align: right;">13.6150569</td>
+<td style="text-align: right;">0.1706531</td>
+<td style="text-align: right;">1.2169975</td>
+<td style="text-align: right;">0.6016617</td>
+<td style="text-align: right;">115963</td>
+<td style="text-align: right;">77.93262</td>
+<td style="text-align: right;">25.83841</td>
+<td style="text-align: right;">6.590033</td>
+<td style="text-align: right;">176647</td>
+<td style="text-align: right;">96.61976</td>
+<td style="text-align: right;">14.527844</td>
+<td style="text-align: right;">21.871177</td>
+<td style="text-align: right;">12.427585</td>
+<td style="text-align: right;">10.318043</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">575</td>
+<td style="text-align: left;">COLES</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">51644</td>
+<td style="text-align: right;">1721.4667</td>
+<td style="text-align: right;">50177</td>
+<td style="text-align: right;">925</td>
+<td style="text-align: right;">92</td>
+<td style="text-align: right;">341</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: right;">97.15940</td>
+<td style="text-align: right;">1.7911084</td>
+<td style="text-align: right;">0.1781427</td>
+<td style="text-align: right;">0.6602897</td>
+<td style="text-align: right;">0.2110603</td>
+<td style="text-align: right;">29136</td>
+<td style="text-align: right;">76.10516</td>
+<td style="text-align: right;">25.17504</td>
+<td style="text-align: right;">8.144563</td>
+<td style="text-align: right;">45693</td>
+<td style="text-align: right;">88.47688</td>
+<td style="text-align: right;">16.748736</td>
+<td style="text-align: right;">16.341941</td>
+<td style="text-align: right;">18.792914</td>
+<td style="text-align: right;">10.993608</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">607</td>
+<td style="text-align: left;">KENDALL</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.018</td>
+<td style="text-align: right;">39413</td>
+<td style="text-align: right;">2189.6111</td>
+<td style="text-align: right;">38019</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: right;">73</td>
+<td style="text-align: right;">224</td>
+<td style="text-align: right;">887</td>
+<td style="text-align: right;">96.46310</td>
+<td style="text-align: right;">0.5328191</td>
+<td style="text-align: right;">0.1852181</td>
+<td style="text-align: right;">0.5683404</td>
+<td style="text-align: right;">2.2505265</td>
+<td style="text-align: right;">24175</td>
+<td style="text-align: right;">83.67735</td>
+<td style="text-align: right;">24.88935</td>
+<td style="text-align: right;">5.253361</td>
+<td style="text-align: right;">39199</td>
+<td style="text-align: right;">99.45703</td>
+<td style="text-align: right;">3.385290</td>
+<td style="text-align: right;">4.420172</td>
+<td style="text-align: right;">2.355049</td>
+<td style="text-align: right;">5.878511</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HLU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">659</td>
+<td style="text-align: left;">WILL</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">357313</td>
+<td style="text-align: right;">7146.2600</td>
+<td style="text-align: right;">303420</td>
+<td style="text-align: right;">38361</td>
+<td style="text-align: right;">692</td>
+<td style="text-align: right;">4774</td>
+<td style="text-align: right;">10066</td>
+<td style="text-align: right;">84.91715</td>
+<td style="text-align: right;">10.7359654</td>
+<td style="text-align: right;">0.1936677</td>
+<td style="text-align: right;">1.3360835</td>
+<td style="text-align: right;">2.8171379</td>
+<td style="text-align: right;">215823</td>
+<td style="text-align: right;">80.43026</td>
+<td style="text-align: right;">24.75686</td>
+<td style="text-align: right;">5.887232</td>
+<td style="text-align: right;">348384</td>
+<td style="text-align: right;">97.50107</td>
+<td style="text-align: right;">6.034720</td>
+<td style="text-align: right;">7.463086</td>
+<td style="text-align: right;">4.799198</td>
+<td style="text-align: right;">8.563398</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HLU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">653</td>
+<td style="text-align: left;">WABASH</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.012</td>
+<td style="text-align: right;">13111</td>
+<td style="text-align: right;">1092.5833</td>
+<td style="text-align: right;">12955</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">98.81016</td>
+<td style="text-align: right;">0.3050873</td>
+<td style="text-align: right;">0.0838990</td>
+<td style="text-align: right;">0.6101747</td>
+<td style="text-align: right;">0.1906796</td>
+<td style="text-align: right;">8520</td>
+<td style="text-align: right;">74.87089</td>
+<td style="text-align: right;">24.73005</td>
+<td style="text-align: right;">3.920188</td>
+<td style="text-align: right;">12849</td>
+<td style="text-align: right;">98.00168</td>
+<td style="text-align: right;">12.942642</td>
+<td style="text-align: right;">17.027588</td>
+<td style="text-align: right;">11.527294</td>
+<td style="text-align: right;">11.389961</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">662</td>
+<td style="text-align: left;">WOODFORD</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.032</td>
+<td style="text-align: right;">32653</td>
+<td style="text-align: right;">1020.4062</td>
+<td style="text-align: right;">32388</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">99.18844</td>
+<td style="text-align: right;">0.1960004</td>
+<td style="text-align: right;">0.1653753</td>
+<td style="text-align: right;">0.3123756</td>
+<td style="text-align: right;">0.1378128</td>
+<td style="text-align: right;">20469</td>
+<td style="text-align: right;">80.01368</td>
+<td style="text-align: right;">22.80522</td>
+<td style="text-align: right;">4.973374</td>
+<td style="text-align: right;">31693</td>
+<td style="text-align: right;">97.05999</td>
+<td style="text-align: right;">7.187707</td>
+<td style="text-align: right;">10.013923</td>
+<td style="text-align: right;">5.628350</td>
+<td style="text-align: right;">7.150557</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">HLU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">661</td>
+<td style="text-align: left;">Winnebago</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">252913</td>
+<td style="text-align: right;">8430.4333</td>
+<td style="text-align: right;">222439</td>
+<td style="text-align: right;">23256</td>
+<td style="text-align: right;">651</td>
+<td style="text-align: right;">2986</td>
+<td style="text-align: right;">3581</td>
+<td style="text-align: right;">87.95080</td>
+<td style="text-align: right;">9.1952569</td>
+<td style="text-align: right;">0.2574008</td>
+<td style="text-align: right;">1.1806432</td>
+<td style="text-align: right;">1.4159019</td>
+<td style="text-align: right;">163047</td>
+<td style="text-align: right;">76.29641</td>
+<td style="text-align: right;">22.65236</td>
+<td style="text-align: right;">5.181941</td>
+<td style="text-align: right;">248507</td>
+<td style="text-align: right;">98.25790</td>
+<td style="text-align: right;">10.117220</td>
+<td style="text-align: right;">14.581410</td>
+<td style="text-align: right;">8.224708</td>
+<td style="text-align: right;">9.626546</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">634</td>
+<td style="text-align: left;">PIATT</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">15548</td>
+<td style="text-align: right;">621.9200</td>
+<td style="text-align: right;">15508</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">99.74273</td>
+<td style="text-align: right;">0.0514536</td>
+<td style="text-align: right;">0.1029071</td>
+<td style="text-align: right;">0.0707486</td>
+<td style="text-align: right;">0.0321585</td>
+<td style="text-align: right;">10458</td>
+<td style="text-align: right;">82.95085</td>
+<td style="text-align: right;">22.01186</td>
+<td style="text-align: right;">5.192197</td>
+<td style="text-align: right;">15315</td>
+<td style="text-align: right;">98.50141</td>
+<td style="text-align: right;">6.131244</td>
+<td style="text-align: right;">7.067669</td>
+<td style="text-align: right;">4.612260</td>
+<td style="text-align: right;">9.167794</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">HLR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">640</td>
+<td style="text-align: left;">RICHLAND</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: right;">16545</td>
+<td style="text-align: right;">752.0455</td>
+<td style="text-align: right;">16442</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">99.37746</td>
+<td style="text-align: right;">0.1027501</td>
+<td style="text-align: right;">0.1450589</td>
+<td style="text-align: right;">0.2598973</td>
+<td style="text-align: right;">0.1148383</td>
+<td style="text-align: right;">10917</td>
+<td style="text-align: right;">73.49089</td>
+<td style="text-align: right;">21.50774</td>
+<td style="text-align: right;">3.627370</td>
+<td style="text-align: right;">16228</td>
+<td style="text-align: right;">98.08401</td>
+<td style="text-align: right;">13.975844</td>
+<td style="text-align: right;">18.660061</td>
+<td style="text-align: right;">12.068161</td>
+<td style="text-align: right;">12.949430</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">641</td>
+<td style="text-align: left;">ROCK ISLAND</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">148723</td>
+<td style="text-align: right;">5311.5357</td>
+<td style="text-align: right;">133428</td>
+<td style="text-align: right;">10488</td>
+<td style="text-align: right;">354</td>
+<td style="text-align: right;">1017</td>
+<td style="text-align: right;">3436</td>
+<td style="text-align: right;">89.71578</td>
+<td style="text-align: right;">7.0520363</td>
+<td style="text-align: right;">0.2380264</td>
+<td style="text-align: right;">0.6838216</td>
+<td style="text-align: right;">2.3103353</td>
+<td style="text-align: right;">96715</td>
+<td style="text-align: right;">77.37476</td>
+<td style="text-align: right;">21.30073</td>
+<td style="text-align: right;">4.497751</td>
+<td style="text-align: right;">144662</td>
+<td style="text-align: right;">97.26942</td>
+<td style="text-align: right;">13.184527</td>
+<td style="text-align: right;">19.375000</td>
+<td style="text-align: right;">11.752093</td>
+<td style="text-align: right;">9.057489</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">642</td>
+<td style="text-align: left;">ST CLAIR</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.040</td>
+<td style="text-align: right;">262852</td>
+<td style="text-align: right;">6571.3000</td>
+<td style="text-align: right;">187866</td>
+<td style="text-align: right;">71275</td>
+<td style="text-align: right;">585</td>
+<td style="text-align: right;">2007</td>
+<td style="text-align: right;">1119</td>
+<td style="text-align: right;">71.47216</td>
+<td style="text-align: right;">27.1160197</td>
+<td style="text-align: right;">0.2225587</td>
+<td style="text-align: right;">0.7635475</td>
+<td style="text-align: right;">0.4257148</td>
+<td style="text-align: right;">162550</td>
+<td style="text-align: right;">72.58690</td>
+<td style="text-align: right;">21.18425</td>
+<td style="text-align: right;">5.389111</td>
+<td style="text-align: right;">257438</td>
+<td style="text-align: right;">97.94029</td>
+<td style="text-align: right;">17.431770</td>
+<td style="text-align: right;">26.729188</td>
+<td style="text-align: right;">14.265401</td>
+<td style="text-align: right;">11.868633</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">660</td>
+<td style="text-align: left;">WILLIAMSON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">57733</td>
+<td style="text-align: right;">2309.3200</td>
+<td style="text-align: right;">56135</td>
+<td style="text-align: right;">1147</td>
+<td style="text-align: right;">112</td>
+<td style="text-align: right;">252</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">97.23209</td>
+<td style="text-align: right;">1.9867320</td>
+<td style="text-align: right;">0.1939965</td>
+<td style="text-align: right;">0.4364921</td>
+<td style="text-align: right;">0.1506937</td>
+<td style="text-align: right;">38733</td>
+<td style="text-align: right;">71.78117</td>
+<td style="text-align: right;">21.05956</td>
+<td style="text-align: right;">4.980249</td>
+<td style="text-align: right;">56318</td>
+<td style="text-align: right;">97.54906</td>
+<td style="text-align: right;">15.801342</td>
+<td style="text-align: right;">22.394582</td>
+<td style="text-align: right;">13.618817</td>
+<td style="text-align: right;">13.819785</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">629</td>
+<td style="text-align: left;">MORGAN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">36397</td>
+<td style="text-align: right;">1102.9394</td>
+<td style="text-align: right;">34561</td>
+<td style="text-align: right;">1510</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">130</td>
+<td style="text-align: right;">148</td>
+<td style="text-align: right;">94.95563</td>
+<td style="text-align: right;">4.1486936</td>
+<td style="text-align: right;">0.1318790</td>
+<td style="text-align: right;">0.3571723</td>
+<td style="text-align: right;">0.4066269</td>
+<td style="text-align: right;">23605</td>
+<td style="text-align: right;">75.90341</td>
+<td style="text-align: right;">20.72442</td>
+<td style="text-align: right;">5.659818</td>
+<td style="text-align: right;">33746</td>
+<td style="text-align: right;">92.71643</td>
+<td style="text-align: right;">11.195401</td>
+<td style="text-align: right;">12.329090</td>
+<td style="text-align: right;">10.141856</td>
+<td style="text-align: right;">12.618389</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">594</td>
+<td style="text-align: left;">HANCOCK</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.047</td>
+<td style="text-align: right;">21373</td>
+<td style="text-align: right;">454.7447</td>
+<td style="text-align: right;">21272</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">99.52744</td>
+<td style="text-align: right;">0.1216488</td>
+<td style="text-align: right;">0.1169700</td>
+<td style="text-align: right;">0.1731156</td>
+<td style="text-align: right;">0.0608244</td>
+<td style="text-align: right;">14322</td>
+<td style="text-align: right;">77.53805</td>
+<td style="text-align: right;">20.66052</td>
+<td style="text-align: right;">3.861193</td>
+<td style="text-align: right;">20943</td>
+<td style="text-align: right;">97.98812</td>
+<td style="text-align: right;">11.784367</td>
+<td style="text-align: right;">14.620207</td>
+<td style="text-align: right;">9.829460</td>
+<td style="text-align: right;">12.915205</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">654</td>
+<td style="text-align: left;">WARREN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">19181</td>
+<td style="text-align: right;">581.2424</td>
+<td style="text-align: right;">18630</td>
+<td style="text-align: right;">356</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">97.12737</td>
+<td style="text-align: right;">1.8560033</td>
+<td style="text-align: right;">0.1042698</td>
+<td style="text-align: right;">0.3649445</td>
+<td style="text-align: right;">0.5474167</td>
+<td style="text-align: right;">12220</td>
+<td style="text-align: right;">76.30933</td>
+<td style="text-align: right;">20.45827</td>
+<td style="text-align: right;">4.574468</td>
+<td style="text-align: right;">18323</td>
+<td style="text-align: right;">95.52682</td>
+<td style="text-align: right;">14.233477</td>
+<td style="text-align: right;">18.900966</td>
+<td style="text-align: right;">12.832096</td>
+<td style="text-align: right;">11.729916</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">585</td>
+<td style="text-align: left;">EFFINGHAM</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">31704</td>
+<td style="text-align: right;">1132.2857</td>
+<td style="text-align: right;">31523</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">95</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">99.42909</td>
+<td style="text-align: right;">0.0378501</td>
+<td style="text-align: right;">0.1419379</td>
+<td style="text-align: right;">0.2996467</td>
+<td style="text-align: right;">0.0914711</td>
+<td style="text-align: right;">19477</td>
+<td style="text-align: right;">74.95508</td>
+<td style="text-align: right;">20.27520</td>
+<td style="text-align: right;">3.783950</td>
+<td style="text-align: right;">31229</td>
+<td style="text-align: right;">98.50177</td>
+<td style="text-align: right;">8.994844</td>
+<td style="text-align: right;">11.599832</td>
+<td style="text-align: right;">6.974466</td>
+<td style="text-align: right;">10.517498</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">650</td>
+<td style="text-align: left;">TAZEWELL</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.039</td>
+<td style="text-align: right;">123692</td>
+<td style="text-align: right;">3171.5897</td>
+<td style="text-align: right;">122639</td>
+<td style="text-align: right;">186</td>
+<td style="text-align: right;">221</td>
+<td style="text-align: right;">432</td>
+<td style="text-align: right;">214</td>
+<td style="text-align: right;">99.14869</td>
+<td style="text-align: right;">0.1503735</td>
+<td style="text-align: right;">0.1786696</td>
+<td style="text-align: right;">0.3492546</td>
+<td style="text-align: right;">0.1730104</td>
+<td style="text-align: right;">80310</td>
+<td style="text-align: right;">78.59420</td>
+<td style="text-align: right;">20.04483</td>
+<td style="text-align: right;">3.921056</td>
+<td style="text-align: right;">121970</td>
+<td style="text-align: right;">98.60783</td>
+<td style="text-align: right;">9.132574</td>
+<td style="text-align: right;">12.893392</td>
+<td style="text-align: right;">7.916417</td>
+<td style="text-align: right;">7.288368</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">627</td>
+<td style="text-align: left;">MONROE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">22422</td>
+<td style="text-align: right;">974.8696</td>
+<td style="text-align: right;">22262</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">99.28642</td>
+<td style="text-align: right;">0.0579788</td>
+<td style="text-align: right;">0.2363750</td>
+<td style="text-align: right;">0.2542146</td>
+<td style="text-align: right;">0.1650165</td>
+<td style="text-align: right;">14613</td>
+<td style="text-align: right;">75.86396</td>
+<td style="text-align: right;">19.92062</td>
+<td style="text-align: right;">3.318963</td>
+<td style="text-align: right;">22071</td>
+<td style="text-align: right;">98.43457</td>
+<td style="text-align: right;">4.811744</td>
+<td style="text-align: right;">4.774624</td>
+<td style="text-align: right;">4.211979</td>
+<td style="text-align: right;">6.836925</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">ALU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">649</td>
+<td style="text-align: left;">STEPHENSON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">48052</td>
+<td style="text-align: right;">1456.1212</td>
+<td style="text-align: right;">44524</td>
+<td style="text-align: right;">3081</td>
+<td style="text-align: right;">58</td>
+<td style="text-align: right;">304</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">92.65795</td>
+<td style="text-align: right;">6.4118039</td>
+<td style="text-align: right;">0.1207026</td>
+<td style="text-align: right;">0.6326480</td>
+<td style="text-align: right;">0.1768917</td>
+<td style="text-align: right;">31555</td>
+<td style="text-align: right;">76.69149</td>
+<td style="text-align: right;">19.87958</td>
+<td style="text-align: right;">3.882111</td>
+<td style="text-align: right;">47225</td>
+<td style="text-align: right;">98.27895</td>
+<td style="text-align: right;">9.907888</td>
+<td style="text-align: right;">13.503258</td>
+<td style="text-align: right;">8.354173</td>
+<td style="text-align: right;">9.505783</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">618</td>
+<td style="text-align: left;">MACON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: right;">117206</td>
+<td style="text-align: right;">3348.7429</td>
+<td style="text-align: right;">102197</td>
+<td style="text-align: right;">14135</td>
+<td style="text-align: right;">157</td>
+<td style="text-align: right;">506</td>
+<td style="text-align: right;">211</td>
+<td style="text-align: right;">87.19434</td>
+<td style="text-align: right;">12.0599628</td>
+<td style="text-align: right;">0.1339522</td>
+<td style="text-align: right;">0.4317185</td>
+<td style="text-align: right;">0.1800249</td>
+<td style="text-align: right;">76297</td>
+<td style="text-align: right;">76.21138</td>
+<td style="text-align: right;">19.86186</td>
+<td style="text-align: right;">4.984469</td>
+<td style="text-align: right;">114042</td>
+<td style="text-align: right;">97.30048</td>
+<td style="text-align: right;">12.741797</td>
+<td style="text-align: right;">19.257479</td>
+<td style="text-align: right;">10.909584</td>
+<td style="text-align: right;">8.984869</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">620</td>
+<td style="text-align: left;">MADISON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.045</td>
+<td style="text-align: right;">249238</td>
+<td style="text-align: right;">5538.6222</td>
+<td style="text-align: right;">230217</td>
+<td style="text-align: right;">16136</td>
+<td style="text-align: right;">683</td>
+<td style="text-align: right;">1420</td>
+<td style="text-align: right;">782</td>
+<td style="text-align: right;">92.36834</td>
+<td style="text-align: right;">6.4741332</td>
+<td style="text-align: right;">0.2740353</td>
+<td style="text-align: right;">0.5697366</td>
+<td style="text-align: right;">0.3137563</td>
+<td style="text-align: right;">161517</td>
+<td style="text-align: right;">75.81431</td>
+<td style="text-align: right;">19.69947</td>
+<td style="text-align: right;">4.949324</td>
+<td style="text-align: right;">245370</td>
+<td style="text-align: right;">98.44807</td>
+<td style="text-align: right;">11.338795</td>
+<td style="text-align: right;">16.670919</td>
+<td style="text-align: right;">9.903051</td>
+<td style="text-align: right;">8.291811</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">561</td>
+<td style="text-align: left;">ADAMS</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.052</td>
+<td style="text-align: right;">66090</td>
+<td style="text-align: right;">1270.9615</td>
+<td style="text-align: right;">63917</td>
+<td style="text-align: right;">1702</td>
+<td style="text-align: right;">98</td>
+<td style="text-align: right;">249</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">96.71206</td>
+<td style="text-align: right;">2.5752761</td>
+<td style="text-align: right;">0.1482826</td>
+<td style="text-align: right;">0.3767590</td>
+<td style="text-align: right;">0.1876229</td>
+<td style="text-align: right;">43298</td>
+<td style="text-align: right;">75.10740</td>
+<td style="text-align: right;">19.63139</td>
+<td style="text-align: right;">4.355859</td>
+<td style="text-align: right;">63628</td>
+<td style="text-align: right;">96.27478</td>
+<td style="text-align: right;">13.151443</td>
+<td style="text-align: right;">18.011717</td>
+<td style="text-align: right;">11.009776</td>
+<td style="text-align: right;">12.443812</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">608</td>
+<td style="text-align: left;">KNOX</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.042</td>
+<td style="text-align: right;">56393</td>
+<td style="text-align: right;">1342.6905</td>
+<td style="text-align: right;">52413</td>
+<td style="text-align: right;">2860</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">320</td>
+<td style="text-align: right;">715</td>
+<td style="text-align: right;">92.94239</td>
+<td style="text-align: right;">5.0715514</td>
+<td style="text-align: right;">0.1507279</td>
+<td style="text-align: right;">0.5674463</td>
+<td style="text-align: right;">1.2678879</td>
+<td style="text-align: right;">37723</td>
+<td style="text-align: right;">76.56602</td>
+<td style="text-align: right;">19.34364</td>
+<td style="text-align: right;">4.212284</td>
+<td style="text-align: right;">53106</td>
+<td style="text-align: right;">94.17126</td>
+<td style="text-align: right;">13.868489</td>
+<td style="text-align: right;">19.673376</td>
+<td style="text-align: right;">12.883174</td>
+<td style="text-align: right;">9.738717</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">566</td>
+<td style="text-align: left;">BUREAU</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">35688</td>
+<td style="text-align: right;">713.7600</td>
+<td style="text-align: right;">35157</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">65</td>
+<td style="text-align: right;">195</td>
+<td style="text-align: right;">221</td>
+<td style="text-align: right;">98.51210</td>
+<td style="text-align: right;">0.1401031</td>
+<td style="text-align: right;">0.1821340</td>
+<td style="text-align: right;">0.5464022</td>
+<td style="text-align: right;">0.6192558</td>
+<td style="text-align: right;">23444</td>
+<td style="text-align: right;">76.62941</td>
+<td style="text-align: right;">18.90462</td>
+<td style="text-align: right;">3.275892</td>
+<td style="text-align: right;">35107</td>
+<td style="text-align: right;">98.37200</td>
+<td style="text-align: right;">10.399635</td>
+<td style="text-align: right;">14.158819</td>
+<td style="text-align: right;">8.179287</td>
+<td style="text-align: right;">11.008586</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">631</td>
+<td style="text-align: left;">OGLE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.045</td>
+<td style="text-align: right;">45957</td>
+<td style="text-align: right;">1021.2667</td>
+<td style="text-align: right;">44895</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">87</td>
+<td style="text-align: right;">136</td>
+<td style="text-align: right;">773</td>
+<td style="text-align: right;">97.68914</td>
+<td style="text-align: right;">0.1436125</td>
+<td style="text-align: right;">0.1893074</td>
+<td style="text-align: right;">0.2959288</td>
+<td style="text-align: right;">1.6820071</td>
+<td style="text-align: right;">29575</td>
+<td style="text-align: right;">77.60271</td>
+<td style="text-align: right;">18.77937</td>
+<td style="text-align: right;">3.472527</td>
+<td style="text-align: right;">45229</td>
+<td style="text-align: right;">98.41591</td>
+<td style="text-align: right;">7.245351</td>
+<td style="text-align: right;">8.546185</td>
+<td style="text-align: right;">6.261317</td>
+<td style="text-align: right;">8.287084</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">ALU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">597</td>
+<td style="text-align: left;">HENRY</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.051</td>
+<td style="text-align: right;">51159</td>
+<td style="text-align: right;">1003.1177</td>
+<td style="text-align: right;">49969</td>
+<td style="text-align: right;">657</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">342</td>
+<td style="text-align: right;">97.67392</td>
+<td style="text-align: right;">1.2842315</td>
+<td style="text-align: right;">0.1231455</td>
+<td style="text-align: right;">0.2502004</td>
+<td style="text-align: right;">0.6685041</td>
+<td style="text-align: right;">33423</td>
+<td style="text-align: right;">77.19534</td>
+<td style="text-align: right;">18.72363</td>
+<td style="text-align: right;">4.221644</td>
+<td style="text-align: right;">50472</td>
+<td style="text-align: right;">98.65713</td>
+<td style="text-align: right;">10.479078</td>
+<td style="text-align: right;">15.177263</td>
+<td style="text-align: right;">8.635263</td>
+<td style="text-align: right;">9.011540</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">625</td>
+<td style="text-align: left;">MENARD</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.018</td>
+<td style="text-align: right;">11164</td>
+<td style="text-align: right;">620.2222</td>
+<td style="text-align: right;">11101</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">99.43569</td>
+<td style="text-align: right;">0.0806163</td>
+<td style="text-align: right;">0.2597635</td>
+<td style="text-align: right;">0.1254031</td>
+<td style="text-align: right;">0.0985310</td>
+<td style="text-align: right;">7390</td>
+<td style="text-align: right;">77.30717</td>
+<td style="text-align: right;">18.51150</td>
+<td style="text-align: right;">3.518268</td>
+<td style="text-align: right;">10964</td>
+<td style="text-align: right;">98.20853</td>
+<td style="text-align: right;">9.558555</td>
+<td style="text-align: right;">12.450331</td>
+<td style="text-align: right;">7.891637</td>
+<td style="text-align: right;">10.144927</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">612</td>
+<td style="text-align: left;">LEE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.043</td>
+<td style="text-align: right;">34392</td>
+<td style="text-align: right;">799.8140</td>
+<td style="text-align: right;">32530</td>
+<td style="text-align: right;">1222</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">181</td>
+<td style="text-align: right;">375</td>
+<td style="text-align: right;">94.58595</td>
+<td style="text-align: right;">3.5531519</td>
+<td style="text-align: right;">0.2442428</td>
+<td style="text-align: right;">0.5262852</td>
+<td style="text-align: right;">1.0903699</td>
+<td style="text-align: right;">22661</td>
+<td style="text-align: right;">76.28083</td>
+<td style="text-align: right;">18.47668</td>
+<td style="text-align: right;">4.042187</td>
+<td style="text-align: right;">32162</td>
+<td style="text-align: right;">93.51593</td>
+<td style="text-align: right;">8.824078</td>
+<td style="text-align: right;">10.537883</td>
+<td style="text-align: right;">7.715425</td>
+<td style="text-align: right;">9.526875</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">592</td>
+<td style="text-align: left;">GRUNDY</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.026</td>
+<td style="text-align: right;">32337</td>
+<td style="text-align: right;">1243.7308</td>
+<td style="text-align: right;">31864</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">45</td>
+<td style="text-align: right;">113</td>
+<td style="text-align: right;">294</td>
+<td style="text-align: right;">98.53728</td>
+<td style="text-align: right;">0.0649411</td>
+<td style="text-align: right;">0.1391595</td>
+<td style="text-align: right;">0.3494449</td>
+<td style="text-align: right;">0.9091752</td>
+<td style="text-align: right;">20541</td>
+<td style="text-align: right;">78.96402</td>
+<td style="text-align: right;">18.37788</td>
+<td style="text-align: right;">3.938464</td>
+<td style="text-align: right;">31979</td>
+<td style="text-align: right;">98.89291</td>
+<td style="text-align: right;">6.616842</td>
+<td style="text-align: right;">6.930472</td>
+<td style="text-align: right;">5.327339</td>
+<td style="text-align: right;">10.462008</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">ALU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">601</td>
+<td style="text-align: left;">JEFFERSON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">37020</td>
+<td style="text-align: right;">1121.8182</td>
+<td style="text-align: right;">34856</td>
+<td style="text-align: right;">1924</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">129</td>
+<td style="text-align: right;">55</td>
+<td style="text-align: right;">94.15451</td>
+<td style="text-align: right;">5.1971907</td>
+<td style="text-align: right;">0.1512696</td>
+<td style="text-align: right;">0.3484603</td>
+<td style="text-align: right;">0.1485683</td>
+<td style="text-align: right;">24023</td>
+<td style="text-align: right;">69.90384</td>
+<td style="text-align: right;">18.36990</td>
+<td style="text-align: right;">3.679807</td>
+<td style="text-align: right;">36495</td>
+<td style="text-align: right;">98.58185</td>
+<td style="text-align: right;">16.056994</td>
+<td style="text-align: right;">21.113499</td>
+<td style="text-align: right;">13.635887</td>
+<td style="text-align: right;">15.631524</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">614</td>
+<td style="text-align: left;">LOGAN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: right;">30798</td>
+<td style="text-align: right;">855.5000</td>
+<td style="text-align: right;">29223</td>
+<td style="text-align: right;">1291</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">143</td>
+<td style="text-align: right;">104</td>
+<td style="text-align: right;">94.88603</td>
+<td style="text-align: right;">4.1918306</td>
+<td style="text-align: right;">0.1201377</td>
+<td style="text-align: right;">0.4643159</td>
+<td style="text-align: right;">0.3376843</td>
+<td style="text-align: right;">20324</td>
+<td style="text-align: right;">75.90041</td>
+<td style="text-align: right;">17.94922</td>
+<td style="text-align: right;">3.798465</td>
+<td style="text-align: right;">28104</td>
+<td style="text-align: right;">91.25268</td>
+<td style="text-align: right;">10.781383</td>
+<td style="text-align: right;">12.825846</td>
+<td style="text-align: right;">9.964791</td>
+<td style="text-align: right;">10.361363</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">651</td>
+<td style="text-align: left;">UNION</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.024</td>
+<td style="text-align: right;">17619</td>
+<td style="text-align: right;">734.1250</td>
+<td style="text-align: right;">17313</td>
+<td style="text-align: right;">122</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">53</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">98.26324</td>
+<td style="text-align: right;">0.6924343</td>
+<td style="text-align: right;">0.1929735</td>
+<td style="text-align: right;">0.3008116</td>
+<td style="text-align: right;">0.5505420</td>
+<td style="text-align: right;">12092</td>
+<td style="text-align: right;">64.22428</td>
+<td style="text-align: right;">17.87959</td>
+<td style="text-align: right;">4.002646</td>
+<td style="text-align: right;">16823</td>
+<td style="text-align: right;">95.48215</td>
+<td style="text-align: right;">18.159662</td>
+<td style="text-align: right;">24.900200</td>
+<td style="text-align: right;">14.679004</td>
+<td style="text-align: right;">19.010096</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">587</td>
+<td style="text-align: left;">FORD</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">14275</td>
+<td style="text-align: right;">475.8333</td>
+<td style="text-align: right;">14157</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">99.17338</td>
+<td style="text-align: right;">0.3012259</td>
+<td style="text-align: right;">0.0980736</td>
+<td style="text-align: right;">0.2802102</td>
+<td style="text-align: right;">0.1471103</td>
+<td style="text-align: right;">9592</td>
+<td style="text-align: right;">77.16847</td>
+<td style="text-align: right;">17.82736</td>
+<td style="text-align: right;">3.899083</td>
+<td style="text-align: right;">13860</td>
+<td style="text-align: right;">97.09282</td>
+<td style="text-align: right;">9.264069</td>
+<td style="text-align: right;">13.571228</td>
+<td style="text-align: right;">7.325288</td>
+<td style="text-align: right;">8.787402</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">606</td>
+<td style="text-align: left;">KANKAKEE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.039</td>
+<td style="text-align: right;">96255</td>
+<td style="text-align: right;">2468.0769</td>
+<td style="text-align: right;">80194</td>
+<td style="text-align: right;">14399</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">644</td>
+<td style="text-align: right;">868</td>
+<td style="text-align: right;">83.31411</td>
+<td style="text-align: right;">14.9592229</td>
+<td style="text-align: right;">0.1558361</td>
+<td style="text-align: right;">0.6690561</td>
+<td style="text-align: right;">0.9017713</td>
+<td style="text-align: right;">59821</td>
+<td style="text-align: right;">73.08637</td>
+<td style="text-align: right;">17.64096</td>
+<td style="text-align: right;">3.990238</td>
+<td style="text-align: right;">92594</td>
+<td style="text-align: right;">96.19656</td>
+<td style="text-align: right;">13.296758</td>
+<td style="text-align: right;">19.598328</td>
+<td style="text-align: right;">10.888062</td>
+<td style="text-align: right;">10.247965</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">622</td>
+<td style="text-align: left;">MARSHALL</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">12846</td>
+<td style="text-align: right;">558.5217</td>
+<td style="text-align: right;">12752</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">28</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">99.26825</td>
+<td style="text-align: right;">0.1323369</td>
+<td style="text-align: right;">0.2335357</td>
+<td style="text-align: right;">0.2179667</td>
+<td style="text-align: right;">0.1479060</td>
+<td style="text-align: right;">8600</td>
+<td style="text-align: right;">77.77907</td>
+<td style="text-align: right;">17.53488</td>
+<td style="text-align: right;">2.569767</td>
+<td style="text-align: right;">12563</td>
+<td style="text-align: right;">97.79698</td>
+<td style="text-align: right;">9.384701</td>
+<td style="text-align: right;">11.471793</td>
+<td style="text-align: right;">7.503075</td>
+<td style="text-align: right;">11.330561</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">564</td>
+<td style="text-align: left;">BOONE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">30806</td>
+<td style="text-align: right;">1812.1176</td>
+<td style="text-align: right;">29344</td>
+<td style="text-align: right;">127</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">1139</td>
+<td style="text-align: right;">95.25417</td>
+<td style="text-align: right;">0.4122574</td>
+<td style="text-align: right;">0.1493216</td>
+<td style="text-align: right;">0.4869181</td>
+<td style="text-align: right;">3.6973317</td>
+<td style="text-align: right;">19272</td>
+<td style="text-align: right;">75.47219</td>
+<td style="text-align: right;">17.27895</td>
+<td style="text-align: right;">4.197800</td>
+<td style="text-align: right;">30337</td>
+<td style="text-align: right;">98.47757</td>
+<td style="text-align: right;">7.209019</td>
+<td style="text-align: right;">11.179536</td>
+<td style="text-align: right;">5.536013</td>
+<td style="text-align: right;">6.217047</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">ALU</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">652</td>
+<td style="text-align: left;">VERMILION</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.052</td>
+<td style="text-align: right;">88257</td>
+<td style="text-align: right;">1697.2500</td>
+<td style="text-align: right;">78956</td>
+<td style="text-align: right;">7841</td>
+<td style="text-align: right;">165</td>
+<td style="text-align: right;">507</td>
+<td style="text-align: right;">788</td>
+<td style="text-align: right;">89.46146</td>
+<td style="text-align: right;">8.8842811</td>
+<td style="text-align: right;">0.1869540</td>
+<td style="text-align: right;">0.5744587</td>
+<td style="text-align: right;">0.8928470</td>
+<td style="text-align: right;">58087</td>
+<td style="text-align: right;">72.75122</td>
+<td style="text-align: right;">17.05717</td>
+<td style="text-align: right;">4.061150</td>
+<td style="text-align: right;">85119</td>
+<td style="text-align: right;">96.44447</td>
+<td style="text-align: right;">15.238666</td>
+<td style="text-align: right;">22.540187</td>
+<td style="text-align: right;">13.043382</td>
+<td style="text-align: right;">11.409357</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">563</td>
+<td style="text-align: left;">BOND</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: right;">14991</td>
+<td style="text-align: right;">681.4091</td>
+<td style="text-align: right;">14477</td>
+<td style="text-align: right;">429</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">96.57128</td>
+<td style="text-align: right;">2.8617170</td>
+<td style="text-align: right;">0.2334734</td>
+<td style="text-align: right;">0.1067307</td>
+<td style="text-align: right;">0.2268028</td>
+<td style="text-align: right;">9669</td>
+<td style="text-align: right;">69.33499</td>
+<td style="text-align: right;">17.03382</td>
+<td style="text-align: right;">4.488572</td>
+<td style="text-align: right;">14235</td>
+<td style="text-align: right;">94.95697</td>
+<td style="text-align: right;">12.068844</td>
+<td style="text-align: right;">14.036061</td>
+<td style="text-align: right;">10.852090</td>
+<td style="text-align: right;">12.697410</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">577</td>
+<td style="text-align: left;">CRAWFORD</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.026</td>
+<td style="text-align: right;">19464</td>
+<td style="text-align: right;">748.6154</td>
+<td style="text-align: right;">19300</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">99.15742</td>
+<td style="text-align: right;">0.3236745</td>
+<td style="text-align: right;">0.1746815</td>
+<td style="text-align: right;">0.2466091</td>
+<td style="text-align: right;">0.0976161</td>
+<td style="text-align: right;">13317</td>
+<td style="text-align: right;">76.03064</td>
+<td style="text-align: right;">16.98581</td>
+<td style="text-align: right;">3.334084</td>
+<td style="text-align: right;">19123</td>
+<td style="text-align: right;">98.24805</td>
+<td style="text-align: right;">10.537050</td>
+<td style="text-align: right;">13.809825</td>
+<td style="text-align: right;">8.870243</td>
+<td style="text-align: right;">10.803387</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">584</td>
+<td style="text-align: left;">EDWARDS</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">7440</td>
+<td style="text-align: right;">531.4286</td>
+<td style="text-align: right;">7401</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">99.47581</td>
+<td style="text-align: right;">0.0806452</td>
+<td style="text-align: right;">0.1075269</td>
+<td style="text-align: right;">0.2553763</td>
+<td style="text-align: right;">0.0806452</td>
+<td style="text-align: right;">5019</td>
+<td style="text-align: right;">69.67523</td>
+<td style="text-align: right;">16.93564</td>
+<td style="text-align: right;">2.450687</td>
+<td style="text-align: right;">7350</td>
+<td style="text-align: right;">98.79032</td>
+<td style="text-align: right;">12.204082</td>
+<td style="text-align: right;">15.159868</td>
+<td style="text-align: right;">10.950250</td>
+<td style="text-align: right;">11.859528</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">610</td>
+<td style="text-align: left;">LA SALLE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.068</td>
+<td style="text-align: right;">106913</td>
+<td style="text-align: right;">1572.2500</td>
+<td style="text-align: right;">103805</td>
+<td style="text-align: right;">1153</td>
+<td style="text-align: right;">206</td>
+<td style="text-align: right;">523</td>
+<td style="text-align: right;">1226</td>
+<td style="text-align: right;">97.09296</td>
+<td style="text-align: right;">1.0784470</td>
+<td style="text-align: right;">0.1926800</td>
+<td style="text-align: right;">0.4891828</td>
+<td style="text-align: right;">1.1467268</td>
+<td style="text-align: right;">70357</td>
+<td style="text-align: right;">73.12705</td>
+<td style="text-align: right;">16.89953</td>
+<td style="text-align: right;">3.438180</td>
+<td style="text-align: right;">104473</td>
+<td style="text-align: right;">97.71777</td>
+<td style="text-align: right;">11.101433</td>
+<td style="text-align: right;">15.241787</td>
+<td style="text-align: right;">9.212097</td>
+<td style="text-align: right;">10.697147</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">648</td>
+<td style="text-align: left;">STARK</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">6534</td>
+<td style="text-align: right;">384.3529</td>
+<td style="text-align: right;">6496</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">99.41843</td>
+<td style="text-align: right;">0.1224365</td>
+<td style="text-align: right;">0.1224365</td>
+<td style="text-align: right;">0.3213958</td>
+<td style="text-align: right;">0.0153046</td>
+<td style="text-align: right;">4396</td>
+<td style="text-align: right;">77.02457</td>
+<td style="text-align: right;">16.87898</td>
+<td style="text-align: right;">2.979982</td>
+<td style="text-align: right;">6404</td>
+<td style="text-align: right;">98.01041</td>
+<td style="text-align: right;">12.460962</td>
+<td style="text-align: right;">19.039146</td>
+<td style="text-align: right;">10.447761</td>
+<td style="text-align: right;">9.387483</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">581</td>
+<td style="text-align: left;">DOUGLAS</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">19464</td>
+<td style="text-align: right;">778.5600</td>
+<td style="text-align: right;">19280</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">108</td>
+<td style="text-align: right;">99.05466</td>
+<td style="text-align: right;">0.0822030</td>
+<td style="text-align: right;">0.0976161</td>
+<td style="text-align: right;">0.2106453</td>
+<td style="text-align: right;">0.5548705</td>
+<td style="text-align: right;">12550</td>
+<td style="text-align: right;">74.03187</td>
+<td style="text-align: right;">16.86853</td>
+<td style="text-align: right;">3.840637</td>
+<td style="text-align: right;">19140</td>
+<td style="text-align: right;">98.33539</td>
+<td style="text-align: right;">9.629049</td>
+<td style="text-align: right;">13.293543</td>
+<td style="text-align: right;">7.924795</td>
+<td style="text-align: right;">8.714363</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">583</td>
+<td style="text-align: left;">EDGAR</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: right;">19595</td>
+<td style="text-align: right;">544.3056</td>
+<td style="text-align: right;">19469</td>
+<td style="text-align: right;">68</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">99.35698</td>
+<td style="text-align: right;">0.3470273</td>
+<td style="text-align: right;">0.1224802</td>
+<td style="text-align: right;">0.1224802</td>
+<td style="text-align: right;">0.0510334</td>
+<td style="text-align: right;">13082</td>
+<td style="text-align: right;">73.52087</td>
+<td style="text-align: right;">16.83993</td>
+<td style="text-align: right;">3.676808</td>
+<td style="text-align: right;">19258</td>
+<td style="text-align: right;">98.28017</td>
+<td style="text-align: right;">16.003739</td>
+<td style="text-align: right;">22.827628</td>
+<td style="text-align: right;">14.480957</td>
+<td style="text-align: right;">11.762014</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">658</td>
+<td style="text-align: left;">WHITESIDE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.041</td>
+<td style="text-align: right;">60186</td>
+<td style="text-align: right;">1467.9512</td>
+<td style="text-align: right;">57135</td>
+<td style="text-align: right;">417</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">187</td>
+<td style="text-align: right;">2362</td>
+<td style="text-align: right;">94.93071</td>
+<td style="text-align: right;">0.6928522</td>
+<td style="text-align: right;">0.1412289</td>
+<td style="text-align: right;">0.3107035</td>
+<td style="text-align: right;">3.9245007</td>
+<td style="text-align: right;">39020</td>
+<td style="text-align: right;">73.28806</td>
+<td style="text-align: right;">16.55305</td>
+<td style="text-align: right;">3.541773</td>
+<td style="text-align: right;">58927</td>
+<td style="text-align: right;">97.90815</td>
+<td style="text-align: right;">10.961020</td>
+<td style="text-align: right;">14.723226</td>
+<td style="text-align: right;">9.503702</td>
+<td style="text-align: right;">9.815253</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">638</td>
+<td style="text-align: left;">PUTNAM</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.010</td>
+<td style="text-align: right;">5730</td>
+<td style="text-align: right;">573.0000</td>
+<td style="text-align: right;">5616</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">98.01047</td>
+<td style="text-align: right;">0.1570681</td>
+<td style="text-align: right;">0.1221640</td>
+<td style="text-align: right;">0.1221640</td>
+<td style="text-align: right;">1.5881326</td>
+<td style="text-align: right;">3783</td>
+<td style="text-align: right;">75.81285</td>
+<td style="text-align: right;">16.52128</td>
+<td style="text-align: right;">3.436426</td>
+<td style="text-align: right;">5722</td>
+<td style="text-align: right;">99.86038</td>
+<td style="text-align: right;">7.549808</td>
+<td style="text-align: right;">10.478062</td>
+<td style="text-align: right;">6.227348</td>
+<td style="text-align: right;">7.155172</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">626</td>
+<td style="text-align: left;">MERCER</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">17290</td>
+<td style="text-align: right;">523.9394</td>
+<td style="text-align: right;">17155</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">99.21920</td>
+<td style="text-align: right;">0.1735107</td>
+<td style="text-align: right;">0.1908618</td>
+<td style="text-align: right;">0.2024292</td>
+<td style="text-align: right;">0.2139965</td>
+<td style="text-align: right;">11357</td>
+<td style="text-align: right;">77.35317</td>
+<td style="text-align: right;">16.47442</td>
+<td style="text-align: right;">3.117020</td>
+<td style="text-align: right;">17006</td>
+<td style="text-align: right;">98.35743</td>
+<td style="text-align: right;">10.131718</td>
+<td style="text-align: right;">11.466373</td>
+<td style="text-align: right;">9.010870</td>
+<td style="text-align: right;">11.433812</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">621</td>
+<td style="text-align: left;">MARION</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: right;">41561</td>
+<td style="text-align: right;">1187.4571</td>
+<td style="text-align: right;">39647</td>
+<td style="text-align: right;">1519</td>
+<td style="text-align: right;">106</td>
+<td style="text-align: right;">232</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">95.39472</td>
+<td style="text-align: right;">3.6548687</td>
+<td style="text-align: right;">0.2550468</td>
+<td style="text-align: right;">0.5582156</td>
+<td style="text-align: right;">0.1371478</td>
+<td style="text-align: right;">27077</td>
+<td style="text-align: right;">70.12594</td>
+<td style="text-align: right;">16.44939</td>
+<td style="text-align: right;">3.312775</td>
+<td style="text-align: right;">40800</td>
+<td style="text-align: right;">98.16896</td>
+<td style="text-align: right;">16.367647</td>
+<td style="text-align: right;">22.349310</td>
+<td style="text-align: right;">13.928571</td>
+<td style="text-align: right;">14.722483</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">603</td>
+<td style="text-align: left;">JO DAVIESS</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.035</td>
+<td style="text-align: right;">21821</td>
+<td style="text-align: right;">623.4571</td>
+<td style="text-align: right;">21732</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">99.59214</td>
+<td style="text-align: right;">0.0641584</td>
+<td style="text-align: right;">0.0916548</td>
+<td style="text-align: right;">0.1328995</td>
+<td style="text-align: right;">0.1191513</td>
+<td style="text-align: right;">14409</td>
+<td style="text-align: right;">74.09258</td>
+<td style="text-align: right;">16.41335</td>
+<td style="text-align: right;">3.428413</td>
+<td style="text-align: right;">21610</td>
+<td style="text-align: right;">99.03304</td>
+<td style="text-align: right;">8.287830</td>
+<td style="text-align: right;">9.291645</td>
+<td style="text-align: right;">6.283982</td>
+<td style="text-align: right;">11.839324</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">568</td>
+<td style="text-align: left;">CARROLL</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.027</td>
+<td style="text-align: right;">16805</td>
+<td style="text-align: right;">622.4074</td>
+<td style="text-align: right;">16519</td>
+<td style="text-align: right;">111</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">98.29813</td>
+<td style="text-align: right;">0.6605177</td>
+<td style="text-align: right;">0.1785183</td>
+<td style="text-align: right;">0.3629872</td>
+<td style="text-align: right;">0.4998512</td>
+<td style="text-align: right;">11323</td>
+<td style="text-align: right;">75.95160</td>
+<td style="text-align: right;">16.19712</td>
+<td style="text-align: right;">3.055727</td>
+<td style="text-align: right;">16455</td>
+<td style="text-align: right;">97.91729</td>
+<td style="text-align: right;">11.710726</td>
+<td style="text-align: right;">17.225462</td>
+<td style="text-align: right;">10.027037</td>
+<td style="text-align: right;">9.525052</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">580</td>
+<td style="text-align: left;">DE WITT</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">16516</td>
+<td style="text-align: right;">718.0870</td>
+<td style="text-align: right;">16387</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">99.21894</td>
+<td style="text-align: right;">0.1513684</td>
+<td style="text-align: right;">0.2240252</td>
+<td style="text-align: right;">0.2603536</td>
+<td style="text-align: right;">0.1453136</td>
+<td style="text-align: right;">10941</td>
+<td style="text-align: right;">74.64583</td>
+<td style="text-align: right;">16.19596</td>
+<td style="text-align: right;">3.308655</td>
+<td style="text-align: right;">16238</td>
+<td style="text-align: right;">98.31678</td>
+<td style="text-align: right;">10.315310</td>
+<td style="text-align: right;">13.568426</td>
+<td style="text-align: right;">7.955993</td>
+<td style="text-align: right;">12.255345</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">655</td>
+<td style="text-align: left;">WASHINGTON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">14965</td>
+<td style="text-align: right;">453.4848</td>
+<td style="text-align: right;">14856</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">99.27163</td>
+<td style="text-align: right;">0.3073839</td>
+<td style="text-align: right;">0.2071500</td>
+<td style="text-align: right;">0.1737387</td>
+<td style="text-align: right;">0.0400936</td>
+<td style="text-align: right;">9906</td>
+<td style="text-align: right;">65.72784</td>
+<td style="text-align: right;">15.96002</td>
+<td style="text-align: right;">2.442964</td>
+<td style="text-align: right;">14620</td>
+<td style="text-align: right;">97.69462</td>
+<td style="text-align: right;">9.281806</td>
+<td style="text-align: right;">9.816110</td>
+<td style="text-align: right;">7.663601</td>
+<td style="text-align: right;">12.377150</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">647</td>
+<td style="text-align: left;">SHELBY</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.044</td>
+<td style="text-align: right;">22261</td>
+<td style="text-align: right;">505.9318</td>
+<td style="text-align: right;">22190</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">99.68106</td>
+<td style="text-align: right;">0.0628903</td>
+<td style="text-align: right;">0.1212884</td>
+<td style="text-align: right;">0.1212884</td>
+<td style="text-align: right;">0.0134765</td>
+<td style="text-align: right;">14745</td>
+<td style="text-align: right;">72.72296</td>
+<td style="text-align: right;">15.95117</td>
+<td style="text-align: right;">3.784334</td>
+<td style="text-align: right;">22010</td>
+<td style="text-align: right;">98.87247</td>
+<td style="text-align: right;">10.004543</td>
+<td style="text-align: right;">12.091730</td>
+<td style="text-align: right;">8.653418</td>
+<td style="text-align: right;">10.629843</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">657</td>
+<td style="text-align: left;">WHITE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.029</td>
+<td style="text-align: right;">16522</td>
+<td style="text-align: right;">569.7241</td>
+<td style="text-align: right;">16397</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">99.24343</td>
+<td style="text-align: right;">0.2481540</td>
+<td style="text-align: right;">0.2239438</td>
+<td style="text-align: right;">0.2118388</td>
+<td style="text-align: right;">0.0726304</td>
+<td style="text-align: right;">11451</td>
+<td style="text-align: right;">66.22129</td>
+<td style="text-align: right;">15.92874</td>
+<td style="text-align: right;">3.248625</td>
+<td style="text-align: right;">16152</td>
+<td style="text-align: right;">97.76056</td>
+<td style="text-align: right;">19.056464</td>
+<td style="text-align: right;">27.034053</td>
+<td style="text-align: right;">16.487238</td>
+<td style="text-align: right;">16.716196</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">630</td>
+<td style="text-align: left;">MOULTRIE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.021</td>
+<td style="text-align: right;">13930</td>
+<td style="text-align: right;">663.3333</td>
+<td style="text-align: right;">13884</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">99.66978</td>
+<td style="text-align: right;">0.0574300</td>
+<td style="text-align: right;">0.1579325</td>
+<td style="text-align: right;">0.0933238</td>
+<td style="text-align: right;">0.0215362</td>
+<td style="text-align: right;">9282</td>
+<td style="text-align: right;">70.28658</td>
+<td style="text-align: right;">15.71860</td>
+<td style="text-align: right;">2.995044</td>
+<td style="text-align: right;">13356</td>
+<td style="text-align: right;">95.87940</td>
+<td style="text-align: right;">11.343217</td>
+<td style="text-align: right;">15.266963</td>
+<td style="text-align: right;">9.102693</td>
+<td style="text-align: right;">11.856585</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">656</td>
+<td style="text-align: left;">WAYNE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.042</td>
+<td style="text-align: right;">17241</td>
+<td style="text-align: right;">410.5000</td>
+<td style="text-align: right;">17141</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">99.41999</td>
+<td style="text-align: right;">0.0522012</td>
+<td style="text-align: right;">0.1798040</td>
+<td style="text-align: right;">0.2552056</td>
+<td style="text-align: right;">0.0928020</td>
+<td style="text-align: right;">11613</td>
+<td style="text-align: right;">63.05864</td>
+<td style="text-align: right;">15.68070</td>
+<td style="text-align: right;">2.755533</td>
+<td style="text-align: right;">17054</td>
+<td style="text-align: right;">98.91538</td>
+<td style="text-align: right;">14.395450</td>
+<td style="text-align: right;">19.685594</td>
+<td style="text-align: right;">11.616918</td>
+<td style="text-align: right;">14.775213</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">589</td>
+<td style="text-align: left;">FULTON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.052</td>
+<td style="text-align: right;">38080</td>
+<td style="text-align: right;">732.3077</td>
+<td style="text-align: right;">37117</td>
+<td style="text-align: right;">668</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: right;">97.47111</td>
+<td style="text-align: right;">1.7542017</td>
+<td style="text-align: right;">0.2179622</td>
+<td style="text-align: right;">0.2757353</td>
+<td style="text-align: right;">0.2809874</td>
+<td style="text-align: right;">25592</td>
+<td style="text-align: right;">73.84730</td>
+<td style="text-align: right;">15.53220</td>
+<td style="text-align: right;">2.997030</td>
+<td style="text-align: right;">36393</td>
+<td style="text-align: right;">95.56985</td>
+<td style="text-align: right;">15.494738</td>
+<td style="text-align: right;">22.812225</td>
+<td style="text-align: right;">13.996573</td>
+<td style="text-align: right;">11.019603</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">643</td>
+<td style="text-align: left;">SALINE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: right;">26551</td>
+<td style="text-align: right;">1206.8636</td>
+<td style="text-align: right;">25452</td>
+<td style="text-align: right;">931</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">95.86080</td>
+<td style="text-align: right;">3.5064593</td>
+<td style="text-align: right;">0.2485782</td>
+<td style="text-align: right;">0.1506535</td>
+<td style="text-align: right;">0.2335129</td>
+<td style="text-align: right;">18020</td>
+<td style="text-align: right;">63.22420</td>
+<td style="text-align: right;">15.48835</td>
+<td style="text-align: right;">3.634850</td>
+<td style="text-align: right;">25545</td>
+<td style="text-align: right;">96.21107</td>
+<td style="text-align: right;">20.183989</td>
+<td style="text-align: right;">26.699108</td>
+<td style="text-align: right;">18.694407</td>
+<td style="text-align: right;">16.846582</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">574</td>
+<td style="text-align: left;">CLINTON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.029</td>
+<td style="text-align: right;">33944</td>
+<td style="text-align: right;">1170.4828</td>
+<td style="text-align: right;">32688</td>
+<td style="text-align: right;">1021</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">104</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">96.29979</td>
+<td style="text-align: right;">3.0078954</td>
+<td style="text-align: right;">0.1414094</td>
+<td style="text-align: right;">0.3063870</td>
+<td style="text-align: right;">0.2445204</td>
+<td style="text-align: right;">21563</td>
+<td style="text-align: right;">67.16598</td>
+<td style="text-align: right;">15.38747</td>
+<td style="text-align: right;">2.875296</td>
+<td style="text-align: right;">32190</td>
+<td style="text-align: right;">94.83267</td>
+<td style="text-align: right;">10.223672</td>
+<td style="text-align: right;">13.299402</td>
+<td style="text-align: right;">9.253834</td>
+<td style="text-align: right;">8.323176</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">LAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">598</td>
+<td style="text-align: left;">IROQUOIS</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.067</td>
+<td style="text-align: right;">30787</td>
+<td style="text-align: right;">459.5075</td>
+<td style="text-align: right;">30154</td>
+<td style="text-align: right;">164</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">69</td>
+<td style="text-align: right;">357</td>
+<td style="text-align: right;">97.94394</td>
+<td style="text-align: right;">0.5326924</td>
+<td style="text-align: right;">0.1396693</td>
+<td style="text-align: right;">0.2241206</td>
+<td style="text-align: right;">1.1595803</td>
+<td style="text-align: right;">20578</td>
+<td style="text-align: right;">73.43765</td>
+<td style="text-align: right;">15.16668</td>
+<td style="text-align: right;">3.226747</td>
+<td style="text-align: right;">30189</td>
+<td style="text-align: right;">98.05762</td>
+<td style="text-align: right;">9.198715</td>
+<td style="text-align: right;">11.676272</td>
+<td style="text-align: right;">7.959263</td>
+<td style="text-align: right;">9.100280</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">572</td>
+<td style="text-align: left;">CLARK</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.030</td>
+<td style="text-align: right;">15921</td>
+<td style="text-align: right;">530.7000</td>
+<td style="text-align: right;">15842</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">99.50380</td>
+<td style="text-align: right;">0.0628101</td>
+<td style="text-align: right;">0.1633063</td>
+<td style="text-align: right;">0.2261164</td>
+<td style="text-align: right;">0.0439671</td>
+<td style="text-align: right;">10734</td>
+<td style="text-align: right;">71.33408</td>
+<td style="text-align: right;">15.11086</td>
+<td style="text-align: right;">2.776225</td>
+<td style="text-align: right;">15615</td>
+<td style="text-align: right;">98.07801</td>
+<td style="text-align: right;">12.007685</td>
+<td style="text-align: right;">15.321547</td>
+<td style="text-align: right;">10.131775</td>
+<td style="text-align: right;">12.595420</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">600</td>
+<td style="text-align: left;">JASPER</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.029</td>
+<td style="text-align: right;">10609</td>
+<td style="text-align: right;">365.8276</td>
+<td style="text-align: right;">10574</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">99.67009</td>
+<td style="text-align: right;">0.0094260</td>
+<td style="text-align: right;">0.1036856</td>
+<td style="text-align: right;">0.1602413</td>
+<td style="text-align: right;">0.0565558</td>
+<td style="text-align: right;">6835</td>
+<td style="text-align: right;">69.70007</td>
+<td style="text-align: right;">15.02560</td>
+<td style="text-align: right;">2.765179</td>
+<td style="text-align: right;">10511</td>
+<td style="text-align: right;">99.07626</td>
+<td style="text-align: right;">13.100561</td>
+<td style="text-align: right;">17.437961</td>
+<td style="text-align: right;">10.007610</td>
+<td style="text-align: right;">14.562252</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">602</td>
+<td style="text-align: left;">JERSEY</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">20539</td>
+<td style="text-align: right;">893.0000</td>
+<td style="text-align: right;">20346</td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">43</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">99.06032</td>
+<td style="text-align: right;">0.4674035</td>
+<td style="text-align: right;">0.2093578</td>
+<td style="text-align: right;">0.1558012</td>
+<td style="text-align: right;">0.1071133</td>
+<td style="text-align: right;">12847</td>
+<td style="text-align: right;">71.91562</td>
+<td style="text-align: right;">14.75831</td>
+<td style="text-align: right;">3.136919</td>
+<td style="text-align: right;">19611</td>
+<td style="text-align: right;">95.48177</td>
+<td style="text-align: right;">9.744531</td>
+<td style="text-align: right;">11.825573</td>
+<td style="text-align: right;">8.834321</td>
+<td style="text-align: right;">9.299720</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">AAU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">588</td>
+<td style="text-align: left;">FRANKLIN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">40319</td>
+<td style="text-align: right;">1612.7600</td>
+<td style="text-align: right;">40068</td>
+<td style="text-align: right;">36</td>
+<td style="text-align: right;">106</td>
+<td style="text-align: right;">84</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">99.37746</td>
+<td style="text-align: right;">0.0892879</td>
+<td style="text-align: right;">0.2629033</td>
+<td style="text-align: right;">0.2083385</td>
+<td style="text-align: right;">0.0620055</td>
+<td style="text-align: right;">27214</td>
+<td style="text-align: right;">66.66422</td>
+<td style="text-align: right;">14.70567</td>
+<td style="text-align: right;">2.432571</td>
+<td style="text-align: right;">39703</td>
+<td style="text-align: right;">98.47218</td>
+<td style="text-align: right;">20.764174</td>
+<td style="text-align: right;">31.074742</td>
+<td style="text-align: right;">19.313537</td>
+<td style="text-align: right;">13.679486</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">645</td>
+<td style="text-align: left;">SCHUYLER</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.026</td>
+<td style="text-align: right;">7498</td>
+<td style="text-align: right;">288.3846</td>
+<td style="text-align: right;">7479</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">99.74660</td>
+<td style="text-align: right;">0.0266738</td>
+<td style="text-align: right;">0.1200320</td>
+<td style="text-align: right;">0.0800213</td>
+<td style="text-align: right;">0.0266738</td>
+<td style="text-align: right;">5090</td>
+<td style="text-align: right;">69.41061</td>
+<td style="text-align: right;">14.63654</td>
+<td style="text-align: right;">2.750491</td>
+<td style="text-align: right;">7365</td>
+<td style="text-align: right;">98.22619</td>
+<td style="text-align: right;">16.496945</td>
+<td style="text-align: right;">21.913415</td>
+<td style="text-align: right;">13.646113</td>
+<td style="text-align: right;">16.780045</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">578</td>
+<td style="text-align: left;">CUMBERLAND</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.020</td>
+<td style="text-align: right;">10670</td>
+<td style="text-align: right;">533.5000</td>
+<td style="text-align: right;">10627</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">99.59700</td>
+<td style="text-align: right;">0.0468604</td>
+<td style="text-align: right;">0.0562324</td>
+<td style="text-align: right;">0.2436738</td>
+<td style="text-align: right;">0.0562324</td>
+<td style="text-align: right;">6727</td>
+<td style="text-align: right;">72.24617</td>
+<td style="text-align: right;">14.59789</td>
+<td style="text-align: right;">2.690650</td>
+<td style="text-align: right;">10590</td>
+<td style="text-align: right;">99.25023</td>
+<td style="text-align: right;">12.049103</td>
+<td style="text-align: right;">13.603185</td>
+<td style="text-align: right;">9.822264</td>
+<td style="text-align: right;">15.284626</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">611</td>
+<td style="text-align: left;">LAWRENCE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: right;">15972</td>
+<td style="text-align: right;">726.0000</td>
+<td style="text-align: right;">15759</td>
+<td style="text-align: right;">151</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">98.66642</td>
+<td style="text-align: right;">0.9454045</td>
+<td style="text-align: right;">0.1940897</td>
+<td style="text-align: right;">0.1314801</td>
+<td style="text-align: right;">0.0626096</td>
+<td style="text-align: right;">10950</td>
+<td style="text-align: right;">69.23288</td>
+<td style="text-align: right;">14.53881</td>
+<td style="text-align: right;">1.945205</td>
+<td style="text-align: right;">15347</td>
+<td style="text-align: right;">96.08690</td>
+<td style="text-align: right;">19.847527</td>
+<td style="text-align: right;">31.112873</td>
+<td style="text-align: right;">16.759706</td>
+<td style="text-align: right;">14.883216</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AHR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">613</td>
+<td style="text-align: left;">LIVINGSTON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.062</td>
+<td style="text-align: right;">39301</td>
+<td style="text-align: right;">633.8871</td>
+<td style="text-align: right;">36551</td>
+<td style="text-align: right;">2115</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">131</td>
+<td style="text-align: right;">442</td>
+<td style="text-align: right;">93.00272</td>
+<td style="text-align: right;">5.3815425</td>
+<td style="text-align: right;">0.1577568</td>
+<td style="text-align: right;">0.3333249</td>
+<td style="text-align: right;">1.1246533</td>
+<td style="text-align: right;">26084</td>
+<td style="text-align: right;">74.14507</td>
+<td style="text-align: right;">14.50314</td>
+<td style="text-align: right;">2.948167</td>
+<td style="text-align: right;">35431</td>
+<td style="text-align: right;">90.15292</td>
+<td style="text-align: right;">9.325167</td>
+<td style="text-align: right;">13.701159</td>
+<td style="text-align: right;">8.020050</td>
+<td style="text-align: right;">6.770407</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">565</td>
+<td style="text-align: left;">BROWN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.018</td>
+<td style="text-align: right;">5836</td>
+<td style="text-align: right;">324.2222</td>
+<td style="text-align: right;">5264</td>
+<td style="text-align: right;">547</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">90.19877</td>
+<td style="text-align: right;">9.3728581</td>
+<td style="text-align: right;">0.2398903</td>
+<td style="text-align: right;">0.0856751</td>
+<td style="text-align: right;">0.1028101</td>
+<td style="text-align: right;">3979</td>
+<td style="text-align: right;">68.86152</td>
+<td style="text-align: right;">14.47600</td>
+<td style="text-align: right;">3.367680</td>
+<td style="text-align: right;">4815</td>
+<td style="text-align: right;">82.50514</td>
+<td style="text-align: right;">13.520249</td>
+<td style="text-align: right;">13.022889</td>
+<td style="text-align: right;">11.143211</td>
+<td style="text-align: right;">19.200000</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">637</td>
+<td style="text-align: left;">PULASKI</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.011</td>
+<td style="text-align: right;">7523</td>
+<td style="text-align: right;">683.9091</td>
+<td style="text-align: right;">5032</td>
+<td style="text-align: right;">2466</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">66.88821</td>
+<td style="text-align: right;">32.7794763</td>
+<td style="text-align: right;">0.1063406</td>
+<td style="text-align: right;">0.0930480</td>
+<td style="text-align: right;">0.1329257</td>
+<td style="text-align: right;">4816</td>
+<td style="text-align: right;">59.77990</td>
+<td style="text-align: right;">14.36877</td>
+<td style="text-align: right;">2.200997</td>
+<td style="text-align: right;">7441</td>
+<td style="text-align: right;">98.91001</td>
+<td style="text-align: right;">30.184115</td>
+<td style="text-align: right;">40.037418</td>
+<td style="text-align: right;">23.867741</td>
+<td style="text-align: right;">31.161972</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">604</td>
+<td style="text-align: left;">JOHNSON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.020</td>
+<td style="text-align: right;">11347</td>
+<td style="text-align: right;">567.3500</td>
+<td style="text-align: right;">10230</td>
+<td style="text-align: right;">1046</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">90.15599</td>
+<td style="text-align: right;">9.2182956</td>
+<td style="text-align: right;">0.2291354</td>
+<td style="text-align: right;">0.1233806</td>
+<td style="text-align: right;">0.2732000</td>
+<td style="text-align: right;">7922</td>
+<td style="text-align: right;">66.17016</td>
+<td style="text-align: right;">14.35244</td>
+<td style="text-align: right;">3.433476</td>
+<td style="text-align: right;">9180</td>
+<td style="text-align: right;">80.90244</td>
+<td style="text-align: right;">15.555556</td>
+<td style="text-align: right;">18.535060</td>
+<td style="text-align: right;">12.266501</td>
+<td style="text-align: right;">19.877532</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">595</td>
+<td style="text-align: left;">HARDIN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.009</td>
+<td style="text-align: right;">5189</td>
+<td style="text-align: right;">576.5556</td>
+<td style="text-align: right;">5062</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">97.55251</td>
+<td style="text-align: right;">1.6380806</td>
+<td style="text-align: right;">0.3083446</td>
+<td style="text-align: right;">0.2505300</td>
+<td style="text-align: right;">0.2505300</td>
+<td style="text-align: right;">3492</td>
+<td style="text-align: right;">59.73654</td>
+<td style="text-align: right;">14.31844</td>
+<td style="text-align: right;">2.605957</td>
+<td style="text-align: right;">4954</td>
+<td style="text-align: right;">95.47119</td>
+<td style="text-align: right;">26.746064</td>
+<td style="text-align: right;">35.141700</td>
+<td style="text-align: right;">25.174284</td>
+<td style="text-align: right;">21.196130</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">636</td>
+<td style="text-align: left;">POPE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.022</td>
+<td style="text-align: right;">4373</td>
+<td style="text-align: right;">198.7727</td>
+<td style="text-align: right;">4072</td>
+<td style="text-align: right;">266</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">93.11685</td>
+<td style="text-align: right;">6.0827807</td>
+<td style="text-align: right;">0.3430140</td>
+<td style="text-align: right;">0.1372056</td>
+<td style="text-align: right;">0.3201464</td>
+<td style="text-align: right;">2821</td>
+<td style="text-align: right;">65.15420</td>
+<td style="text-align: right;">14.25027</td>
+<td style="text-align: right;">2.481390</td>
+<td style="text-align: right;">4160</td>
+<td style="text-align: right;">95.12920</td>
+<td style="text-align: right;">25.168269</td>
+<td style="text-align: right;">36.472946</td>
+<td style="text-align: right;">24.414869</td>
+<td style="text-align: right;">15.361139</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">569</td>
+<td style="text-align: left;">CASS</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.024</td>
+<td style="text-align: right;">13437</td>
+<td style="text-align: right;">559.8750</td>
+<td style="text-align: right;">13384</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">99.60557</td>
+<td style="text-align: right;">0.1190742</td>
+<td style="text-align: right;">0.0595371</td>
+<td style="text-align: right;">0.1711692</td>
+<td style="text-align: right;">0.0446528</td>
+<td style="text-align: right;">8825</td>
+<td style="text-align: right;">72.27195</td>
+<td style="text-align: right;">14.10765</td>
+<td style="text-align: right;">3.206799</td>
+<td style="text-align: right;">13081</td>
+<td style="text-align: right;">97.35060</td>
+<td style="text-align: right;">13.875086</td>
+<td style="text-align: right;">17.994784</td>
+<td style="text-align: right;">11.914343</td>
+<td style="text-align: right;">13.660180</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">593</td>
+<td style="text-align: left;">HAMILTON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.025</td>
+<td style="text-align: right;">8499</td>
+<td style="text-align: right;">339.9600</td>
+<td style="text-align: right;">8462</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">99.56465</td>
+<td style="text-align: right;">0.0352983</td>
+<td style="text-align: right;">0.1294270</td>
+<td style="text-align: right;">0.2470879</td>
+<td style="text-align: right;">0.0235322</td>
+<td style="text-align: right;">5859</td>
+<td style="text-align: right;">59.99317</td>
+<td style="text-align: right;">14.04677</td>
+<td style="text-align: right;">2.611367</td>
+<td style="text-align: right;">8383</td>
+<td style="text-align: right;">98.63513</td>
+<td style="text-align: right;">19.849696</td>
+<td style="text-align: right;">21.923269</td>
+<td style="text-align: right;">17.050133</td>
+<td style="text-align: right;">23.141967</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">624</td>
+<td style="text-align: left;">MASSAC</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">14752</td>
+<td style="text-align: right;">1053.7143</td>
+<td style="text-align: right;">13804</td>
+<td style="text-align: right;">870</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">93.57375</td>
+<td style="text-align: right;">5.8975054</td>
+<td style="text-align: right;">0.2508134</td>
+<td style="text-align: right;">0.2101410</td>
+<td style="text-align: right;">0.0677874</td>
+<td style="text-align: right;">10068</td>
+<td style="text-align: right;">65.30592</td>
+<td style="text-align: right;">14.03457</td>
+<td style="text-align: right;">2.930076</td>
+<td style="text-align: right;">14348</td>
+<td style="text-align: right;">97.26139</td>
+<td style="text-align: right;">16.741009</td>
+<td style="text-align: right;">22.980825</td>
+<td style="text-align: right;">14.968237</td>
+<td style="text-align: right;">14.328358</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">619</td>
+<td style="text-align: left;">MACOUPIN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.050</td>
+<td style="text-align: right;">47679</td>
+<td style="text-align: right;">953.5800</td>
+<td style="text-align: right;">47077</td>
+<td style="text-align: right;">379</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">88</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">98.73739</td>
+<td style="text-align: right;">0.7948992</td>
+<td style="text-align: right;">0.1971518</td>
+<td style="text-align: right;">0.1845676</td>
+<td style="text-align: right;">0.0859917</td>
+<td style="text-align: right;">31217</td>
+<td style="text-align: right;">72.81930</td>
+<td style="text-align: right;">14.00839</td>
+<td style="text-align: right;">3.254637</td>
+<td style="text-align: right;">46387</td>
+<td style="text-align: right;">97.29021</td>
+<td style="text-align: right;">13.212754</td>
+<td style="text-align: right;">18.598894</td>
+<td style="text-align: right;">10.817108</td>
+<td style="text-align: right;">12.460907</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">596</td>
+<td style="text-align: left;">HENDERSON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.023</td>
+<td style="text-align: right;">8096</td>
+<td style="text-align: right;">352.0000</td>
+<td style="text-align: right;">8037</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">99.27125</td>
+<td style="text-align: right;">0.0988142</td>
+<td style="text-align: right;">0.3582016</td>
+<td style="text-align: right;">0.1235178</td>
+<td style="text-align: right;">0.1482213</td>
+<td style="text-align: right;">5467</td>
+<td style="text-align: right;">73.34919</td>
+<td style="text-align: right;">13.77355</td>
+<td style="text-align: right;">2.176696</td>
+<td style="text-align: right;">8030</td>
+<td style="text-align: right;">99.18478</td>
+<td style="text-align: right;">12.938979</td>
+<td style="text-align: right;">15.608075</td>
+<td style="text-align: right;">10.282353</td>
+<td style="text-align: right;">16.295026</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">573</td>
+<td style="text-align: left;">CLAY</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">14460</td>
+<td style="text-align: right;">516.4286</td>
+<td style="text-align: right;">14403</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">29</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">99.60581</td>
+<td style="text-align: right;">0.0276625</td>
+<td style="text-align: right;">0.1175657</td>
+<td style="text-align: right;">0.2005532</td>
+<td style="text-align: right;">0.0484094</td>
+<td style="text-align: right;">9647</td>
+<td style="text-align: right;">65.56442</td>
+<td style="text-align: right;">13.68301</td>
+<td style="text-align: right;">2.788432</td>
+<td style="text-align: right;">14248</td>
+<td style="text-align: right;">98.53389</td>
+<td style="text-align: right;">16.774284</td>
+<td style="text-align: right;">20.582578</td>
+<td style="text-align: right;">14.464114</td>
+<td style="text-align: right;">17.670078</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">586</td>
+<td style="text-align: left;">FAYETTE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.044</td>
+<td style="text-align: right;">20893</td>
+<td style="text-align: right;">474.8409</td>
+<td style="text-align: right;">20148</td>
+<td style="text-align: right;">599</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">96.43421</td>
+<td style="text-align: right;">2.8669889</td>
+<td style="text-align: right;">0.1914517</td>
+<td style="text-align: right;">0.1675202</td>
+<td style="text-align: right;">0.3398267</td>
+<td style="text-align: right;">13894</td>
+<td style="text-align: right;">68.79228</td>
+<td style="text-align: right;">13.60299</td>
+<td style="text-align: right;">2.986901</td>
+<td style="text-align: right;">19452</td>
+<td style="text-align: right;">93.10295</td>
+<td style="text-align: right;">13.618137</td>
+<td style="text-align: right;">16.627635</td>
+<td style="text-align: right;">12.134146</td>
+<td style="text-align: right;">13.435829</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">571</td>
+<td style="text-align: left;">CHRISTIAN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.042</td>
+<td style="text-align: right;">34418</td>
+<td style="text-align: right;">819.4762</td>
+<td style="text-align: right;">34176</td>
+<td style="text-align: right;">82</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">89</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">99.29688</td>
+<td style="text-align: right;">0.2382474</td>
+<td style="text-align: right;">0.1481783</td>
+<td style="text-align: right;">0.2585856</td>
+<td style="text-align: right;">0.0581091</td>
+<td style="text-align: right;">22945</td>
+<td style="text-align: right;">73.07474</td>
+<td style="text-align: right;">13.56723</td>
+<td style="text-align: right;">3.089998</td>
+<td style="text-align: right;">33788</td>
+<td style="text-align: right;">98.16956</td>
+<td style="text-align: right;">11.708299</td>
+<td style="text-align: right;">16.320612</td>
+<td style="text-align: right;">9.569700</td>
+<td style="text-align: right;">11.490641</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">633</td>
+<td style="text-align: left;">PERRY</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.026</td>
+<td style="text-align: right;">21412</td>
+<td style="text-align: right;">823.5385</td>
+<td style="text-align: right;">20901</td>
+<td style="text-align: right;">399</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">63</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">97.61349</td>
+<td style="text-align: right;">1.8634411</td>
+<td style="text-align: right;">0.1214272</td>
+<td style="text-align: right;">0.2942275</td>
+<td style="text-align: right;">0.1074164</td>
+<td style="text-align: right;">13921</td>
+<td style="text-align: right;">67.83995</td>
+<td style="text-align: right;">13.56224</td>
+<td style="text-align: right;">2.205301</td>
+<td style="text-align: right;">21090</td>
+<td style="text-align: right;">98.49617</td>
+<td style="text-align: right;">15.836889</td>
+<td style="text-align: right;">20.859671</td>
+<td style="text-align: right;">13.347590</td>
+<td style="text-align: right;">15.866051</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">623</td>
+<td style="text-align: left;">MASON</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">16269</td>
+<td style="text-align: right;">493.0000</td>
+<td style="text-align: right;">16180</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">38</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">99.45295</td>
+<td style="text-align: right;">0.0491733</td>
+<td style="text-align: right;">0.1659598</td>
+<td style="text-align: right;">0.2335730</td>
+<td style="text-align: right;">0.0983466</td>
+<td style="text-align: right;">10729</td>
+<td style="text-align: right;">72.57899</td>
+<td style="text-align: right;">13.50545</td>
+<td style="text-align: right;">2.898686</td>
+<td style="text-align: right;">16025</td>
+<td style="text-align: right;">98.50022</td>
+<td style="text-align: right;">15.507020</td>
+<td style="text-align: right;">24.113135</td>
+<td style="text-align: right;">12.840096</td>
+<td style="text-align: right;">11.603801</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">646</td>
+<td style="text-align: left;">SCOTT</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.015</td>
+<td style="text-align: right;">5644</td>
+<td style="text-align: right;">376.2667</td>
+<td style="text-align: right;">5634</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">99.82282</td>
+<td style="text-align: right;">0.0177179</td>
+<td style="text-align: right;">0.1063076</td>
+<td style="text-align: right;">0.0531538</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">3732</td>
+<td style="text-align: right;">73.60665</td>
+<td style="text-align: right;">13.07610</td>
+<td style="text-align: right;">2.250804</td>
+<td style="text-align: right;">5578</td>
+<td style="text-align: right;">98.83062</td>
+<td style="text-align: right;">11.527429</td>
+<td style="text-align: right;">14.256480</td>
+<td style="text-align: right;">9.370678</td>
+<td style="text-align: right;">13.360656</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">591</td>
+<td style="text-align: left;">GREENE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.033</td>
+<td style="text-align: right;">15317</td>
+<td style="text-align: right;">464.1515</td>
+<td style="text-align: right;">15231</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">99.43853</td>
+<td style="text-align: right;">0.0914017</td>
+<td style="text-align: right;">0.3264347</td>
+<td style="text-align: right;">0.1109878</td>
+<td style="text-align: right;">0.0326435</td>
+<td style="text-align: right;">10031</td>
+<td style="text-align: right;">69.04596</td>
+<td style="text-align: right;">13.04955</td>
+<td style="text-align: right;">2.711594</td>
+<td style="text-align: right;">15096</td>
+<td style="text-align: right;">98.55716</td>
+<td style="text-align: right;">15.533916</td>
+<td style="text-align: right;">20.030083</td>
+<td style="text-align: right;">13.444049</td>
+<td style="text-align: right;">14.943182</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">639</td>
+<td style="text-align: left;">RANDOLPH</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.036</td>
+<td style="text-align: right;">34583</td>
+<td style="text-align: right;">960.6389</td>
+<td style="text-align: right;">31532</td>
+<td style="text-align: right;">2852</td>
+<td style="text-align: right;">54</td>
+<td style="text-align: right;">83</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">91.17775</td>
+<td style="text-align: right;">8.2468265</td>
+<td style="text-align: right;">0.1561461</td>
+<td style="text-align: right;">0.2400023</td>
+<td style="text-align: right;">0.1792788</td>
+<td style="text-align: right;">22847</td>
+<td style="text-align: right;">64.22287</td>
+<td style="text-align: right;">12.74128</td>
+<td style="text-align: right;">2.958813</td>
+<td style="text-align: right;">30685</td>
+<td style="text-align: right;">88.72857</td>
+<td style="text-align: right;">11.002118</td>
+<td style="text-align: right;">14.292509</td>
+<td style="text-align: right;">8.995606</td>
+<td style="text-align: right;">11.678487</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">635</td>
+<td style="text-align: left;">PIKE</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.049</td>
+<td style="text-align: right;">17577</td>
+<td style="text-align: right;">358.7143</td>
+<td style="text-align: right;">17499</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">99.55624</td>
+<td style="text-align: right;">0.0455140</td>
+<td style="text-align: right;">0.1365421</td>
+<td style="text-align: right;">0.1820561</td>
+<td style="text-align: right;">0.0796495</td>
+<td style="text-align: right;">11820</td>
+<td style="text-align: right;">69.85618</td>
+<td style="text-align: right;">12.17428</td>
+<td style="text-align: right;">2.309645</td>
+<td style="text-align: right;">17365</td>
+<td style="text-align: right;">98.79388</td>
+<td style="text-align: right;">17.932623</td>
+<td style="text-align: right;">23.332559</td>
+<td style="text-align: right;">15.083477</td>
+<td style="text-align: right;">18.277359</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AHR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">567</td>
+<td style="text-align: left;">CALHOUN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.017</td>
+<td style="text-align: right;">5322</td>
+<td style="text-align: right;">313.0588</td>
+<td style="text-align: right;">5298</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">99.54904</td>
+<td style="text-align: right;">0.0187899</td>
+<td style="text-align: right;">0.1503194</td>
+<td style="text-align: right;">0.2818489</td>
+<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right;">3583</td>
+<td style="text-align: right;">62.82445</td>
+<td style="text-align: right;">11.91739</td>
+<td style="text-align: right;">3.209601</td>
+<td style="text-align: right;">5241</td>
+<td style="text-align: right;">98.47802</td>
+<td style="text-align: right;">15.149781</td>
+<td style="text-align: right;">13.787761</td>
+<td style="text-align: right;">12.932331</td>
+<td style="text-align: right;">21.085271</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LAR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">628</td>
+<td style="text-align: left;">MONTGOMERY</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.041</td>
+<td style="text-align: right;">30728</td>
+<td style="text-align: right;">749.4634</td>
+<td style="text-align: right;">29956</td>
+<td style="text-align: right;">559</td>
+<td style="text-align: right;">49</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">98</td>
+<td style="text-align: right;">97.48763</td>
+<td style="text-align: right;">1.8191877</td>
+<td style="text-align: right;">0.1594637</td>
+<td style="text-align: right;">0.2147878</td>
+<td style="text-align: right;">0.3189274</td>
+<td style="text-align: right;">20386</td>
+<td style="text-align: right;">72.19170</td>
+<td style="text-align: right;">11.72373</td>
+<td style="text-align: right;">2.526244</td>
+<td style="text-align: right;">29003</td>
+<td style="text-align: right;">94.38623</td>
+<td style="text-align: right;">14.029583</td>
+<td style="text-align: right;">17.795845</td>
+<td style="text-align: right;">12.291226</td>
+<td style="text-align: right;">13.470008</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">AAR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">590</td>
+<td style="text-align: left;">GALLATIN</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.019</td>
+<td style="text-align: right;">6909</td>
+<td style="text-align: right;">363.6316</td>
+<td style="text-align: right;">6842</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">99.03025</td>
+<td style="text-align: right;">0.6079027</td>
+<td style="text-align: right;">0.1447388</td>
+<td style="text-align: right;">0.1592126</td>
+<td style="text-align: right;">0.0578955</td>
+<td style="text-align: right;">4680</td>
+<td style="text-align: right;">58.41880</td>
+<td style="text-align: right;">11.36752</td>
+<td style="text-align: right;">2.692308</td>
+<td style="text-align: right;">6737</td>
+<td style="text-align: right;">97.51049</td>
+<td style="text-align: right;">21.433873</td>
+<td style="text-align: right;">29.724656</td>
+<td style="text-align: right;">20.005596</td>
+<td style="text-align: right;">16.230032</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">562</td>
+<td style="text-align: left;">ALEXANDER</td>
+<td style="text-align: left;">IL</td>
+<td style="text-align: right;">0.014</td>
+<td style="text-align: right;">10626</td>
+<td style="text-align: right;">759.0000</td>
+<td style="text-align: right;">7054</td>
+<td style="text-align: right;">3496</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">66.38434</td>
+<td style="text-align: right;">32.9004329</td>
+<td style="text-align: right;">0.1788067</td>
+<td style="text-align: right;">0.4517222</td>
+<td style="text-align: right;">0.0846979</td>
+<td style="text-align: right;">6724</td>
+<td style="text-align: right;">59.72635</td>
+<td style="text-align: right;">11.24331</td>
+<td style="text-align: right;">2.870315</td>
+<td style="text-align: right;">10529</td>
+<td style="text-align: right;">99.08714</td>
+<td style="text-align: right;">32.244278</td>
+<td style="text-align: right;">45.826514</td>
+<td style="text-align: right;">27.385647</td>
+<td style="text-align: right;">25.228976</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">LHR</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>This graph presents a visual description of where [add R code for county name] falls along rates of college degrees, along with two other statistics: rates of high school diplomas and rates of professional school completion.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## add code to create plot </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## hint: for this part, you may want to modify the function to return both the plot and the input data for the plot </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We see that, for these statistics:</p>
+<ul>
+<li>[county name] has [higher or lower] rates of high school diplomas than the state mean</li>
+<li>[county name] has [higher or lower] rates of college degrees than the state mean</li>
+<li>[county name] has [higher or lower] rates of professional school degrees than the state mean</li>
+</ul>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

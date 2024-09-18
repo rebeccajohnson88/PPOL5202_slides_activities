@@ -47,10 +47,14 @@ editor: visual
 #| output: false
 library(tidyverse)
 library(ggplot2)
+
+ksl84
 library(haven)
 library(devtools)
 #install_github("jamesmartherus/anesr")
-library(anesr)
+library(fastmap)
+
+
 
 data("socialmedia_2020")
 socialmedia_2020 <- socialmedia_2020 %>%
@@ -76,6 +80,10 @@ socialmedia_2020 <- socialmedia_2020 %>%
                              vote20d1 == 2 ~ "Biden",
                              vote20d1 != -7 ~ "Other",
                              TRUE ~ NA))
+
+
+# cleaning up demographic variables
+# factors with informative labels
 
 ```
 
@@ -112,7 +120,10 @@ summary(climate_attitudes)
 
 tidy(climate_attitudes) 
 
-```
+# more intuitive titles
+# color names
+# broom creates tidy summaries
+# the p value column doesn't really ahve a great name for calling via $ so we use broom which makes better names
 
 ## Plotting the result
 
@@ -470,7 +481,13 @@ y <- College %>%
 fit <- cv.glmnet(x_covar, y, 
               family = "binomial")
 
-```
+rm(College)
+
+
+
+
+
+
 
 ## Step 2: Extract predictions
 
@@ -557,10 +574,22 @@ error_area
 
 ```
 
-## Precision-recall curve
+## ROC
+
 
 -   Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class
 -   Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)
+
+
+
+
+
+- Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class
+- ROC curves show how varying that threshold creates tradeoffs between maximizing true positive rates (use a low threshold) and minimizing false positive rates (use a high threshold)
+
+
+
+
 
 ## First: visualizing the distribution of probabilities relative to predicted class
 
