@@ -21,12 +21,13 @@ execute:
 #| output: true 
 library(tidyverse)
 library(ggplot2)
+library(haven)
 #library(devtools)
 #install_github("jamesmartherus/anesr")
-library(anesr)
+#library(anesr)
 library(broom)
 
-data("socialmedia_2020")
+socialmedia_2020 = read.csv("socialmedia_2020.csv")
 socialmedia_2020 <- socialmedia_2020 %>%
           mutate(derived_climate_nohuman = 
             case_when(c_self %in% c(1, 2) ~ TRUE, 
@@ -61,6 +62,30 @@ climate_attitudes <- lm(formula(sprintf("%s ~ %s",
 
 ## your code here 
 
+cl_toplot <- tidy(climate_attitudes, conf.int = TRUE) %>%
+          mutate(term_clean = paste(gsub("derived\\_", "", term)),
+                 term_type = term_clean == 'age' | term_clean == 'femaleTRUE',
+                 term_ref = case_when()) %>%
+          filter(!grepl("Intercept", term_clean))
+cl_toplot
+
+p <- ggplot(cl_toplot,
+       aes(x = reorder(term_clean, estimate), y = estimate, 
+           ymin = conf.low, 
+           ymax = conf.high)) +
+  geom_pointrange() +
+  ylab("Estimate from OLS model\n(positive = more likely to view no human role\nin climate change)") +
+  xlab("Predictor") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  coord_flip() +
+  theme_bw() 
+
+p
+
+levels(factor(socialmedia_2020$derived_educ))
+
+socialmedia_2020
+
 ```
 
 ## Exercise 2: predicted probabilities with more continuous predictor
@@ -89,8 +114,83 @@ climate_attitudes_glm <- glm(formula(sprintf("%s ~ %s",
 
 ## your code here
 
+mode <- function(codes){
+  which.max(tabulate(codes))
+}
+
+## compare college trump v biden voters to hs trump voter
+## others at their median or median values either 
+## within group or across the full sample
+data_topredict <- data.frame(derived_vote = 
+                        c(rep("Trump", 41),
+                          rep("Biden", 41)),
+                        derived_age = c(rep(seq(from = 20, to = 60, by = 1), 2))) %>%
+            mutate(derived_female = TRUE, 
+                   derived_raceth = "White non-Hispanic",
+                   derived_educ = "Some college")
+
+data_topredict
+
+aug_result <- augment(climate_attitudes_glm,
+                      newdata = data_topredict,
+                      type.predict = "response",
+                      se_fit = TRUE) %>%
+              mutate(lower = .fitted-1.96*.se.fit,
+                     upper = .fitted+1.96*.se.fit) 
+aug_result %>%
+  select(derived_vote, derived_educ,
+         .fitted, lower, upper) 
+
+
+#climate_attitudes_glm
+
+
+p <- ggplot(aug_result, aes(x = factor(derived_age),
+                       y = .fitted,
+                       group = derived_vote,
+                       color = derived_vote)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower, 
+                    ymax = upper),
+                width = 0.1) +
+  ylab("Predicted probability\nagree that no human role\nclimate change") +
+  xlab("Level of education") +
+  labs(color = "2020 vote") +
+  scale_color_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  theme_bw(base_size = 24) +
+  theme(legend.position = c(0.5, 0.5),
+        legend.background = element_blank())  #+ 
+  #coord_flip()
+
+p
 ```
 
+```{r}
+
+p2 <- ggplot(aug_result, aes(x = factor(derived_age),
+                       y = .fitted,
+                       group = derived_vote,
+                       color = derived_vote)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = lower, 
+                    ymax = upper,
+                  group = derived_vote,
+                  color = derived_vote,
+                  fill = derived_vote,
+                  alpha = 0.2)) +
+  ylab("Predicted probability\nagree that no human role\nclimate change") +
+  xlab("Level of education") +
+  labs(color = "2020 vote") +
+  scale_color_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  theme_bw(base_size = 24) +
+  theme(legend.position = c(0.5, 0.5),
+        legend.background = element_blank())  #+ 
+  #coord_flip()
+
+p2
+```
 
 ## Exercise 3: showing when lasso regularizes a coefficient to zero
 
@@ -107,6 +207,7 @@ Create a plot where:
 #| output: true 
 library(glmnet)
 library(ISLR2)
+library(gamlr)
 
 ## model estimation
 x_covar <- model.matrix(Grad.Rate ~ ., 
@@ -123,4 +224,23 @@ cv_lasso <- cv.glmnet(x_covar,
 
 
 ## your code here 
+
+all_coefs = cv_lasso$glmnet.fit$beta
+
+for(lamb in cv_lasso$lambda){
+  print(coef(cv_lasso, s = lamb))
+}
+
+#coef(cv_lasso, select = )
+
+
+
+
+#dim(cv_lasso$gamlr$beta)
+
+all_coefs = cv_lasso$glmnet.fit$beta
+all_labmda = cv_lasso$lambda
+
+all_coefs[,1]
+
 ```
