@@ -569,6 +569,7 @@ error_area
 ## ROC
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 -   Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class
 -   Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)
 =======
@@ -577,6 +578,12 @@ error_area
 
 >>>>>>> f5c47b21bcac2a42605310a715747afee2fa24fa
 
+=======
+
+- Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class
+- ROC curves show how varying that threshold creates tradeoffs between maximizing true positive rates (use a low threshold) and minimizing false positive rates (use a high threshold)
+
+>>>>>>> 1a5b2f83bc536124d853e820155ce22c09fa4426
 ## First: visualizing the distribution of probabilities relative to predicted class
 
 ```{r}
