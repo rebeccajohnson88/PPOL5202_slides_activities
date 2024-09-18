@@ -1,0 +1,247 @@
+---
+title: "Model Visualization"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Model Visualization
+
+## Exercise 1: improve the climate change coefficients plot 
+
+- Begin with the coefficients plot from the lecture activity (we reproduce the cleaning / model estimation below)
+- Improve the coefficients plot in two ways:
+  - For each of the categorical variables, add the reference category
+  - Color the coefficients by type of category 
+  
+```{r}
+#| echo: false
+#| output: true 
+library(tidyverse)
+library(ggplot2)
+#library(devtools)
+#install_github("jamesmartherus/anesr")
+library(anesr)
+library(broom)
+
+data("socialmedia_2020")
+socialmedia_2020 <- socialmedia_2020 %>%
+          mutate(derived_climate_nohuman = 
+            case_when(c_self %in% c(1, 2) ~ TRUE, 
+                      c_self %in% c(3, 4) ~ FALSE, 
+                      TRUE ~ NA),
+            derived_age = case_when(profile_age == "80+" ~ 80, 
+                                  TRUE ~ as.numeric(profile_age)),
+            derived_female = profile_gender == 2,
+            derived_raceth = 
+          case_when(profile_racethnicity == 1 ~ "White non-Hispanic",
+                  profile_racethnicity == 2 ~ "Black non-Hispanic",
+                  profile_racethnicity == 3 ~ "Other non-Hispanic",
+                  profile_racethnicity == 4 ~ "Hispanic"),
+            derived_educ = 
+        case_when(profile_educ5 == 1 ~ "< High School",
+                  profile_educ5 == 2 ~ "HS grad",
+                  profile_educ5 == 3 ~ "Some college",
+                  profile_educ5 == 4 ~ "College",
+                  profile_educ5 == 5 ~ "Professional school"),
+    derived_vote = case_when(vote20d1 == 1 ~ "Trump",
+                             vote20d1 == 2 ~ "Biden",
+                             vote20d1 != -7 ~ "Other",
+                             TRUE ~ NA))
+
+dv <- "derived_climate_nohuman"
+covars <- setdiff(grep("derived", colnames(socialmedia_2020), 
+               value = TRUE),
+               dv)
+climate_attitudes <- lm(formula(sprintf("%s ~ %s",
+                    dv, paste(covars, collapse = "+"))),
+                    data = socialmedia_2020) 
+
+cl_toplot <- tidy(climate_attitudes, conf.int = TRUE) %>%
+          mutate(term_clean = gsub("derived\\_", "", term),
+                 ref_category = case_when(grepl("educ", term_clean) ~ paste0(term_clean,
+                                                                    " (ref: < High school (HS))"),
+                                          grepl("raceth", term_clean) ~ paste0(term_clean,
+                                                                  " (ref: Black non-Hispanic)"),
+                                          grepl("vote", term_clean) ~ paste0(term_clean,
+                                                                  " (ref: Biden)"),
+                                          TRUE ~ term_clean),
+                 dem_categories = case_when(grepl("educ", term_clean) ~ "Educ",
+                                          grepl("raceth", term_clean) ~ "Race",
+                                          grepl("vote", term_clean) ~ "Vote choice",
+                                          term_clean == "age" ~ "age",
+                                          term_clean == "femaleTRUE" ~ "gender"),
+                 term_clean_2 = gsub("educ|raceth", "", ref_category)) %>%
+          filter(!grepl("Intercept", term_clean))
+
+ggplot(cl_toplot,
+       aes(x = reorder(term_clean_2, estimate), y = estimate, 
+           color = dem_categories,
+           ymin = conf.low, 
+           ymax = conf.high)) +
+  geom_pointrange() +
+  ylab("Estimate from OLS model\n(positive = more likely to view\n no human role\nin climate change)") +
+  xlab("Predictor") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  coord_flip() +
+  theme_bw(base_size = 16) +
+  guides(color = "none")
+
+
+```
+
+## Exercise 2: predicted probabilities with more continuous predictor
+
+Create plots that examines the following contrast:
+
+- Age values ranging from 20 to 60 incrementing by 1 year 
+- For each age value, Biden v. Trump voters
+- Other values at: female, some college, and white non-Hispanic
+
+
+For the plot, have the x axis be age, y axis be the predicted probability of endorsing no human role in climate change, and group/color by intended vote choice 
+
+Create two plots:
+
+1. One plot using `geom_point()` and `geom_errorbar()` to illustrate the point estimates + uncertainty 
+2. Another plot using `geom_line()` and `geom_ribbon()` to illustrate the point estimates + uncertainty 
+
+```{r}
+#| echo: false
+#| output: true 
+## model for reference
+climate_attitudes_glm <- glm(formula(sprintf("%s ~ %s",
+                    dv, paste(covars, collapse = "+"))),
+                    data = socialmedia_2020,
+                    family = "binomial")  
+
+age_seq <- seq(from = 20, to = 60, by = 1)
+data_topredict <- data.frame(derived_age = rep(age_seq, 2),
+                             derived_vote = c(rep("Biden", length(age_seq)), rep("Trump", length(age_seq)))) %>%
+                mutate(derived_educ = "Some college",
+                       derived_female = TRUE, 
+                       derived_raceth = "White non-Hispanic")
+
+aug_result <- augment(climate_attitudes_glm,
+                      newdata = data_topredict,
+                      type.predict = "response",
+                      se_fit = TRUE) %>%
+              mutate(lower = .fitted-1.96*.se.fit,
+                     upper = .fitted+1.96*.se.fit) 
+
+ggplot(aug_result, aes(x = derived_age,
+                       y = .fitted,
+                       group = derived_vote,
+                       color = derived_vote)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower, 
+                    ymax = upper),
+                width = 0.1) +
+  ylab("Predicted probability\nagree that no human role\nclimate change") +
+  xlab("Age") +
+  labs(color = "2020 vote") +
+  scale_color_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  theme_bw(base_size = 24) +
+  theme(legend.position = c(0.5, 0.5),
+        legend.background = element_blank())  
+
+```
+
+
+```{r}
+#| echo: false
+#| output: true 
+ggplot(aug_result, aes(x = derived_age,
+                       y = .fitted,
+                       group = derived_vote,
+                       color = derived_vote)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = lower, 
+                    ymax = upper,
+                  group = derived_vote,
+                  color = derived_vote,
+                  fill = derived_vote),
+              alpha = 0.5) +
+  ylab("Predicted probability\nagree that no human role\nclimate change") +
+  xlab("Age") +
+  labs(color = "2020 vote") +
+  scale_color_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  scale_fill_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  theme_bw(base_size = 24) +
+  theme(legend.position = c(0.5, 0.5),
+        legend.background = element_blank())  +
+  guides(fill = "none") 
+
+
+```
+
+
+## Exercise 3: showing when lasso regularizes a coefficient to zero 
+
+Create a plot where:
+
+- The `x axis` is each value of $\lambda$ used in `cv.glmnet` predicting college graduation (provided in code)
+- The `y axis` is each predictor in the dataset
+- There is a dot/point for each value of $\lambda$ where that particular predictor remains non-zero 
+
+**Hint**: see this Stack Overflow post for how to get coefficients at a specific lambda value - [https://stackoverflow.com/questions/66718416/how-to-get-the-coefficents-of-a-cross-validated-lasso-for-a-specific-lambda-not](https://stackoverflow.com/questions/66718416/how-to-get-the-coefficents-of-a-cross-validated-lasso-for-a-specific-lambda-not)
+
+
+```{r}
+#| echo: false
+#| output: true 
+library(glmnet)
+library(ISLR2)
+
+## model estimation
+x_covar <- model.matrix(Grad.Rate ~ ., 
+          College)[, -1] 
+y <- College %>%
+    select(Grad.Rate) %>%
+    unlist() %>%
+    as.numeric() 
+
+set.seed(040484)
+cv_lasso <- cv.glmnet(x_covar, 
+                      y,
+                      alpha = 1) 
+
+all_coef <- cv_lasso$glmnet.fit$beta
+
+
+## get all the lambda values 
+all_lambda <- cv_lasso$lambda
+coef_atlambda <- function(i){
+  coef_vec <- all_coef[, i]
+  coef_df <- data.frame(coef = coef_vec,
+                        predictor = names(coef_vec)) %>%
+            mutate(coef_nonzero = coef != 0)
+  coef_df$lambda <- all_lambda[i]
+  return(coef_df)
+}
+
+all_coef_list <- lapply(1:length(all_lambda), coef_atlambda)
+all_coef_rbind <- do.call(rbind.data.frame, all_coef_list)
+
+## summarize % regularized for lambda 
+all_coef_wpr <- all_coef_rbind %>%
+            left_join(all_coef_rbind %>% group_by(predictor) %>% summarize(perc_stay = mean(coef_nonzero)) %>%
+            arrange(desc(perc_stay)), by = "predictor")
+
+ggplot(all_coef_wpr %>% filter(coef_nonzero),
+       aes(x = factor(round(lambda, 2)), y = reorder(predictor, 
+                                        perc_stay))) +
+  geom_point() +
+  xlab("Lambda (higher = more regularization of coefficients to zero)") +
+  ylab("Predictor of college graduation") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle= 90, size = 10)) +
+  ggtitle("Which predictors of college graduation persist through regularization?")
+
+```
+
