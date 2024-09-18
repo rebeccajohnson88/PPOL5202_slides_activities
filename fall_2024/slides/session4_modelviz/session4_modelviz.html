@@ -842,23 +842,23 @@ $residual.scale
 <div class="cell-output cell-output-stdout">
 <pre><code>18 x 1 sparse Matrix of class "dgCMatrix"
                        s1
-(Intercept)  3.861348e+01
-PrivateYes   .           
-Apps         2.630667e-05
+(Intercept) 37.5424343867
+PrivateYes   0.1120580770
+Apps         0.0002320950
 Accept       .           
 Enroll       .           
-Top10perc    4.061556e-02
-Top25perc    1.226006e-01
+Top10perc    0.0298125714
+Top25perc    0.1309966324
 F.Undergrad  .           
-P.Undergrad -4.856720e-04
-Outstate     1.042826e-03
-Room.Board   1.015134e-03
+P.Undergrad -0.0008920686
+Outstate     0.0010035465
+Room.Board   0.0012551701
 Books        .           
-Personal    -6.001237e-04
+Personal    -0.0010702201
 PhD          .           
 Terminal     .           
 S.F.Ratio    .           
-perc.alumni  2.075078e-01
+perc.alumni  0.2313854891
 Expend       .           </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a><span class="do">## convert from sparse matrix to dataframe</span></span>
@@ -941,7 +941,9 @@ Expend       .           </code></pre>
 <span id="cb27-10"><a href=""></a>    <span class="fu">as.numeric</span>() </span>
 <span id="cb27-11"><a href=""></a></span>
 <span id="cb27-12"><a href=""></a>fit <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(x_covar, y, </span>
-<span id="cb27-13"><a href=""></a>              <span class="at">family =</span> <span class="st">"binomial"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-13"><a href=""></a>              <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb27-14"><a href=""></a></span>
+<span id="cb27-15"><a href=""></a><span class="fu">rm</span>(College)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="step-2-extract-predictions" class="slide level2">
@@ -975,7 +977,7 @@ Expend       .           </code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 False negative False positive  True negative  True positive 
-            88             73            318            298 </code></pre>
+            88             74            317            298 </code></pre>
 </div>
 </div>
 </section>
@@ -1017,11 +1019,11 @@ False negative False positive  True negative  True positive
 <h2>Visualize using area chart</h2>
 
 <img data-src="session4_modelviz_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section>
-<section id="precision-recall-curve" class="slide level2">
-<h2>Precision-recall curve</h2>
+<section id="roc" class="slide level2">
+<h2>ROC</h2>
 <ul>
 <li>Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class</li>
-<li>Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)</li>
+<li>ROC curves show how varying that threshold creates tradeoffs between maximizing true positive rates (use a low threshold) and minimizing false positive rates (use a high threshold)</li>
 </ul>
 </section>
 <section id="first-visualizing-the-distribution-of-probabilities-relative-to-predicted-class" class="slide level2">

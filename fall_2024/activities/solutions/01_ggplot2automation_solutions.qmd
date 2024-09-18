@@ -17,15 +17,14 @@ Use that template to create a separate report for 3 distinct counties
 
 ## Exercise 1: create a plot for a single county
 
-- Use the `midwest` data
-- Focus on `county == "COOK"` within `state == "IL"` as the focal county 
-- Create a bar graph where the bars represent the mean value of the following statistics for all the remaining counties in Illinois (so counties minus Cook):
-  - `perchsd`: percent with a high school diploma
-  - `percollege`: percent with a college degree
-  - `percprof`: percent with a professional school degree
-  
-- Adds a dot + label to that bar graph with the focal county's own statistics (at the rough height of where that statistic falls along the `y axis`) compared to the mean value 
-  
+-   Use the `midwest` data
+-   Focus on `county == "COOK"` within `state == "IL"` as the focal county
+-   Create a bar graph where the bars represent the mean value of the following statistics for all the remaining counties in Illinois (so counties minus Cook):
+    -   `perchsd`: percent with a high school diploma
+    -   `percollege`: percent with a college degree
+    -   `percprof`: percent with a professional school degree
+-   Adds a dot + label to that bar graph with the focal county's own statistics (at the rough height of where that statistic falls along the `y axis`) compared to the mean value
+
 ```{r}
 #| echo: false
 #| output: true
@@ -85,15 +84,9 @@ ggplot(stats_toplot %>% filter(category == "other"),
 
 ```
 
+## Exercise 2: generalize to create a county comparison function
 
-## Exercise 2: generalize to create a county comparison function 
-
-Write a function that generalizes the plot from exercise 1 by:
-- Taking in two parameters: county + state
-- Finding the remaining counties in that state
-- Creating the same plot as above (making sure to label the county-specific rate appropriately with the county's name)
-- Test the function on a few different counties from different states
-
+Write a function that generalizes the plot from exercise 1 by: - Taking in two parameters: county + state - Finding the remaining counties in that state - Creating the same plot as above (making sure to label the county-specific rate appropriately with the county's name) - Test the function on a few different counties from different states
 
 ```{r}
 #| echo: false
@@ -167,16 +160,14 @@ comparison_plot(state_name = "MI", county_name = "WASHTENAW")
 
 ```
 
+## Exercise 3: use that function to create a county-specific report
 
-## Exercise 3: use that function to create a county-specific report 
+-   Modify the `county_template.qmd` file to add in the missing components
 
-- Modify the `county_template.qmd` file to add in the missing components
-- Write and execute a bash script to generate reports for the following counties within Illinois:
-  - "COOK"
-  - "CHAMPAIGN"
-  - "LAKE"
-  
-  
-  See other file for solutions 
+-   Write and execute a bash script to generate reports for the following counties within Illinois:
 
+    -   "COOK"
+    -   "CHAMPAIGN"
+    -   "LAKE"
 
+    See other file for solutions
