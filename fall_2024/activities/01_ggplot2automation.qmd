@@ -27,81 +27,6 @@ In this activity, you'll work to produce the following:
 
 ```{r}
 ## your code here 
-library(ggplot2)
-library(tidyverse)
-
-cookco = midwest %>% filter(county == "COOK" & state == "IL")
-illinois_nocook = midwest %>% filter(state == "IL" & county != "COOK")
-
-vars = c("perchsd", "percollege", "percprof")
-
-illinois_avg = illinois_nocook %>% summarize(perchsd_mean = mean(perchsd), percollege_mean = mean(percollege), percprof_mean = mean(percprof))
-
-plot_data = data.frame(varname = vars, avgval = c(illinois_avg[[1]], illinois_avg[[2]], illinois_avg[[3]]))
-
-f1 = ggplot(plot_data, aes(x = varname, y = avgval)) + geom_col()
-
-```
-
-solution:
-
-```{r}
-#| echo: false
-#| output: true
-library(tidyverse)
-library(ggplot2)
-library(reshape2)
-
-#creates a new dataset that pulls the summarizes the 3 variables and binds the summary with the row values for cook county. then reshapes the dataset so that the mutated variable columns are now part of rows and created a variable description as well. 
-stats_comparison <- rbind.data.frame(midwest %>%
-            filter(state == "IL" & county != "COOK") %>%
-            summarise(hsd = mean(perchsd), college =  mean(percollege), 
-                      professional = mean(percprof)) %>%
-            mutate(category = "other"),
-            midwest %>%
-            filter(state == "IL" & county == "COOK") %>%
-            summarise(hsd = mean(perchsd), college =  mean(percollege), 
-                      professional = mean(percprof)) %>%
-            mutate(category = "COOK")) %>%
-            reshape2::melt(., id.vars = "category") %>%
-            mutate(variable_descriptive = 
-            factor(case_when(variable == "hsd" ~ "High school degree",
-                      variable == "college" ~ "College degree",
-                      variable == "professional" ~ "Professional school"),
-                levels = c("High school degree",
-                           "College degree",
-                           "Professional school"),
-                ordered = TRUE)) 
-
-stats_toplot <- stats_comparison %>%
-          left_join(stats_comparison %>% filter(category == "other") 
-                  %>% rename(mean_value = value) %>%
-                  select(variable, mean_value),
-                  by = "variable") 
-
-            
-ggplot(stats_toplot %>% filter(category == "other"), 
-       aes(x = variable_descriptive, 
-                            y = value)) +
-  geom_bar(stat = "identity", color = "black", 
-           fill = "wheat4") +
-  xlab("Highest level of educational attainment") +
-  ylab("Percentage in county (mean across other\nIllinois counties)") +
-  geom_point(data = stats_toplot %>% filter(category != "other"),
-             aes(x = variable_descriptive, 
-                 y = value),
-             color = "red", size = 4) +
-  geom_label(data = stats_toplot %>% filter(category != "other"),
-             aes(x = variable_descriptive, 
-                 y = value, 
-                 label = sprintf("Cook County's rate: %.2f\nMean rate: %.2f",
-                                 value, 
-                                 mean_value)),
-          color = "red",
-          size = 2,
-          nudge_y = 5) +
-  ylim(0, 100) +
-  ggtitle("Cook County compared to other Illinois counties")
 
 ```
 
@@ -110,66 +35,8 @@ ggplot(stats_toplot %>% filter(category == "other"),
 Write a function that generalizes the plot from exercise 1 by: - Taking in two parameters: county + state - Finding the remaining counties in that state - Creating the same plot as above (making sure to label the county-specific rate appropriately with the county's name) - Test the function on a few different counties from different states
 
 ```{r}
-library(stringr)
+## your code here
 
-state_comparison_graph = function(countyname, stateabbr){
-  stats_comparison <- rbind.data.frame(midwest %>%
-            filter(state == stateabbr & county != countyname) %>%
-            summarise(hsd = mean(perchsd), college =  mean(percollege), 
-                      professional = mean(percprof)) %>%
-            mutate(category = "Other"),
-            midwest %>%
-            filter(state == stateabbr & county == countyname) %>%
-            summarise(hsd = mean(perchsd), college =  mean(percollege), 
-                      professional = mean(percprof)) %>%
-            mutate(category = countyname)) %>%
-            reshape2::melt(., id.vars = "category") %>%
-            mutate(variable_descriptive = 
-            factor(case_when(variable == "hsd" ~ "High school degree",
-                      variable == "college" ~ "College degree",
-                      variable == "professional" ~ "Professional school"),
-                levels = c("High school degree",
-                           "College degree",
-                           "Professional school"),
-                ordered = TRUE)) 
-  
-  stats_to_plot <- stats_comparison %>%
-          left_join(stats_comparison %>% filter(category == "Other") 
-                  %>% rename(mean_value = value) %>%
-                  select(variable, mean_value),
-                  by = "variable") 
-  
-  graph1 = ggplot(stats_to_plot %>% filter(category == "Other"), 
-       aes(x = variable_descriptive, y = value)) +
-    geom_bar(stat = "identity", color = "black", 
-           fill = "wheat4") +
-    xlab("Highest level of educational attainment") +
-    ylab(sprintf("Percentage in county (mean across other\n %s counties)", 
-                 state.name[state.abb == stateabbr])) +
-           geom_point(data = stats_to_plot %>% filter(category != "Other"),
-             aes(x = variable_descriptive, 
-                 y = value),
-             color = "red", size = 4) +
-           geom_label(data = stats_to_plot %>% filter(category != "Other"),
-             aes(x = variable_descriptive, 
-                 y = value, 
-                 label = sprintf("%s County's rate: %.2f\nMean rate: %.2f", 
-                                 str_to_title(countyname),
-                                 value, 
-                                 mean_value)),
-          color = "red",
-          size = 2,
-          nudge_y = 5) +
-    ylim(0, 100) +
-    ggtitle(sprintf("%s County compared to other %s counties", 
-                    str_to_title(countyname), state.name[state.abb == stateabbr]))
-  
-  return(graph1)
-  
-}
-
-state_comparison_graph("COOK", "IL")
-state_comparison_graph("WAYNE", "MI")
 ```
 
 ## Exercise 3: use that function to create a county-specific report

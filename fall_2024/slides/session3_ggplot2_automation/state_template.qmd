@@ -7,8 +7,6 @@ params:
   state: "IL"
 ---
 
-the parameter "state" at the top specifies the particular value of the state parameter
-
 # What Report Shows
 
 ```{r}
@@ -20,8 +18,6 @@ full_state <- state.name[state.abb == params$state]
 ```
 
 Here, we present demographic statistics for `r full_state` separated into metropolitan areas and non-metropolitan areas.
-
-the sentence above allows you to input the variable value of full_state in the sentence using the
 
 ```{r}
 #| echo: false

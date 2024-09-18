@@ -32,7 +32,6 @@ library(tidyverse)
 library(ggplot2)
 library(reshape2)
 
-#creates a new dataset that pulls the summarizes the 3 variables and binds the summary with the row values for cook county. then reshapes the dataset so that the mutated variable columns are now part of rows and created a variable description as well. 
 stats_comparison <- rbind.data.frame(midwest %>%
             filter(state == "IL" & county != "COOK") %>%
             summarise(hsd = mean(perchsd), college =  mean(percollege), 
