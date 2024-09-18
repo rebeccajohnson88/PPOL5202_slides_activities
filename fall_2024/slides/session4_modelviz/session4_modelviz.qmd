@@ -490,6 +490,8 @@ y <- College %>%
 fit <- cv.glmnet(x_covar, y, 
               family = "binomial")
 
+rm(College)
+
 ```
 
 
@@ -579,10 +581,10 @@ error_area
 
 ```
 
-## Precision-recall curve
+## ROC
 
 - Confusion matrix shows a static true and false positive rate at a fixed threshold for converting the continuous predicted probabilities to a binary class
-- Precision-recall curves show how varying that threshold creates tradeoffs between precision (aided by a high threshold) and recall (aided by a low threshold)
+- ROC curves show how varying that threshold creates tradeoffs between maximizing true positive rates (use a low threshold) and minimizing false positive rates (use a high threshold)
 
 
 ## First: visualizing the distribution of probabilities relative to predicted class
