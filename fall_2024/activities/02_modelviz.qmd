@@ -21,10 +21,13 @@ execute:
 #| output: true 
 library(tidyverse)
 library(ggplot2)
+#install.packages("devtools")
+#install.packages("fastmap")
 #library(devtools)
 #install_github("jamesmartherus/anesr")
 library(anesr)
 library(broom)
+library(haven)
 
 data("socialmedia_2020")
 socialmedia_2020 <- socialmedia_2020 %>%
@@ -48,8 +51,7 @@ socialmedia_2020 <- socialmedia_2020 %>%
                   profile_educ5 == 5 ~ "Professional school"),
     derived_vote = case_when(vote20d1 == 1 ~ "Trump",
                              vote20d1 == 2 ~ "Biden",
-                             vote20d1 != -7 ~ "Other",
-                             TRUE ~ NA))
+                             vote20d1 != -7 ~ "Other"))
 
 dv <- "derived_climate_nohuman"
 covars <- setdiff(grep("derived", colnames(socialmedia_2020), 
@@ -57,10 +59,49 @@ covars <- setdiff(grep("derived", colnames(socialmedia_2020),
                dv)
 climate_attitudes <- lm(formula(sprintf("%s ~ %s",
                     dv, paste(covars, collapse = "+"))),
-                    data = socialmedia_2020) 
+                    data = socialmedia_2020)  
 
 ## your code here 
+climate_attitudes <- lm(formula(sprintf("%s ~ %s", dv, paste(covars, collapse = "+"))), 
+                        data = socialmedia_2020)
+coeffs <- broom::tidy(climate_attitudes) %>%
+  filter(term != "(Intercept)")
 
+reference_categories <- tibble(
+  term = c("derived_femaleRef", "derived_racethRef", "derived_educRef"),
+  estimate = c(0, 0, 0), 
+  std.error = NA,
+  statistic = NA,
+  p.value = NA,
+  category_type = c("Demographic", "Demographic", "Education")
+)
+
+coeffs <- bind_rows(coeffs, reference_categories)
+
+coeffs <- coeffs %>%
+  mutate(category_type = case_when(
+    str_detect(term, "female") ~ "Demographic",
+    str_detect(term, "raceth") ~ "Demographic",
+    str_detect(term, "educ") ~ "Education",
+    str_detect(term, "vote") ~ "Political",
+    TRUE ~ "Other"
+  ))
+
+##color the coefficient by category
+ggplot(coeffs, aes(x = reorder(term, estimate), y = estimate, color = category_type)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = estimate - 1.96 * std.error, ymax = estimate + 1.96 * std.error),
+                width = 0.2) +
+  coord_flip() +  
+  labs(title = "Coefficients from Climate Attitudes Model",
+       x = "Predictor Variables",
+       y = "Coefficient Estimate",
+       color = "Category Type") +
+  theme_minimal() +
+  scale_color_manual(values = c("Demographic" = "blue", 
+                                "Education" = "green", 
+                                "Political" = "red", 
+                                "Other" = "purple"))
 ```
 
 ## Exercise 2: predicted probabilities with more continuous predictor
@@ -88,9 +129,61 @@ climate_attitudes_glm <- glm(formula(sprintf("%s ~ %s",
                     family = "binomial")  
 
 ## your code here
+library(tidyverse)
+library(broom)
+age_values <- 20:60
 
+new_data <- expand.grid(
+  derived_age = age_values,
+  derived_female = TRUE, 
+  derived_educ = "Some college",  
+  derived_raceth = "White non-Hispanic",  
+  derived_vote = c("Biden", "Trump") 
+)
+
+predictions <- augment(climate_attitudes_glm, newdata = new_data, type.predict = "response", se_fit = TRUE) %>% mutate(lower = .fitted-1.96*.se.fit,upper = .fitted+1.96*.se.fit) 
+
+
+plot1 = ggplot(predictions, aes(x = derived_age, y = .fitted, group = derived_vote, color = derived_vote)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2) +
+  labs(
+    title = "Predicted Probability of No Human Role in Climate Change by Age",
+    x = "Age",
+    y = "Predicted Probability",
+    color = "2020 Vote"
+  ) + 
+  scale_color_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  theme_bw(base_size = 24) +
+  theme(legend.position = c(0.5, 0.5),
+        legend.background = element_blank()) 
+ 
+
+
+plot2 = ggplot(predictions, aes(x = derived_age, y = .fitted, color = derived_vote, fill = derived_vote)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2) +
+  labs(
+    title = "Predicted Probability of No Human Role in Climate Change by Age",
+    x = "Age",
+    y = "Predicted Probability",
+    color = "2020 Vote",
+    fill = "Vote Choice"
+  ) +
+  scale_color_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  scale_fill_manual(values = c("Trump" = "red",
+                                "Biden" = "blue")) +
+  theme_bw(base_size = 24) +
+  theme(legend.position = c(0.5, 0.5),
+        legend.background = element_blank())  +
+  guides(fill = "none") 
+
+
+print(plot1)
+print(plot2)
 ```
-
 
 ## Exercise 3: showing when lasso regularizes a coefficient to zero
 
@@ -106,7 +199,10 @@ Create a plot where:
 #| echo: false
 #| output: true 
 library(glmnet)
+#install.packages("ISLR2")
 library(ISLR2)
+library(tidyverse)
+
 
 ## model estimation
 x_covar <- model.matrix(Grad.Rate ~ ., 
@@ -121,6 +217,46 @@ cv_lasso <- cv.glmnet(x_covar,
                       y,
                       alpha = 1) 
 
+# extract coefficients for all lamba values
+coeff_matrix <- as.matrix(cv_lasso$glmnet.fit$beta)
+lambda_values <- cv_lasso$lambda
 
-## your code here 
+# define a function to extract coefficients at a specific lambda value
+extract_coefficients <- function(lambda_index) {
+  coeff_vector <- coeff_matrix[, lambda_index]  # Get coefficient vector for the lambda index
+  coeff_df <- data.frame(
+    Predictor = rownames(coeff_matrix),  # Predictor names as rownames of the matrix
+    Coefficient = coeff_vector  # Coefficients for the specific lambda
+  )
+  coeff_df <- coeff_df %>%
+    mutate(NonZero = Coefficient != 0,  # Mark non-zero coefficients
+           Lambda = lambda_values[lambda_index])  # Add the corresponding lambda value
+  return(coeff_df)
+}
+all_coeff_list <- lapply(1:length(lambda_values), extract_coefficients)
+combined_coeff_df <- bind_rows(all_coeff_list)
+
+#calcuate the percentage of times each predictor remains non-zero across all lambda values
+predictor_summary <- combined_coeff_df %>%
+  group_by(Predictor) %>%
+  summarize(PercentNonZero = mean(NonZero)) %>%
+  arrange(desc(PercentNonZero))
+
+#merge the percentage summary to the combined coefficient dataframe
+final_coeff_df <- combined_coeff_df %>%
+  left_join(predictor_summary, by = "Predictor")
+
+#create the plot to show which predictors remain non-zero across lambda values
+ggplot(final_coeff_df %>% filter(NonZero),
+       aes(x = factor(round(Lambda, 2)), y = reorder(Predictor, PercentNonZero))) +
+  geom_point() +
+  xlab("Lambda (higher = more regularization)") +
+  ylab("Predictor") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  ggtitle("Predictors that Remain Non-Zero Across Regularization (LASSO)")
+```
+
+```{r}
+
 ```

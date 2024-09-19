@@ -9,13 +9,13 @@ execute:
 
 # Model Visualization
 
-## Exercise 1: improve the climate change coefficients plot 
+## Exercise 1: improve the climate change coefficients plot
 
-- Begin with the coefficients plot from the lecture activity (we reproduce the cleaning / model estimation below)
-- Improve the coefficients plot in two ways:
-  - For each of the categorical variables, add the reference category
-  - Color the coefficients by type of category 
-  
+-   Begin with the coefficients plot from the lecture activity (we reproduce the cleaning / model estimation below)
+-   Improve the coefficients plot in two ways:
+    -   For each of the categorical variables, add the reference category
+    -   Color the coefficients by type of category
+
 ```{r}
 #| echo: false
 #| output: true 
@@ -96,17 +96,16 @@ ggplot(cl_toplot,
 
 Create plots that examines the following contrast:
 
-- Age values ranging from 20 to 60 incrementing by 1 year 
-- For each age value, Biden v. Trump voters
-- Other values at: female, some college, and white non-Hispanic
+-   Age values ranging from 20 to 60 incrementing by 1 year
+-   For each age value, Biden v. Trump voters
+-   Other values at: female, some college, and white non-Hispanic
 
-
-For the plot, have the x axis be age, y axis be the predicted probability of endorsing no human role in climate change, and group/color by intended vote choice 
+For the plot, have the x axis be age, y axis be the predicted probability of endorsing no human role in climate change, and group/color by intended vote choice
 
 Create two plots:
 
-1. One plot using `geom_point()` and `geom_errorbar()` to illustrate the point estimates + uncertainty 
-2. Another plot using `geom_line()` and `geom_ribbon()` to illustrate the point estimates + uncertainty 
+1.  One plot using `geom_point()` and `geom_errorbar()` to illustrate the point estimates + uncertainty
+2.  Another plot using `geom_line()` and `geom_ribbon()` to illustrate the point estimates + uncertainty
 
 ```{r}
 #| echo: false
@@ -150,7 +149,6 @@ ggplot(aug_result, aes(x = derived_age,
 
 ```
 
-
 ```{r}
 #| echo: false
 #| output: true 
@@ -180,17 +178,15 @@ ggplot(aug_result, aes(x = derived_age,
 
 ```
 
-
-## Exercise 3: showing when lasso regularizes a coefficient to zero 
+## Exercise 3: showing when lasso regularizes a coefficient to zero
 
 Create a plot where:
 
-- The `x axis` is each value of $\lambda$ used in `cv.glmnet` predicting college graduation (provided in code)
-- The `y axis` is each predictor in the dataset
-- There is a dot/point for each value of $\lambda$ where that particular predictor remains non-zero 
+-   The `x axis` is each value of $\lambda$ used in `cv.glmnet` predicting college graduation (provided in code)
+-   The `y axis` is each predictor in the dataset
+-   There is a dot/point for each value of $\lambda$ where that particular predictor remains non-zero
 
-**Hint**: see this Stack Overflow post for how to get coefficients at a specific lambda value - [https://stackoverflow.com/questions/66718416/how-to-get-the-coefficents-of-a-cross-validated-lasso-for-a-specific-lambda-not](https://stackoverflow.com/questions/66718416/how-to-get-the-coefficents-of-a-cross-validated-lasso-for-a-specific-lambda-not)
-
+**Hint**: see this Stack Overflow post for how to get coefficients at a specific lambda value - <https://stackoverflow.com/questions/66718416/how-to-get-the-coefficents-of-a-cross-validated-lasso-for-a-specific-lambda-not>
 
 ```{r}
 #| echo: false
@@ -244,4 +240,3 @@ ggplot(all_coef_wpr %>% filter(coef_nonzero),
   ggtitle("Which predictors of college graduation persist through regularization?")
 
 ```
-
