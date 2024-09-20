@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.56">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>PPOL 5202: Problem Set 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="ppol5202_problemset1_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ppol5202_problemset1_files/libs/quarto-html/quarto.js"></script>
+<script src="ppol5202_problemset1_files/libs/quarto-html/popper.min.js"></script>
+<script src="ppol5202_problemset1_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ppol5202_problemset1_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ppol5202_problemset1_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ppol5202_problemset1_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ppol5202_problemset1_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ppol5202_problemset1_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ppol5202_problemset1_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">PPOL 5202: Problem Set 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><em>Topics covered</em>: ggplot2 for EDA; automating ggplot2 graphics generation; ML/statistics model exploration</p>
+<section id="question-1-data-cleaning-to-prepare-for-data-viz12-points" class="level2">
+<h2 class="anchored" data-anchor-id="question-1-data-cleaning-to-prepare-for-data-viz12-points"><strong>Question 1: Data Cleaning to Prepare for Data Viz</strong>(12 points)</h2>
+<section id="below-we-have-you-load-the-dc-hate-crimes-data-we-used-in-a-class-activity." class="level4">
+<h4 class="anchored" data-anchor-id="below-we-have-you-load-the-dc-hate-crimes-data-we-used-in-a-class-activity.">Below, we have you load the <a href="https://mpdc.dc.gov/node/1334781"><strong>DC Hate Crimes data</strong></a> we used in a class activity.</h4>
+<p>In this question, you will clean the dataset to make it suitable for visualization and analysis in the next step. Focus on the following key variables: <strong><code>Type.of.Hate.Bias</code></strong> and <strong><code>Targeted.Group</code></strong>, as these will be central to the visualizations you create in Question 2.</p>
+</section>
+<section id="instructions" class="level4">
+<h4 class="anchored" data-anchor-id="instructions"><strong>Instructions</strong>:</h4>
+<ol type="1">
+<li><p><strong>Filter the Data</strong>:</p>
+<ul>
+<li><p><strong><code>Type.of.Hate.Bias</code></strong>: Focus only on categories with more than <strong>100 records</strong>. Filter out any categories with fewer than 100 records. Do not worry about correct typos.</p></li>
+<li><p>Save the resulting dataset as <strong><code>hc1</code></strong> and print the dimensions.</p></li>
+</ul></li>
+<li><p><strong>Clean the District Information</strong>:</p>
+<ul>
+<li><p>Clean the <code>District</code> variable if necessary. Ensure the district names are consistent and clean.</p></li>
+<li><p>Save the cleaned district information as a new variable called <strong><code>district_clean</code></strong>.</p></li>
+</ul></li>
+<li><p><strong>Targeted Group Cleaning</strong>:</p>
+<ul>
+<li><p>Clean the <strong><code>Targeted.Group</code></strong> variable by removing any leading or trailing spaces from the values. Similarly, do not worry about typos or combined categories.</p></li>
+<li><p>Save this cleaned variable as <strong><code>tg_clean</code></strong>.</p></li>
+</ul></li>
+<li><p><strong>Focus on Key Target Groups</strong>:</p>
+<ul>
+<li><p>After cleaning, categorize the values in <code>Targeted.Group</code> according to the following <strong>6 key groups</strong>, based on <a href="https://www.census.gov/topics/population/race/about.html"><strong>U.S. Census Bureau standards</strong></a>:</p>
+<ul>
+<li><p><strong>White</strong>: A person having origins in any of the original peoples of Europe, the Middle East, or North Africa.</p></li>
+<li><p><strong>Hispanic or Latino</strong>: A person of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture or origin, regardless of race.</p></li>
+<li><p><strong>Black or African American</strong>: A person having origins in any of the Black racial groups of Africa.</p></li>
+<li><p><strong>American Indian or Alaska Native</strong>: A person having origins in any of the original peoples of North and South America (including Central America) and who maintains tribal affiliation or community attachment.</p></li>
+<li><p><strong>Asian</strong>: A person having origins in any of the original peoples of the Far East, Southeast Asia, or the Indian subcontinent (e.g., Cambodia, China, India, Japan, Korea, Malaysia, Pakistan, the Philippine Islands, Thailand, Vietnam).</p></li>
+<li><p><strong>Native Hawaiian or Other Pacific Islander</strong>: A person having origins in any of the original peoples of Hawaii, Guam, Samoa, or other Pacific Islands.</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Exclusion of Other Groups</strong>:</p>
+<ul>
+<li><p>Exclude any records that cannot be categorized under the 6 groups listed above. For example, exclude categories like <strong>Multiple</strong>, <strong>Muslim</strong>, etc.</p></li>
+<li><p>Provide a brief write-up (2-3 sentences) explaining your methodology and rationale for excluding certain groups.</p></li>
+</ul></li>
+<li><p><strong>Final Cleaning and Output</strong>:</p>
+<ul>
+<li><p>Create True/False indicator variables in <code>hc</code> with the following reasons for exclusion and print tables with the count of true for each:</p>
+<ul>
+<li>Type of hate bias &lt; 100 records</li>
+<li>Targeted group outside the 6 we focus on</li>
+</ul></li>
+<li><p>Create two datasets:</p></li>
+</ul>
+<ol type="1">
+<li>hc_alltargets: filters out records where type of hate bias &lt; 100 records or District = <code>Unk</code> but does not use the targeted group filter</li>
+<li>hc_censustargets: adds the targeted group filter</li>
+</ol>
+<ul>
+<li>Print the number of rows in both the original <code>hc</code> and and the two new datasets. Compare your values against those on the GitHub issue and small differences are fine.</li>
+</ul></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Import packages and datasets</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(openxlsx)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>hc <span class="ot">&lt;-</span> <span class="fu">read.xlsx</span>(<span class="st">"https://mpdc.dc.gov/sites/default/files/dc/sites/mpdc/publication/attachments/Hate%20Crimes%20Open%20Data_16.xlsx"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Date.of.Offense Time.of.Offense Date.Offense.Reported Report.Year Month
+1           40916       1500-1505                 40916        2012     1
+2           40920            1722                 40920        2012     1
+3           40921       1255-1258                 40921        2012     1
+4           40922       0240-0250                 40922        2012     1
+5           40922       0431-0433                 40922        2012     1
+6           40930             145                 40930        2012     1
+       CCN District                Block.Location         Type.of.Hate.Bias
+1 12003845       3D        1600 block 17th St NW         Sexual Orientation
+2 12005834       1D         3rd St SW and K St SW        Sexual Orientation
+3 12006285       4D Park Rd NW and Sherman Ave NW                      Race
+4 12006716       3D         1800 block 14th St NW        Sexual Orientation
+5 12006742       3D 18th St NW and Florida Ave NW Ethnicity/National Origin
+6 12010626       7D     1300 block Alabama Ave SE        Sexual Orientation
+       Targeted.Group Top.Offense.Type
+1                &lt;NA&gt;          Threats
+2                &lt;NA&gt;          Robbery
+3         Unspecified   Simple Assault
+4                &lt;NA&gt;   Simple Assault
+5 Arab/Middle Eastern   Simple Assault
+6                &lt;NA&gt;              ADW</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## your code here </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="question-2-exploratory-data-visualization-of-hate-crimes-data-15-points" class="level2">
+<h2 class="anchored" data-anchor-id="question-2-exploratory-data-visualization-of-hate-crimes-data-15-points">Question 2: Exploratory Data Visualization of Hate Crimes data (15 points)</h2>
+<p>In this question, you will create several visualizations to explore and analyze the cleaned dataset from Question 1.</p>
+<section id="instructions-1" class="level4">
+<h4 class="anchored" data-anchor-id="instructions-1">Instructions:</h4>
+</section>
+<section id="plot-1-bar-plot-hc1" class="level4">
+<h4 class="anchored" data-anchor-id="plot-1-bar-plot-hc1"><strong>Plot 1: Bar Plot (hc1)</strong></h4>
+<ul>
+<li><p><strong>Objective</strong>: Compare the number of occurrences for each <code>Type.of.Hate.Bias</code> across different districts and write a 1-2 sentence takeaway below the code block about how the crimes compare across districts (and googling for what police districts mean in DC).</p></li>
+<li><p><strong>Instructions</strong>:</p>
+<ul>
+<li><p>Use the <strong><code>hc_alltargets</code></strong> dataset (filtered dataset from Question 1).</p></li>
+<li><p>Create a <strong>bar plot</strong> that shows the count of each <code>Type.of.Hate.Bias</code> for each district.</p></li>
+<li><p>The x-axis should represent the districts, and the y-axis should represent the count of records.</p></li>
+<li><p>Ensure each bar is colored by the <code>Type.of.Hate.Bias</code> category.</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 1: Bar Plot</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Summarise the data</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="do">## your code here </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plot-2-alluvial-flow-diagram-hc2" class="level4">
+<h4 class="anchored" data-anchor-id="plot-2-alluvial-flow-diagram-hc2"><strong>Plot 2: Alluvial Flow Diagram (hc2)</strong></h4>
+<ul>
+<li><p><strong>Objective</strong>: Visualize the flow of hate crimes by <code>Type.of.Hate.Bias</code> and <code>Targeted.Group</code> within the district with the most records.</p></li>
+<li><p><strong>Instructions</strong>:</p>
+<ul>
+<li><p>Use the <strong><code>hc_censustargets</code></strong> dataset</p></li>
+<li><p>Find the district with the highest number of hate crime records.</p></li>
+<li><p>Create an <strong>alluvial flow diagram</strong> to visualize the flow of hate crimes based on <code>Type.of.Hate.Bias</code> and <code>Targeted.Group</code> in that district.</p></li>
+<li><p>The flow should show how hate crime bias types connect to the targeted groups.</p></li>
+<li><p>Interpret the results in 1-2 sentences</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot 2: Alluvial Flow Diagram</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="do">## your code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plot-3-square-area-chart-hc1" class="level4">
+<h4 class="anchored" data-anchor-id="plot-3-square-area-chart-hc1"><strong>Plot 3: Square Area Chart (hc1)</strong></h4>
+<ul>
+<li><p><strong>Objective</strong>: Show the distribution of different types of hate bias in the dataset.</p></li>
+<li><p><strong>Instructions</strong>:</p>
+<ul>
+<li><p>Use the <strong><code>hc_alltargets</code></strong> dataset.</p></li>
+<li><p>Create a 10 x 10 (100 squares) <strong>square area chart</strong> (also known as a <strong>waffle chart</strong>) to represent the distribution of the different <code>Type.of.Hate.Bias</code>.</p></li>
+<li><p>The number of squares for each category should be proportional to the frequency of that bias type.</p></li>
+<li><p>Make sure to label the chart clearly and use clearly distinct colors for each type of bias.</p></li>
+<li><p>Interpret the results in 1-2 sentences</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## your code here </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="question-3-automating-quarto-reports-15-points" class="level2">
+<h2 class="anchored" data-anchor-id="question-3-automating-quarto-reports-15-points">Question 3: Automating quarto reports (15 points)</h2>
+<p>From Q3 to Q5, you’ll work with the most comprehensive dataset to date on climate change and public opinion via Twitter, titled `Twitter.csv.’ This dataset is a subset from <a href="https://www.kaggle.com/datasets/deffro/the-climate-change-twitter-dataset">Kaggle</a>. You are required to create an automated report that compares the sentiment, aggressiveness, and stance of tweets from one year (the “focal year”) to the previous year.</p>
+<section id="instructions-2" class="level4">
+<h4 class="anchored" data-anchor-id="instructions-2">Instructions:</h4>
+<ol type="1">
+<li><p><strong>Create a Quarto Markdown (<code>.qmd</code>) template</strong> that:</p>
+<ul>
+<li><p>Takes a <strong>year</strong> as a parameter.</p></li>
+<li><p>Filters tweets for the focal year and the previous year.</p></li>
+<li><p>Compares the following aspects between the two years:</p>
+<ul>
+<li><p><strong>Sentiment</strong> (e.g., average sentiment score).</p></li>
+<li><p><strong>Aggressiveness</strong> (percentage of aggressive tweets).</p></li>
+<li><p><strong>Stance</strong> (distribution of “believer” vs.&nbsp;“denier” vs.&nbsp;“neutral”).</p></li>
+</ul></li>
+<li><p>Includes visualizations (e.g., bar charts) and a brief <strong>verbal interpretation</strong> of the results.</p></li>
+</ul></li>
+<li><p><strong>Write a Bash script</strong> that:</p>
+<ul>
+<li><p>Executes the <code>.qmd</code> file twice: once for the year <strong>2008</strong> (so comparing to 2007) and once for the year <strong>2009</strong> (so comparing to 2008).</p></li>
+<li><p>Each execution should generate a separate HTML report for the respective year.</p></li>
+</ul></li>
+</ol>
+</section>
+</section>
+<section id="question-4-model-visualizations---machine-learning-10-points" class="level2">
+<h2 class="anchored" data-anchor-id="question-4-model-visualizations---machine-learning-10-points">Question 4: Model Visualizations - Machine Learning (10 points)</h2>
+<p>You will build a <strong>Random Forest</strong> machine learning model to predict the <strong>stance</strong> of a tweet based on various attributes/features of the tweet. You will also create visualizations related to performance.</p>
+<section id="instructions-3" class="level4">
+<h4 class="anchored" data-anchor-id="instructions-3">Instructions:</h4>
+<ul>
+<li><p><strong>Modeling (code provided)</strong>:</p>
+<ul>
+<li><p>See the code below that implements a <strong>Random Forest</strong> model in <strong>R</strong> to predict the tweet’s stance (<code>denier</code> or <code>believer</code>). It uses a target variable of the <strong>stance</strong> of the tweet, with the following labels, filtering out neutral stances before training the model.</p>
+<ul>
+<li><p><code>1 = denier</code> (Tweet denies the idea of man-made climate change)</p></li>
+<li><p><code>0 = believer</code> (Tweet supports the idea of man-made climate change)</p></li>
+</ul></li>
+</ul></li>
+<li><p><strong>ROC Curve</strong>:</p>
+<ul>
+<li><p>Regular credit: using the <code>roc</code> package, <strong>create an ROC curve</strong> by calculating the <strong>True Positive Rate (TPR)</strong> (sensitivity) and <strong>False Positive Rate (FPR)</strong> (1- specificity) at different thresholds (0 to 1).</p></li>
+<li><p>For extra credit, create this curve manually by writing a function, iterating over thresholds, and calculating the rates at each threshold</p>
+<ul>
+<li>Plot the ROC curve using <code>ggplot2</code>.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Feature Importance</strong>:</p>
+<ul>
+<li><p>Use the Random Forest model’s output to extract the <em>feature importances</em> of each coefficient</p></li>
+<li><p>Visualize the feature importance using a bar chart, using the <code>MeanDecreaseGini</code> metric, showing the most highly predictive features to the least</p></li>
+<li><p>Interpret in 1-2 sentences</p></li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>tweets <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Twitter.csv"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>tweets<span class="sc">$</span>created_at <span class="ot">&lt;-</span> <span class="fu">ymd_hms</span>(tweets<span class="sc">$</span>created_at)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>tweets<span class="sc">$</span>year <span class="ot">&lt;-</span> <span class="fu">year</span>(tweets<span class="sc">$</span>created_at)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter out neutral stances</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>tweets_filtered <span class="ot">&lt;-</span> tweets <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(stance <span class="sc">!=</span> <span class="st">"neutral"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stance_binary =</span> <span class="fu">ifelse</span>(stance <span class="sc">==</span> <span class="st">"denier"</span>, <span class="dv">1</span>, <span class="dv">0</span>))  <span class="co"># 1 = denier, 0 = believer</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert it into binary variables</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>tweets_filtered<span class="sc">$</span>stance_binary <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(tweets_filtered<span class="sc">$</span>stance_binary)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove any na values</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>tweets_filtered <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(tweets_filtered)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert categorical variables into factors</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>tweets_filtered<span class="sc">$</span>aggressiveness <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(tweets_filtered<span class="sc">$</span>aggressiveness)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>tweets_filtered<span class="sc">$</span>gender <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(tweets_filtered<span class="sc">$</span>gender)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Splitting the data into training and testing sets (80% train, 20% test)</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)  </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>train_index <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(tweets_filtered), <span class="fl">0.8</span> <span class="sc">*</span> <span class="fu">nrow</span>(tweets_filtered))</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> tweets_filtered[train_index, ]</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>test_data <span class="ot">&lt;-</span> tweets_filtered[<span class="sc">-</span>train_index, ]</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the Random Forest model</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(stance_binary <span class="sc">~</span> sentiment <span class="sc">+</span> aggressiveness <span class="sc">+</span> gender <span class="sc">+</span> temperature_avg <span class="sc">+</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>                           year, </span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data =</span> train_data, <span class="at">ntree =</span> <span class="dv">100</span>, <span class="at">importance =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Print model summary</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rf_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+ randomForest(formula = stance_binary ~ sentiment + aggressiveness +      gender + temperature_avg + year, data = train_data, ntree = 100,      importance = TRUE) 
+               Type of random forest: classification
+                     Number of trees: 100
+No. of variables tried at each split: 2
+
+        OOB estimate of  error rate: 19.65%
+Confusion matrix:
+      0  1 class.error
+0 65742 82 0.001245746
+1 16022 99 0.993858942</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">## your code here</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="question-5-model-visualizations---statistics-12-points" class="level2">
+<h2 class="anchored" data-anchor-id="question-5-model-visualizations---statistics-12-points">Question 5: Model Visualizations - Statistics (12 points)</h2>
+<p>In this task, you will build a <strong>binomial (logistic) regression model</strong> to predict the <strong>stance</strong> of a tweet based on <strong>gender</strong> and <strong>aggressiveness</strong>. After building the model, you will use it to predict the probability of being a “denier” for different tweet profiles.</p>
+<section id="instructions-4" class="level4">
+<h4 class="anchored" data-anchor-id="instructions-4">Instructions:</h4>
+<ul>
+<li><p><strong>Modeling</strong>:</p>
+<ul>
+<li><p>Create a <strong>binomial logistic regression model</strong> in <strong>R</strong> that predicts the <strong>stance</strong> of a tweet (<code>denier</code> vs <code>believer</code>) using:</p>
+<ul>
+<li><p><strong>Gender</strong> (male, female, undefined)</p></li>
+<li><p><strong>Aggressiveness</strong> (aggressive, not aggressive)</p></li>
+</ul></li>
+<li><p>The target variable is <strong>stance</strong>, with the following labels:</p>
+<ul>
+<li><p><code>1 = denier</code> (Tweet denies the idea of man-made climate change)</p></li>
+<li><p><code>0 = believer</code> (Tweet supports the idea of man-made climate change)</p></li>
+</ul></li>
+<li><p><strong>Filter out neutral</strong> stances before training the model.</p></li>
+</ul></li>
+<li><p><strong>Predicted Probabilities</strong>:</p>
+<ul>
+<li><p>After fitting the model, calculate the <strong>predicted probability</strong> of the tweet taking a denial stance for the following profiles at each of the years in the data:</p>
+<ol type="1">
+<li><p>Female / Aggressive tweet</p></li>
+<li><p>Female / Not Aggressive tweet</p></li>
+<li><p>Male / Aggressive tweet</p></li>
+<li><p>Male / Not Aggressive tweet</p></li>
+</ol></li>
+</ul></li>
+<li><p><strong>Interpretation</strong>:</p>
+<ul>
+<li>Compare the predicted probabilities for the different profiles and interpret what these probabilities mean in the context of tweet stance prediction.</li>
+</ul></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## your code here </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

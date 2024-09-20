@@ -1,0 +1,306 @@
+---
+title: "PPOL 5202: Problem Set 1"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+*Topics covered*: ggplot2 for EDA; automating ggplot2 graphics generation; ML/statistics model exploration
+
+## **Question 1: Data Cleaning to Prepare for Data Viz**(12 points)
+
+#### Below, we have you load the [**DC Hate Crimes data**](https://mpdc.dc.gov/node/1334781) we used in a class activity.
+
+In this question, you will clean the dataset to make it suitable for visualization and analysis in the next step. Focus on the following key variables: **`Type.of.Hate.Bias`** and **`Targeted.Group`**, as these will be central to the visualizations you create in Question 2.
+
+#### **Instructions**:
+
+1.  **Filter the Data**:
+
+    -   **`Type.of.Hate.Bias`**: Focus only on categories with more than **100 records**. Filter out any categories with fewer than 100 records. Do not worry about correct typos.
+
+    -   Save the resulting dataset as **`hc1`** and print the dimensions.
+
+2.  **Clean the District Information**:
+
+    -   Clean the `District` variable if necessary. Ensure the district names are consistent and clean.
+
+    -   Save the cleaned district information as a new variable called **`district_clean`**.
+
+3.  **Targeted Group Cleaning**:
+
+    -   Clean the **`Targeted.Group`** variable by removing any leading or trailing spaces from the values. Similarly, do not worry about typos or combined categories.
+
+    -   Save this cleaned variable as **`tg_clean`**.
+
+4.  **Focus on Key Target Groups**:
+
+    -   After cleaning, categorize the values in `Targeted.Group` according to the following **6 key groups**, based on [**U.S. Census Bureau standards**](https://www.census.gov/topics/population/race/about.html):
+
+        -   **White**: A person having origins in any of the original peoples of Europe, the Middle East, or North Africa.
+
+        -   **Hispanic or Latino**: A person of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture or origin, regardless of race.
+
+        -   **Black or African American**: A person having origins in any of the Black racial groups of Africa.
+
+        -   **American Indian or Alaska Native**: A person having origins in any of the original peoples of North and South America (including Central America) and who maintains tribal affiliation or community attachment.
+
+        -   **Asian**: A person having origins in any of the original peoples of the Far East, Southeast Asia, or the Indian subcontinent (e.g., Cambodia, China, India, Japan, Korea, Malaysia, Pakistan, the Philippine Islands, Thailand, Vietnam).
+
+        -   **Native Hawaiian or Other Pacific Islander**: A person having origins in any of the original peoples of Hawaii, Guam, Samoa, or other Pacific Islands.
+
+5.  **Exclusion of Other Groups**:
+
+    -   Exclude any records that cannot be categorized under the 6 groups listed above. For example, exclude categories like **Multiple**, **Muslim**, etc.
+
+    -   Provide a brief write-up (2-3 sentences) explaining your methodology and rationale for excluding certain groups.
+
+6.  **Final Cleaning and Output**:
+
+    -   Create True/False indicator variables in `hc` with the following reasons for exclusion and print tables with the count of true for each:
+
+        -   Type of hate bias \< 100 records
+        -   Targeted group outside the 6 we focus on
+
+    -   Create two datasets:
+
+    1.  hc_alltargets: filters out records where type of hate bias \< 100 records or District = `Unk` but does not use the targeted group filter
+    2.  hc_censustargets: adds the targeted group filter
+
+    -   Print the number of rows in both the original `hc` and and the two new datasets. Compare your values against those on the GitHub issue and small differences are fine.
+
+```{r, message=FALSE,warning=FALSE}
+#| echo: True
+## Import packages and datasets
+library(openxlsx)
+
+hc <- read.xlsx("https://mpdc.dc.gov/sites/default/files/dc/sites/mpdc/publication/attachments/Hate%20Crimes%20Open%20Data_16.xlsx")
+head(hc)
+
+
+## your code here 
+```
+
+## Question 2: Exploratory Data Visualization of Hate Crimes data (15 points)
+
+In this question, you will create several visualizations to explore and analyze the cleaned dataset from Question 1.
+
+#### Instructions:
+
+#### **Plot 1: Bar Plot (hc1)**
+
+-   **Objective**: Compare the number of occurrences for each `Type.of.Hate.Bias` across different districts and write a 1-2 sentence takeaway below the code block about how the crimes compare across districts (and googling for what police districts mean in DC).
+
+-   **Instructions**:
+
+    -   Use the **`hc_alltargets`** dataset (filtered dataset from Question 1).
+
+    -   Create a **bar plot** that shows the count of each `Type.of.Hate.Bias` for each district.
+
+    -   The x-axis should represent the districts, and the y-axis should represent the count of records.
+
+    -   Ensure each bar is colored by the `Type.of.Hate.Bias` category.
+
+```{r, message=FALSE,warning=FALSE}
+#| echo: true
+# Plot 1: Bar Plot
+# Step 1: Summarise the data
+
+## your code here 
+
+
+```
+
+#### **Plot 2: Alluvial Flow Diagram (hc2)**
+
+-   **Objective**: Visualize the flow of hate crimes by `Type.of.Hate.Bias` and `Targeted.Group` within the district with the most records.
+
+-   **Instructions**:
+
+    -   Use the **`hc_censustargets`** dataset
+
+    -   Find the district with the highest number of hate crime records.
+
+    -   Create an **alluvial flow diagram** to visualize the flow of hate crimes based on `Type.of.Hate.Bias` and `Targeted.Group` in that district.
+
+    -   The flow should show how hate crime bias types connect to the targeted groups.
+
+    -   Interpret the results in 1-2 sentences
+
+```{r}
+#| echo: true
+# Plot 2: Alluvial Flow Diagram
+
+## your code here
+```
+
+#### **Plot 3: Square Area Chart (hc1)**
+
+-   **Objective**: Show the distribution of different types of hate bias in the dataset.
+
+-   **Instructions**:
+
+    -   Use the **`hc_alltargets`** dataset.
+
+    -   Create a 10 x 10 (100 squares) **square area chart** (also known as a **waffle chart**) to represent the distribution of the different `Type.of.Hate.Bias`.
+
+    -   The number of squares for each category should be proportional to the frequency of that bias type.
+
+    -   Make sure to label the chart clearly and use clearly distinct colors for each type of bias.
+
+    -   Interpret the results in 1-2 sentences
+
+```{r}
+#| echo: true
+
+## your code here 
+```
+
+## Question 3: Automating quarto reports (15 points)
+
+From Q3 to Q5, you'll work with the most comprehensive dataset to date on climate change and public opinion via Twitter, titled \`Twitter.csv.' This dataset is a subset from [Kaggle](https://www.kaggle.com/datasets/deffro/the-climate-change-twitter-dataset). You are required to create an automated report that compares the sentiment, aggressiveness, and stance of tweets from one year (the "focal year") to the previous year.
+
+#### Instructions:
+
+1.  **Create a Quarto Markdown (`.qmd`) template** that:
+
+    -   Takes a **year** as a parameter.
+
+    -   Filters tweets for the focal year and the previous year.
+
+    -   Compares the following aspects between the two years:
+
+        -   **Sentiment** (e.g., average sentiment score).
+
+        -   **Aggressiveness** (percentage of aggressive tweets).
+
+        -   **Stance** (distribution of "believer" vs. "denier" vs. "neutral").
+
+    -   Includes visualizations (e.g., bar charts) and a brief **verbal interpretation** of the results.
+
+2.  **Write a Bash script** that:
+
+    -   Executes the `.qmd` file twice: once for the year **2008** (so comparing to 2007) and once for the year **2009** (so comparing to 2008).
+
+    -   Each execution should generate a separate HTML report for the respective year.
+
+## Question 4: Model Visualizations - Machine Learning (10 points)
+
+You will build a **Random Forest** machine learning model to predict the **stance** of a tweet based on various attributes/features of the tweet. You will also create visualizations related to performance.
+
+#### Instructions:
+
+-   **Modeling (code provided)**:
+
+    -   See the code below that implements a **Random Forest** model in **R** to predict the tweet's stance (`denier` or `believer`). It uses a target variable of the **stance** of the tweet, with the following labels, filtering out neutral stances before training the model.
+
+        -   `1 = denier` (Tweet denies the idea of man-made climate change)
+
+        -   `0 = believer` (Tweet supports the idea of man-made climate change)
+
+-   **ROC Curve**:
+
+    -   Regular credit: using the `roc` package, **create an ROC curve** by calculating the **True Positive Rate (TPR)** (sensitivity) and **False Positive Rate (FPR)** (1- specificity) at different thresholds (0 to 1).
+
+    -   For extra credit, create this curve manually by writing a function, iterating over thresholds, and calculating the rates at each threshold
+
+        -   Plot the ROC curve using `ggplot2`.
+
+-   **Feature Importance**:
+
+    -   Use the Random Forest model's output to extract the *feature importances* of each coefficient
+
+    -   Visualize the feature importance using a bar chart, using the `MeanDecreaseGini` metric, showing the most highly predictive features to the least
+
+    -   Interpret in 1-2 sentences
+
+```{r, message=FALSE,warning=FALSE}
+#| echo: true
+
+library(randomForest)
+library(lubridate)
+library(tidyverse)
+
+tweets <- read.csv("Twitter.csv")
+tweets$created_at <- ymd_hms(tweets$created_at)
+tweets$year <- year(tweets$created_at)
+
+
+# Filter out neutral stances
+tweets_filtered <- tweets %>%
+  filter(stance != "neutral") %>%
+  mutate(stance_binary = ifelse(stance == "denier", 1, 0))  # 1 = denier, 0 = believer
+
+
+# Convert it into binary variables
+tweets_filtered$stance_binary <- as.factor(tweets_filtered$stance_binary)
+
+# Remove any na values
+tweets_filtered <- na.omit(tweets_filtered)
+
+# Convert categorical variables into factors
+tweets_filtered$aggressiveness <- as.factor(tweets_filtered$aggressiveness)
+tweets_filtered$gender <- as.factor(tweets_filtered$gender)
+
+# Splitting the data into training and testing sets (80% train, 20% test)
+set.seed(123)  
+train_index <- sample(1:nrow(tweets_filtered), 0.8 * nrow(tweets_filtered))
+train_data <- tweets_filtered[train_index, ]
+test_data <- tweets_filtered[-train_index, ]
+
+# Fit the Random Forest model
+rf_model <- randomForest(stance_binary ~ sentiment + aggressiveness + gender + temperature_avg +
+                           year, 
+                         data = train_data, ntree = 100, importance = TRUE)
+
+# Print model summary
+print(rf_model)
+
+## your code here
+```
+
+## Question 5: Model Visualizations - Statistics (12 points)
+
+In this task, you will build a **binomial (logistic) regression model** to predict the **stance** of a tweet based on **gender** and **aggressiveness**. After building the model, you will use it to predict the probability of being a "denier" for different tweet profiles.
+
+#### Instructions:
+
+-   **Modeling**:
+
+    -   Create a **binomial logistic regression model** in **R** that predicts the **stance** of a tweet (`denier` vs `believer`) using:
+
+        -   **Gender** (male, female, undefined)
+
+        -   **Aggressiveness** (aggressive, not aggressive)
+
+    -   The target variable is **stance**, with the following labels:
+
+        -   `1 = denier` (Tweet denies the idea of man-made climate change)
+
+        -   `0 = believer` (Tweet supports the idea of man-made climate change)
+
+    -   **Filter out neutral** stances before training the model.
+
+-   **Predicted Probabilities**:
+
+    -   After fitting the model, calculate the **predicted probability** of the tweet taking a denial stance for the following profiles at each of the years in the data:
+
+        1.  Female / Aggressive tweet
+
+        2.  Female / Not Aggressive tweet
+
+        3.  Male / Aggressive tweet
+
+        4.  Male / Not Aggressive tweet
+
+-   **Interpretation**:
+
+    -   Compare the predicted probabilities for the different profiles and interpret what these probabilities mean in the context of tweet stance prediction.
+
+```{r, message=FALSE,warning=FALSE}
+#| echo: true
+
+## your code here 
+```
