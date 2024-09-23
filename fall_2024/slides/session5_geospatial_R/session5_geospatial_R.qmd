@@ -23,17 +23,15 @@ library(ggplot2)
 library(sf)
 ```
 
-
 ## Roadmap
 
--   Mapping vocabulary and types of geospatial data*
+-   Mapping vocabulary and types of geospatial data\*
 
--   Should it be a map?*
+-   Should it be a map?\*
 
 -   R tools for mapping
 
-*Credit to Prof. Pickens' Lecture 7: Geospatial Visualizations for content in these sections this lecture adapts 
-
+\*Credit to Prof. Pickens' Lecture 7: Geospatial Visualizations for content in these sections this lecture adapts
 
 # Mapping vocabulary and geospatial data
 
@@ -81,7 +79,7 @@ library(sf)
 
     -   It's a closed source proprietary ESRI file format (though drivers to read/write shapefiles have been open sourced)
 
-## `GeoJSON` as alternative 
+## `GeoJSON` as alternative
 
 `GeoJSON` has these advantages:
 
@@ -116,7 +114,6 @@ library(sf)
     -   area
 
     of features in a dataset. There is not a single CRS that does a great job at optimizing all three elements: shape, distance AND area.
-
 
 ## Choosing a CRS
 
@@ -182,8 +179,6 @@ A layer with polygons and a layer with points, with each dot representing a cons
 
 # Should it be a map?
 
-
-
 ## Should it be a map?
 
 ::: {.callout-note appearance="minimal" icon="false"}
@@ -191,7 +186,6 @@ Just because you've got geographic data, doesn't mean that you have to make a ma
 :::
 
 -   Urban Institute [Data Visualization Style Guide](http://urbaninstitute.github.io/graphics-styleguide/)
-
 
 ## Maps can distort the data
 
@@ -277,7 +271,6 @@ Another alternative is to use a traditional facetted plot, arranged as a map.
 
 -   The geometry column is "sticky", so `sf` is compatible with `dplyr` and `ggplot2`; you can do manipulations to the main part of your data without losing it (!!!!)
 
-
 ## Tigris to get DC census tracts
 
 ```{r}
@@ -306,7 +299,6 @@ plot(dc_tracts['TRACTCE'])
 
 ```
 
-
 ## Plotting tract polygons with `ggplot2`
 
 Feed it the `sf` object and use `geom_sf()` command
@@ -323,7 +315,6 @@ p <- ggplot(dc_tracts) +
 
 ## Plotting tract polygons with `ggplot2`
 
-
 ```{r}
 #| echo: false
 #| output: true
@@ -332,14 +323,12 @@ p
 
 ```
 
-
-## Using `tidycensus` to get demographic information 
+## Using `tidycensus` to get demographic information
 
 Two main options:
 
-- `get_decennial`: data from the Decennial Censuses (2000; 2010; 2020)
-- `get_acs`: data from the American Community Survey (ACS)
-
+-   `get_decennial`: data from the Decennial Censuses (2000; 2010; 2020)
+-   `get_acs`: data from the American Community Survey (ACS)
 
 ## Exploring codebook
 
@@ -440,10 +429,9 @@ p
 
 ## How do we add points to the map?
 
-- The previous map contains polygons shaded by one attribute (household poverty rates)
-- How do we add points representing specific locations to the map?
-- Example: `geojson` file from DC open data representing homeless service facilities
-
+-   The previous map contains polygons shaded by one attribute (household poverty rates)
+-   How do we add points representing specific locations to the map?
+-   Example: `geojson` file from DC open data representing homeless service facilities
 
 ## Step one: load the data
 
@@ -455,7 +443,7 @@ class(homeless_facilities)
 
 ```
 
-## Step two: make sure CRS are equivalent 
+## Step two: make sure CRS are equivalent
 
 ```{r}
 #| echo: true
@@ -465,7 +453,7 @@ st_crs(dc_tracts_wpov)
 
 ```
 
-## Step two: make sure CRS are equivalent 
+## Step two: make sure CRS are equivalent
 
 ```{r}
 #| echo: true
@@ -479,8 +467,8 @@ st_crs(homeless_facilities_t) == st_crs(dc_tracts_wpov)
 
 ## Example operations we can perform:
 
-1. Plot the points directly over the polygon plot
-2. Examine the intersection of the points and polygons, and summarize relationship between the presence of 1+ homeless service facility and poverty rates 
+1.  Plot the points directly over the polygon plot
+2.  Examine the intersection of the points and polygons, and summarize relationship between the presence of 1+ homeless service facility and poverty rates
 
 ## Plotting the facilities
 
@@ -506,8 +494,7 @@ p <- ggplot(dc_tracts_wpov %>% filter(poverty_rate != 1)) +
 p 
 ```
 
-
-## Plotting the facilities: background of street map 
+## Plotting the facilities: background of street map
 
 ```{r}
 #| echo: true
@@ -521,8 +508,7 @@ p <- ggmap(dc_map) +
              color = "blue", alpha = 0.5)
 ```
 
-## Plotting the facilities: background of street map 
-
+## Plotting the facilities: background of street map
 
 ```{r}
 #| echo: false
@@ -530,19 +516,17 @@ p <- ggmap(dc_map) +
 p
 ```
 
-
-
-## Spatial intersection to see number of homeless service facilities by tract 
+## Spatial intersection to see number of homeless service facilities by tract
 
 Order within `st_intersects` is important:
 
-- `st_intersects(polygon, points)`: returns a list where each element represents a polygon from the original dataframe and the list contains the resulting point(s) that intersect (if any)
+-   `st_intersects(polygon, points)`: returns a list where each element represents a polygon from the original dataframe and the list contains the resulting point(s) that intersect (if any)
 
-- `st_intersects(points, polygon)`: returns a list where each element represents a point from the original dataframe and the list contains the resulting polygon that intersects (if any)
+-   `st_intersects(points, polygon)`: returns a list where each element represents a point from the original dataframe and the list contains the resulting polygon that intersects (if any)
 
-In this case, want the former 
+In this case, want the former
 
-## Count of facilities per polygon 
+## Count of facilities per polygon
 
 ```{r}
 #| echo: true
@@ -556,7 +540,7 @@ class(points_per_poly)
 length(points_per_poly)
 ```
 
-## Count of facilities per polygon 
+## Count of facilities per polygon
 
 ```{r}
 #| echo: true
@@ -569,7 +553,7 @@ p <- ggplot(dc_tracts_wpov, aes(x = facilities_pertract > 1, y = poverty_rate)) 
 
 ```
 
-## Count of facilities per polygon 
+## Count of facilities per polygon
 
 ```{r}
 #| echo: false
@@ -598,24 +582,21 @@ p <- ggplot(dc_tracts_wpov %>% filter(poverty_rate != 1)) +
 
 ## Motivating interactive plots: labeling plots
 
-
 ```{r}
 #| echo: false
 #| output: true
 p 
 ```
 
-
 ## Wrapping up
 
-- Reviewed following tools for working with spatial data:
+-   Reviewed following tools for working with spatial data:
 
-  - Loading two types of vector geometries:
-    - Points
-    - Polygons 
-  - Merging on fill information for polygons
-  - Plotting each type
-  - Obtaining street map data as background
-  - Spatial intersections 
-  
-- Activity: more practice with polygons + alternative map types (geofacets; tilegrams)
+    -   Loading two types of vector geometries:
+        -   Points
+        -   Polygons
+    -   Merging on fill information for polygons
+    -   Obtaining street map data as background
+    -   Spatial intersections
+
+-   Activity: more practice with polygons + alternative map types (geofacets; tilegrams)
