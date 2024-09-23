@@ -1,0 +1,621 @@
+---
+title: "Session 5: Geospatial Data Visualization"
+author: "Prof. Rebecca A. Johnson"
+date: "23 September 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+    highlight-style: arrow-dark
+    code-block-background: true
+    slide-number: true
+editor: visual
+execute:
+  warning: false
+  message: false 
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(tigris)
+library(ggplot2)
+library(sf)
+```
+
+
+## Roadmap
+
+-   Mapping vocabulary and types of geospatial data*
+
+-   Should it be a map?*
+
+-   R tools for mapping
+
+*Credit to Prof. Pickens' Lecture 7: Geospatial Visualizations for content in these sections this lecture adapts 
+
+
+# Mapping vocabulary and geospatial data
+
+## Types of geospatial data
+
+-   **Vector data** - represents the world using points, lines, and polygons
+
+-   **Raster data** - divides surface into cells of constant size
+
+-   Vector data tends to dominate the social sciences because human settlements tend to have discrete borders
+
+-   Raster dominates many environmental sciences because of the reliance on remote sensing data
+
+-   Can convert between them
+
+## Vector vs. raster data
+
+![Source: https://www.gislounge.com/geodatabases-explored-vector-and-raster-data/](images/vector-vs-raster.png){fig-align="center"}
+
+## (Vector) Geometries
+
+-   **Points** represent a single longitude/latitude (e.g., location of a building or household)
+
+-   **Lines** represent a pair of connected points (e.g., line between two locations)
+
+-   **Polygons** represent a collection of points that make a shape (e.g., a Census tract; Precinct boundaries)
+
+## Geospatial file formats
+
+-   There are [many options](https://r.geocompx.org/read-write.html#file-formats) for storing spatial data
+
+-   The most common: CSV files with latitude/longitude columns, GeoJSON (.geojson), and shapefiles
+
+## Shapefiles
+
+-   Packaged as multiple files in one folder - in R, you will typically "read in" the `.shp` file or a directory of files
+
+-   De facto standard for GIS developers (meaning they are VERY common), but have some downsides:
+
+    -   A shapefile is composed of at least 3 files, making data transfer tricky
+
+    -   Column names are limited to 10 characters
+
+    -   Their file size is limited to 2 GB
+
+    -   It's a closed source proprietary ESRI file format (though drivers to read/write shapefiles have been open sourced)
+
+## `GeoJSON` as alternative 
+
+`GeoJSON` has these advantages:
+
+1.  It's an open source file format
+
+2.  It uses standardized projections and naming conventions
+
+3.  It's a lightweight single file, makes it easy to transfer small to medium sized files
+
+4.  No size limitations
+
+## Projections
+
+-   Maps are 2D representations of 3D data. There is ALWAYS some distortion!
+
+-   The process of going from 3D to 2D, called *projection,* necessarily introduces distortions, because a curved surface cannot be projected exactly onto a flat surface
+
+## Coordinate Reference System (CRS)
+
+-   Basis of vector data model
+
+-   A complete set of assumptions (including projection) used to translate the latitude and longitude information into a two-dimensional map
+
+## Coordinate Reference System (CRS)
+
+-   each `CRS` is optimized to best represent the:
+
+    -   shape and/or
+
+    -   scale / distance and/or
+
+    -   area
+
+    of features in a dataset. There is not a single CRS that does a great job at optimizing all three elements: shape, distance AND area.
+
+
+## Choosing a CRS
+
+-   Choose a CRS that is optimized for the area you are visualizing (search for options [here](https://spatialreference.org/))
+
+-   Good US default: `"ESRI:102003"` (Atlas Equal Earth Projection, used by the Census)
+
+-   geoJSON default: `EPSG:4326` (World Geodetic System, global standard used by GPS)
+
+-   R package to search for best CRS match if it's not present in your data: `crsuggest`
+
+## Spatial joins
+
+-   Join on location instead of a common identifier
+
+-   Two datasets must be the same CRS (!!)
+
+## Spatial data manipulation
+
+-   Spatial filtering - "cropping" a map
+
+    -   Returning center of a polygon geometry, or create "buffers" of a certain distance around a point - can filter on this too
+
+-   Spatial union or aggregation - combining multiple geometries into one
+
+## Other spatial data manipulation
+
+-   Calculating distances
+
+-   Spatial modeling
+
+-   Geocoding - turning text (usually addresses) into latitude and longitude
+
+## Types of maps
+
+-   Choropleths
+
+-   Cartograms
+
+-   Geofacets (sometimes also called cartograms)
+
+-   Dot density maps
+
+-   Bubble maps
+
+## Choropleth maps
+
+Show the magnitude of a variable by coloring individual regions in a map according to the data dimension.
+
+![Source: Wilke Figure 15-11](images/wilke-15-11.png){fig-align="center"}
+
+## Bubble maps (graduated symbol map)
+
+A layer with polygons and a layer with points, with points sized according to a variable.
+
+![https://urbaninstitute.github.io/r-at-urban/mapping.html#bubble-maps](images/bubble-maps-urban.png){fig-align="center"}
+
+## Dot density maps
+
+A layer with polygons and a layer with points, with each dot representing a constant number of things, people, or other quantifiable phenomena.
+
+![Source: https://urbaninstitute.github.io/r-at-urban/mapping.html#dot-density-maps](images/dot-density-maps-urban.png){fig-align="center"}
+
+# Should it be a map?
+
+
+
+## Should it be a map?
+
+::: {.callout-note appearance="minimal" icon="false"}
+Just because you've got geographic data, doesn't mean that you have to make a map. Many times, there are more efficient storyforms that will get your point across more clearly. If your data shows a very clear geographic trend or if the absolute location of a place or event matters, maps might be the best approach, [but sometimes the reflexive impulse to map the data can make you forget that showing the data in another form might answer other---and sometimes more important---questions.](http://www.ericson.net/content/2011/10/when-maps-shouldnt-be-maps/) Consider using other graphic types when the interesting patterns are not geographic patterns, or when the geographic data is more effective for analysis than for presentation. Many times, a simple bar chart, column chart, scatterplot or table are more effective at translating your research to a reader.
+:::
+
+-   Urban Institute [Data Visualization Style Guide](http://urbaninstitute.github.io/graphics-styleguide/)
+
+
+## Maps can distort the data
+
+![Source: https://xkcd.com/1939/](images/trump-xkcd-fix.png){fig-align="center"}
+
+## Maps can obscure non-geographic takeaways
+
+![Source: https://www.nytimes.com/2011/09/30/us/politics/obama-sees-a-path-to-12-victory-beyond-the-rust-belt.html](images/election-scatter-plot.png){fig-align="center"}
+
+## Should it be a \[traditional\] map?
+
+Some other map types try to address the problems with choropleths (notably, data distortion).
+
+-   Cartograms
+
+-   Geofacets (sometimes also called cartograms)
+
+## Cartograms
+
+![Source: Adam Cole (NPR) https://www.npr.org/sections/itsallpolitics/2012/11/01/163632378/a-campaign-map-morphed-by-money](images/cartogram-adam-cole.jpg){fig-align="center"}
+
+## Geofacets - tiles (tilemap)
+
+-   Geofaceting arranges sub-geography-specific plots into a grid that resembles a larger geography (usually the US)
+
+-   Downsides of all geofacets: it can be hard to preserve actual geographic relationships/borders.
+
+![Source: https://fivethirtyeight.com/features/where-your-state-gets-its-money/](images/tile-map-538.png){fig-align="center"}
+
+## Geofacets - hexes (hexmap)
+
+Hexes resolve some of the border problem, but not all of it.
+
+![Source: https://www.npr.org/sections/itsallpolitics/2015/04/28/402774189/activists-urge-states-to-protect-the-civil-rights-of-lgbt-people](images/hexes-npr.png){fig-align="center"}
+
+## Geofacets - plots
+
+Another alternative is to use a traditional facetted plot, arranged as a map.
+
+![Source: https://www.urban.org/sites/default/files/publication/94801/barriers-to-homeownership-down-payments-credit-access-and-affordability_3.pdf](images/geofacet-plotting-urban.png){fig-align="center"}
+
+## Use cartograms when:
+
+-   Particularly useful for visualizing population
+
+-   Data representation does not require shape and topology
+
+-   Projecting linear proximities (i.e., metro map)
+
+## Don't use cartograms when:
+
+-   Statistical, geographic, and topological accuracy are important to you
+
+-   Interpretation needs to be simple and free of bias
+
+# R Tools for mapping
+
+## R packages - getting data
+
+-   `tigris`: For downloading US Census geographies (sister package: `tidycensus` provides Census data to accompany geographies)
+
+    -   Useful resource: [Analyzing US Census data: Methods, Maps, and Models in R](https://walker-data.com/census-r/)
+
+-   `rnaturalearth` is similar to `tigris`, but includes data beyond the US
+
+## R packages - mapping
+
+-   `sf`: For managing and analyzing spatial dataframes (predecessor: `sp` - don't use this, it's deprecated! just be aware it exists)
+
+    -   Vector data only
+
+-   `ggplot2`: For making publication ready static maps
+
+-   `mapview` and `leaflet`: For making exploratory interactive maps
+
+## Why is `sf` so great?
+
+-   `sf` handles point, line, and polygon spatial data
+
+-   `sf` can read/write geodata in many formats
+
+-   `sf` objects are dataframes with an additional geometry column
+
+-   The geometry column is "sticky", so `sf` is compatible with `dplyr` and `ggplot2`; you can do manipulations to the main part of your data without losing it (!!!!)
+
+
+## Tigris to get DC census tracts
+
+```{r}
+#| echo: true
+#| output: false
+options(tigris_class = "sf")
+dc_tracts <- tracts(state = "DC")
+```
+
+```{r}
+#| echo: true
+#| output: true
+class(dc_tracts)
+head(dc_tracts)
+
+```
+
+## Plotting tract polygons with Base R
+
+```{r}
+#| echo: true
+#| output: true
+
+plot(dc_tracts['TRACTCE'])
+
+
+```
+
+
+## Plotting tract polygons with `ggplot2`
+
+Feed it the `sf` object and use `geom_sf()` command
+
+```{r}
+#| echo: true
+#| output: true
+
+p <- ggplot(dc_tracts) +
+  geom_sf(color = "firebrick", fill = "gray") +
+  theme_bw() 
+
+```
+
+## Plotting tract polygons with `ggplot2`
+
+
+```{r}
+#| echo: false
+#| output: true
+
+p
+
+```
+
+
+## Using `tidycensus` to get demographic information 
+
+Two main options:
+
+- `get_decennial`: data from the Decennial Censuses (2000; 2010; 2020)
+- `get_acs`: data from the American Community Survey (ACS)
+
+
+## Exploring codebook
+
+```{r}
+#| echo: false
+#| output: false
+library(tidycensus)
+library(tidyverse)
+library(yaml)
+```
+
+```{r}
+#| echo: true
+#| output: true
+## variables to explore
+vars_explore <- load_variables(2020, "acs5", cache = TRUE)
+head(vars_explore)
+vars_topull <- vars_explore %>% 
+          filter(name %in% c("B17020_001", "B17020_002")) 
+```
+
+## Pulling those variables for DC
+
+`State` is first two digits of the `geoid` for tract
+
+```{r}
+#| echo: true
+#| output: true
+census_api_key(read_yaml("keys.yaml")$census_api_key)
+dc_poverty <- get_acs(geography = "tract",
+                 variables = vars_topull$name,
+                 state = unique(substr(dc_tracts$GEOID, 1, 2)),
+                 output = "wide",
+                 year = 2020,
+                 moe_level = 95,
+                 survey = "acs5",
+                 cache_table = TRUE) %>%
+          mutate(poverty_rate = !!sym(sprintf("%sE",
+                                  vars_topull$name[!grepl("001",
+                                  vars_topull$name)]))/
+                                !!sym(sprintf("%sE",
+                                  vars_topull$name[grepl("001",
+                                  vars_topull$name)])))
+
+```
+
+## Pulling those variables for DC
+
+```{r}
+#| echo: true
+#| output: true
+head(dc_poverty %>% 
+    select(GEOID, B17020_002E, B17020_001E, poverty_rate))
+
+class(dc_poverty)
+```
+
+## Merging poverty dataframe with the `sf` dataframe with polygons
+
+Can use `dplyr` functions due to compatibility with `sf`
+
+```{r}
+#| echo: true
+#| output: true
+
+dc_tracts_wpov <- dc_tracts %>%
+            left_join(dc_poverty %>% select(GEOID, poverty_rate), 
+                      by = "GEOID") 
+
+class(dc_tracts_wpov)
+head(dc_tracts_wpov, 2)
+```
+
+## Creating a map with tracts shaded by poverty level
+
+```{r}
+#| echo: true
+#| output: true
+median_pov <- quantile(dc_tracts_wpov$poverty_rate, probs = 0.5)
+p <- ggplot(dc_tracts_wpov %>% filter(poverty_rate != 1)) +
+  geom_sf(aes(fill = poverty_rate)) +
+  theme_void() +
+  scale_fill_gradient2(low = "darkgreen", mid = "white", high = "firebrick",
+                       midpoint = median_pov) +
+  labs(fill = "Tract-level\npoverty rate") 
+
+```
+
+## Creating a map with tracts shaded by poverty level
+
+```{r}
+#| echo: false
+#| output: true
+p 
+
+
+```
+
+## How do we add points to the map?
+
+- The previous map contains polygons shaded by one attribute (household poverty rates)
+- How do we add points representing specific locations to the map?
+- Example: `geojson` file from DC open data representing homeless service facilities
+
+
+## Step one: load the data
+
+```{r}
+#| echo: true
+#| output: true
+homeless_facilities <- sf::st_read("Homeless_Service_Facilities.geojson")
+class(homeless_facilities)
+
+```
+
+## Step two: make sure CRS are equivalent 
+
+```{r}
+#| echo: true
+#| output: true
+st_crs(homeless_facilities)
+st_crs(dc_tracts_wpov)
+
+```
+
+## Step two: make sure CRS are equivalent 
+
+```{r}
+#| echo: true
+#| output: true
+## align the points with the crs of the polygon data 
+homeless_facilities_t <- homeless_facilities %>%
+        st_transform(crs = st_crs(dc_tracts_wpov))
+
+st_crs(homeless_facilities_t) == st_crs(dc_tracts_wpov)
+```
+
+## Example operations we can perform:
+
+1. Plot the points directly over the polygon plot
+2. Examine the intersection of the points and polygons, and summarize relationship between the presence of 1+ homeless service facility and poverty rates 
+
+## Plotting the facilities
+
+```{r}
+#| echo: true
+#| output: true
+p <- ggplot(dc_tracts_wpov %>% filter(poverty_rate != 1)) +
+  geom_sf(aes(fill = poverty_rate)) +
+  geom_sf(data = homeless_facilities_t, color = "black") +
+  theme_void() +
+  scale_fill_gradient2(low = "darkgreen", mid = "white", high = "firebrick",
+                       midpoint = median_pov) +
+  labs(fill = "Tract-level\npoverty rate") 
+  
+
+```
+
+## Plotting the facilities
+
+```{r}
+#| echo: false
+#| output: true
+p 
+```
+
+
+## Plotting the facilities: background of street map 
+
+```{r}
+#| echo: true
+#| output: true
+library(ggmap)
+ggmap::register_google(read_yaml("keys.yaml")$googlemaps_api_key)
+dc_map <- get_googlemap(center = "Washington, DC", zoom = 12)
+p <- ggmap(dc_map) +
+  geom_point(data = homeless_facilities_t,
+             aes(x = LONGITUDE, y = LATITUDE), 
+             color = "blue", alpha = 0.5)
+```
+
+## Plotting the facilities: background of street map 
+
+
+```{r}
+#| echo: false
+#| output: true
+p
+```
+
+
+
+## Spatial intersection to see number of homeless service facilities by tract 
+
+Order within `st_intersects` is important:
+
+- `st_intersects(polygon, points)`: returns a list where each element represents a polygon from the original dataframe and the list contains the resulting point(s) that intersect (if any)
+
+- `st_intersects(points, polygon)`: returns a list where each element represents a point from the original dataframe and the list contains the resulting polygon that intersects (if any)
+
+In this case, want the former 
+
+## Count of facilities per polygon 
+
+```{r}
+#| echo: true
+#| output: true
+sprintf("There are %d census tracts and %d homeless facilities",
+        nrow(dc_tracts_wpov), nrow(homeless_facilities_t))
+
+points_per_poly <- st_intersects(dc_tracts_wpov,
+                               homeless_facilities_t)
+class(points_per_poly)
+length(points_per_poly)
+```
+
+## Count of facilities per polygon 
+
+```{r}
+#| echo: true
+#| output: true
+dc_tracts_wpov$facilities_pertract <- lengths(points_per_poly)
+
+p <- ggplot(dc_tracts_wpov, aes(x = facilities_pertract > 1, y = poverty_rate)) +
+  geom_violin() +
+  geom_boxplot(width= 1) 
+
+```
+
+## Count of facilities per polygon 
+
+```{r}
+#| echo: false
+#| output: true
+p
+
+```
+
+## Motivating interactive plots: labeling plots
+
+```{r}
+#| echo: true
+#| output: true
+p <- ggplot(dc_tracts_wpov %>% filter(poverty_rate != 1)) +
+  geom_sf(aes(fill = poverty_rate)) +
+  geom_sf(data = homeless_facilities_t, color = "black") +
+  geom_sf_label(data = homeless_facilities_t %>% 
+                filter(PROGRAM_NAME == "Harriet Tubman Day Program"), aes(label = PROGRAM_NAME),
+                size = 2)+ 
+  theme_void() +
+  scale_fill_gradient2(low = "darkgreen", mid = "white", high = "firebrick",
+                       midpoint = median_pov) +
+  labs(fill = "Tract-level\npoverty rate") 
+
+```
+
+## Motivating interactive plots: labeling plots
+
+
+```{r}
+#| echo: false
+#| output: true
+p 
+```
+
+
+## Wrapping up
+
+- Reviewed following tools for working with spatial data:
+
+  - Loading two types of vector geometries:
+    - Points
+    - Polygons 
+  - Merging on fill information for polygons
+  - Plotting each type
+  - Obtaining street map data as background
+  - Spatial intersections 
+  
+- Activity: more practice with polygons + alternative map types (geofacets; tilegrams)
