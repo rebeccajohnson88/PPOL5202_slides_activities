@@ -1,0 +1,183 @@
+---
+title: "Geospatial data in R"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Activity 1: Spatial data manipulation to construct + plot a DC-Maryland-Virginia metropolitan area plot
+
+In this activity, you'll construct a DC-Maryland-Virginia metropolitan area plot. A metropolitan statistical area (MSA) is a sub-category of a core-based statistical area (CBSA) within the Census Bureau data files.
+
+-   First, use the `tigris` package and the `core_based_statistical_areas()` command to download polygons for all US CBSAs (the default), setting the year to 2020
+-   Then use the following `GEOID` to filter to the Washington-Arlington-Alexandria CBSA: 47900. [link here](https://www2.census.gov/programs-surveys/cps/methodology/2015%20Geography%20Cover.pdf)
+-   Uncomment the `get_acs` command provided to pull poverty information for DC (FIPs code = 11), Maryland (FIPs code = 24), and Virginia (FIPs code = 51). Note that this will also pull the polygons associated with the tracts.
+-   Use `st_intersects()` to only retain the tracts that fall within the metropolitan boundary. Call this new spatial dataframe: `dc_md_va_msatracts`
+    -   This should reduce the count of tracts from 3879 tracts to 1550 tracts
+
+```{r, results = "hide"}
+#| echo: false
+#| output: false
+
+library("sf")
+library("tidyverse")
+library("tigris")
+library("tidycensus")
+
+## 
+all_cbsas <- core_based_statistical_areas(year = 2020)
+dc_cbsa <- all_cbsas %>% filter(GEOID == "47900")
+
+
+vars_topull <- c("B17020_001", "B17020_002")
+
+dc_md_va_tracts <- get_acs(geography = "tract",
+                  variables = vars_topull,
+                  state = c(11, 24, 51),
+                  output = "wide",
+                  year = 2020,
+                  moe_level = 95,
+                  survey = "acs5",
+                  cache_table = TRUE,
+                  geometry = TRUE, progress_bar = FALSE) %>%
+          mutate(poverty_rate = !!sym(sprintf("%sE",
+                                  vars_topull[!grepl("001",
+                                  vars_topull)]))/
+                                !!sym(sprintf("%sE",
+                                  vars_topull[grepl("001",
+                                  vars_topull)])))
+
+```
+
+```{r}
+#| echo: false
+#| output: true
+
+sprintf("There are %d Census tracts across these three states", nrow(dc_md_va_tracts)) 
+
+tract_intersect <- st_intersects(dc_md_va_tracts, dc_cbsa)
+dc_md_va_tracts$keep_tract <- lengths(tract_intersect) > 0
+
+dc_md_va_msatracts <- dc_md_va_tracts %>% filter(keep_tract)
+
+sprintf("There are %d Census tracts once we restrict to tracts within the MSA", nrow(dc_md_va_msatracts)) 
+
+```
+
+## Activity 2: create two plots of the results
+
+-   Plot one: shows all tracts across DC, MD, and VA; colors the tracts within the MSA green and the remainder of the tracts gray
+
+-   Plot two: uses the dataset filtered to tracts within the MSA. Creates a choropleth plot of poverty rates, grouped into the following buckets:
+
+    -   0-5% poverty rate
+    -   6-10% poverty rate
+    -   11-20% poverty rate
+    -   21% or higher poverty rate
+
+-   If you have extra time, for the first plot, use the `tigris` code below to pull the state boundaries and add the state boundaries for DC, MD, and VA along with a label for the state
+
+```{r}
+#| echo: false
+#| output: true
+state_boundaries <- tigris::states(year = 2020, progress_bar = FALSE)
+dc_md_va_states <- state_boundaries %>% filter(GEOID %in% c(11, 24, 51))
+```
+
+```{r}
+#| echo: false
+#| output: true
+ggplot(dc_md_va_tracts) +
+  geom_sf(aes(fill = keep_tract), color = "white") +
+  geom_sf(data = dc_md_va_states, color = "black", width = 2, alpha = 0.1) +
+  geom_sf_label(data = dc_md_va_states, aes(label = STUSPS), size = 2) +
+  theme_void() +
+  scale_fill_manual(values =c("TRUE" = "darkgreen", "FALSE" = "gray")) +
+  labs(fill = "Is Tract within MSA?") 
+```
+
+```{r}
+#| echo: false
+#| output: true
+## create categorical poverty rate measure
+dc_md_va_msatracts <- dc_md_va_msatracts %>%
+            mutate(poverty_cat = factor(case_when(poverty_rate < 0.06 ~ "0-5%",
+                                                  poverty_rate < 0.11 ~ "6-10%",
+                                                  poverty_rate < 0.21 ~ "11-20%",
+                                                  TRUE ~ "21% or higher"),
+                                        levels = c("0-5%",
+                                                    "6-10%",
+                                                    "11-20%",
+                                                    "21% or higher"),
+                                        ordered = TRUE)) 
+
+
+ggplot(dc_md_va_msatracts) +
+  geom_sf(aes(fill = poverty_cat), color = "white") +
+  geom_sf(data = dc_md_va_states %>% filter(STUSPS == "DC"),
+          color = "black", width = 2, alpha = 0.1) +
+  theme_void() +
+  labs(fill = "Tract-level poverty rate:") +
+  scale_fill_manual(values = c("0-5%" = "darkgreen",
+                               "6-10%" = "lightgreen",
+                               "11-20%" = "pink",
+                               "21% or higher" = "firebrick"))
+```
+
+## Activity 3: visualization using hexgrids
+
+For this activity, we provide example code below, based on [this Stack Overflow post](https://stackoverflow.com/questions/76153155/creating-a-hexagonal-map-from-a-shapefile-in-r) for how to create a hexgrid for DC
+
+In this activity, adapt that code by:
+
+-   Reading in the following `geojson` file with locations of CCTV cameras in DC: `cctv-street-cameras.geojson`
+-   Creating a similar hexgrid map where the hexes are shaded by the count of CCTV cameras within its boundary,
+
+```{r}
+#| echo: true
+#| output: true
+homeless_facilities <- sf::st_read("03_geospatial_inputdata/Homeless_Service_Facilities.geojson")
+
+dc_polygon <- dc_md_va_states %>% filter(STUSPS == "DC")
+hex_grid <- st_make_grid(dc_polygon,
+                        cellsize = 0.01,
+                        what = 'polygons',
+                        square = FALSE) %>%
+            st_as_sf() 
+
+hex_grid_dc <- hex_grid[c(unlist(st_contains(dc_polygon, hex_grid)),
+                         unlist(st_overlaps(dc_polygon, hex_grid))), ] 
+
+## add poverty rate
+counts_per_hex <- st_intersects(hex_grid_dc,
+                      homeless_facilities %>% st_transform(crs = st_crs(hex_grid_dc)))  
+hex_grid_dc$homeless_facilities_counts <- lengths(counts_per_hex)
+            
+
+ggplot(hex_grid_dc) +
+  geom_sf(aes(fill = factor(homeless_facilities_counts))) +
+  theme_void() +
+  labs(fill = "Count of homeless\nservice facilities") 
+
+```
+
+Repeat with CCTV cameras
+
+```{r}
+#| echo: false
+#| output: true
+cctv <- sf::st_read("03_geospatial_inputdata/cctv-street-cameras.geojson")
+counts_per_hex <- st_intersects(hex_grid_dc,
+                      cctv %>% st_transform(crs = st_crs(hex_grid_dc)))  
+hex_grid_dc$cctv_counts <- lengths(counts_per_hex)
+
+ggplot(hex_grid_dc) +
+  geom_sf(aes(fill = cctv_counts)) +
+  theme_void() +
+  labs(fill = "Count of CCTV cameras") +
+  scale_fill_gradient2(low = "wheat4", high = "firebrick")
+            
+
+```
