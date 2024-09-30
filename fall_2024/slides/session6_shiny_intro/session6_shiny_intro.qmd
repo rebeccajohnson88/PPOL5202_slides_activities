@@ -1,0 +1,717 @@
+---
+title: "Session 6: Introduction to Shiny"
+author: "Prof. Rebecca A. Johnson"
+date: "30 September 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+    highlight-style: arrow-dark
+    code-block-background: true
+    slide-number: true
+editor: visual
+execute:
+  warning: false
+  message: false 
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(shiny)
+library(here)
+```
+
+# About Shiny
+
+## About Shiny
+
+-   Shiny is an R package that lets you build interactive web apps
+
+    -   Especially, web pages that interact with R and display R objects
+
+-   [Shiny for Python](https://shiny.posit.co/py/) also exists!
+
+## Hosting a Shiny app
+
+-   Share as R script + data, etc. (less portable/user friendly, requires R)
+
+-   Publish to the web (someone must host)
+
+    -   Free option: shinyapps.io
+
+    -   Free, but technically complex option: [Shiny server](https://github.com/rstudio/shiny-server/blob/master/README.md) BYO Linux server
+
+    -   Not free (enterprise option): Posit Connect (advanced customization + customer support)
+
+## Shiny pros
+
+-   De facto R interactivity tool (lots of support + online tutorials)
+-   Extremely powerful and flexible (compared to other dashboarding tools, i.e. Tableau) and has many extension packages
+-   Works especially well for local deployment and small scale use cases
+-   Requires limited knowledge of HTML for how powerful the outputs are
+
+## Shiny cons
+
+-   Flexibility adds complexity (less beginner-friendly)
+
+-   When you anticipate scale, hosting can get expensive
+
+-   Pipelines can be slow for free hosting
+
+-   Scripts can grow nested + complex quickly and can be hard to debug
+
+## Examples
+
+-   New Zealand [trade dashboard](https://shiny.posit.co/r/gallery/government-public-sector/nz-trade-dash/)
+
+-   [Shiny gallery](https://shiny.posit.co/r/gallery/)
+
+## Additional resources
+
+-   [Shiny cheatsheet](https://rstudio.github.io/cheatsheets/shiny.pdf)
+
+-   Shiny [extension packages](https://github.com/nanxstats/awesome-shiny-extensions)
+
+-   Shiny [Getting Started](https://shiny.posit.co/r/getstarted/shiny-basics/lesson1/index.html) tutorial and [articles](https://shiny.posit.co/r/articles/)
+
+-   Beginner/intermediate Shiny: [Mastering Shiny](https://shiny.posit.co/r/articles/) by Hadley Wickham
+
+-   Advanced Shiny [backend](https://engineering-shiny.org/index.html)
+
+-   Advanced Shiny [frontend](https://unleash-shiny.rinterface.com/index.html)
+
+# Building Shiny Apps
+
+## Basic structure
+
+```{r}
+#| echo: true
+#| output: false
+library(shiny)
+
+ui <- fluidPage()
+
+server <- function(input, output){
+  
+}
+
+shinyApp(ui = ui, server = server)
+
+```
+
+## Two ways to structure
+
+1.  Have one file called `app.R` - click `Run App` in the R user interface
+
+2.  Have two files in the same directory; omit the `shinyApp` code at the end
+
+-   `ui.R`
+-   `server.R`
+
+If you go to File -\> New File -\> Shiny Web app, it'll give you a choice between the two structures + starter code
+
+## Two examples
+
+-   Pulling and displaying different slices of data
+-   Combining with `plotly` for a clickable interactive visualization
+
+## Focal dataset
+
+```{r}
+#| echo: true
+#| output: true
+airbnb <- read.csv(here("fall_2024/slides/session6_shiny_intro/data/airbnb_listings.csv"))
+
+head(airbnb, 2)
+colnames(airbnb)
+table(airbnb$room_type)
+```
+
+## Step one: empty page with text
+
+```{r}
+#| echo: true
+#| output: true
+ui <- fluidPage(
+  titlePanel("DC airnb listings"),
+  sidebarLayout(
+    sidebarPanel("Inputs to filter by"),
+    mainPanel("Results")
+  )
+)
+
+```
+
+## Step two: add inputs to the `ui`
+
+![](images/shiny_inputchoices.png)
+
+Source: [Shiny Apps tutorial](https://deanattali.com/blog/building-shiny-apps-tutorial/)
+
+## Input one: Radio buttons
+
+-   Allows users to select a type of apartment
+
+-   All inputs have the same first arguments:
+
+    -   `inputId`: what your app will use to identify this input when pulling data; needs to be unique
+    -   `label`: text to label the input with / what's shown to users viewing the app
+
+## Input one: Radio buttons
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: false 
+
+## checking the choices
+table(airbnb$room_type)
+
+## coding those as choices - goes inside the ui
+radioButtons(inputId= "input_roomtype",
+            label = "Room types to show:",
+            choices = unique(airbnb$room_type),
+            selected = "Entire home/apt")
+
+```
+
+## How do we make the output responsive to the choice of room type?
+
+Four main types of outputs:
+
+-   `plotOutput()`: plot
+-   `tableOutput()`: table / dataset
+-   `uiOutput()`: shiny UI element
+-   `textOutput()`: text
+
+In this case, want `tableOutput()`
+
+## How do we make the output responsive to the choice of room type?
+
+-   Our `inputId` becomes an attribute of the `input` that we feed our server
+
+-   We also need to add an attribute to the `output` of that server to feed back to the ui
+
+## The code: server
+
+-   Call `input$input_roomtype` (our `inputId`) to filter the data
+-   Add an attribute to our output: `filtered_data`
+
+```{r}
+#| echo: true
+#| output: false
+server <- function(input, output) {
+  output$filtered_data <- renderTable(
+    {
+      airbnb %>% filter(room_type ==
+                          input$input_roomtype) %>%
+        select(id,host_name, name,
+               room_type, price, neighbourhood) %>%
+        arrange(price)},
+    rownames = FALSE
+  )
+}
+```
+
+## The code: ui
+
+-   Our `tableOutput` takes in the `filtered_data` attribute (don't need to cross-reference the output object)
+
+```{r}
+#| echo: true
+#| output: false
+ui <- fluidPage(
+  titlePanel("DC airnb listings"),
+  sidebarLayout(
+    sidebarPanel(
+      radioButtons(inputId= "input_roomtype",
+                   label = "Room types to show:",
+                   choices = unique(airbnb$room_type),
+                   selected = "Entire home/apt")
+    ),
+    mainPanel(
+      tableOutput("filtered_data")
+    )
+  )
+)
+
+```
+
+## Input two: continuous variable
+
+-   Can use sliders for filtering according to a low and high value of a continuous variable
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false 
+sliderInput(inputId = "input_price",
+            label = "Price range:",
+            min = min(airbnb$price),
+            max = max(airbnb$price),
+            value = c(50, 200))
+
+
+```
+
+## Adjusting the server to reflect new input
+
+```{r}
+#| echo: true
+#| output: false
+server <- function(input, output) {
+  output$filtered_data <- renderTable(
+    {
+      airbnb %>% filter(room_type ==
+                          input$input_roomtype &
+                        price >= 
+                        input$input_price[1] &
+                        price <= 
+                        input$input_price[2]) %>%
+        select(id,host_name, name,
+               room_type, price, neighbourhood) %>%
+        arrange(price)},
+    rownames = FALSE
+  )
+
+}
+
+```
+
+## Where we are
+
+-   Created two elements for the user interface:
+    -   Select the type of room
+    -   Select a price range
+-   Output is a table with all airbnb listings that meet those filters
+-   *Next step*: add a plot with the locations of the filtered listings
+
+## Adding a plot
+
+First, let's write code for plot outside the app
+
+```{r}
+#| echo: true
+#| output: false
+library(tigris)
+library(sf) 
+
+## reading wards json and creating an sf object
+## from the dataframe 
+dc_state <- st_read(here('fall_2024/slides/session6_shiny_intro/data/Wards_from_2022.geojson'))
+airbnb_sf <- airbnb %>%
+      st_as_sf(coords = c("longitude", "latitude"),
+               crs = st_crs(dc_state)) 
+
+
+```
+
+## Adding a plot
+
+```{r}
+#| echo: true
+#| output: false
+p <- ggplot(dc_state) +
+  geom_sf(data = airbnb_sf, color = "red", alpha = 0.5,
+          size = 0.5) +
+  geom_sf(color = "black", fill = "white", alpha = 0.1) +
+  geom_sf_label(aes(label = NAME), size = 1.5) +
+  theme_void() 
+
+```
+
+## Adding a plot
+
+```{r}
+#| echo: false
+#| output: true
+p
+```
+
+## Transitioning to the app
+
+How do we add this plot to our Shiny app?
+
+## Step one: to avoid fully duplicating data filtering
+
+Add a reactive element to the server; basically, creates a temp version of the dataset reflecting the input values
+
+```{r}
+#| echo: true
+#| output: false
+d <- reactive({airbnb %>% filter(room_type ==
+                          input$input_roomtype &
+                          price >= 
+                          input$input_price[1] &
+                          price <= 
+                          input$input_price[2])
+})
+
+```
+
+## Step two: modify table code to draw upon that reactive element
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+output$filtered_data <- renderTable(
+    { d() %>%
+        select(id,host_name, name,
+               room_type, price, neighbourhood) %>%
+        arrange(price)},
+    rownames = FALSE
+  )
+```
+
+## Step three: transform table output into dataset useful for plotting
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+d_map <- reactive({d() %>%
+                      st_as_sf(coords = c("longitude", "latitude"), 
+                               crs = st_crs(dc_state))
+                })
+  
+```
+
+## Step four: add plot to return
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+output$map <- renderPlot(
+    ggplot(dc_state) +
+  geom_sf(data = airbnb_sf, color = "red", alpha = 0.5,
+          size = 0.5) +
+  geom_sf(color = "black", fill = "white", alpha = 0.1) +
+  geom_sf_label(aes(label = NAME), size = 1.5) +
+  theme_void() 
+  )
+
+```
+
+## Putting it together
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+#| 
+# Define UI 
+ui <- fluidPage(
+  titlePanel("DC airnb listings"),
+  sidebarLayout(
+    sidebarPanel(
+      radioButtons(inputId= "input_roomtype",
+                   label = "Room types to show:",
+                   choices = unique(airbnb$room_type),
+                   selected = "Entire home/apt"),
+      sliderInput(inputId = "input_price",
+                  label = "Price range:",
+                  min = min(airbnb$price),
+                  max = max(airbnb$price),
+                  value = c(50, 200))
+    ),
+    mainPanel(
+      plotOutput("map"),
+      tableOutput("filtered_data")
+    )
+  )
+)
+
+# Define server logic 
+server <- function(input, output) {
+  
+  d <- reactive({airbnb %>% filter(room_type ==
+                                     input$input_roomtype &
+                                     price >= 
+                                     input$input_price[1] &
+                                     price <= 
+                                     input$input_price[2])
+  })
+  
+  d_map <- reactive({d() %>%
+                      st_as_sf(coords = c("longitude", "latitude"), 
+                               crs = st_crs(dc_state))
+                })
+  
+  output$filtered_data <- renderTable(
+    { d() %>%
+        select(id,host_name, name,
+               room_type, price, neighbourhood) %>%
+        arrange(price)},
+    rownames = FALSE
+  )
+  
+  output$map <- renderPlot(
+     ggplot(dc_state) +
+    geom_sf(data = d_map(), color = "red", alpha = 0.5,
+          size = 0.5) +
+    geom_sf(color = "black", fill = "white", alpha = 0.1) +
+    geom_sf_label(aes(label = NAME), size = 1.5) +
+    theme_void() 
+  )
+}
+
+```
+
+## Summarizing
+
+-   Two elements to every shiny app:
+    -   `ui`: defines what the user sees
+    -   `server`: feeds things to the ui (eg tables; plots; etc)
+-   Build the app element by element
+    -   For each `ui` element that allows users to specify an input, go to the `server` and figure out how it will affect the output
+    -   For each type of output created (plot; table), place it somewhere in the viewable app
+
+## How can we also make the visualization interactive?
+
+-   `plotly` can work with Shiny to make it easier to code interactive visualizations
+
+-   [Resource](https://plotly-r.com/maps)
+
+## Step one: create the interactive map outside the app
+
+Add a `text` argument to the geom_sf call with the information we want to include when we hover
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true
+library(plotly)
+
+p <- ggplot(dc_state) +
+  geom_sf(data = airbnb_sf, color = "red", alpha = 0.5,
+          size = 0.5,
+          aes(text = sprintf("Airbnb name: %s;<br>price: $%d",
+                             name, price))) +
+  geom_sf(color = "black", fill = "white", alpha = 0.1) +
+  theme_void() 
+```
+
+## Step one: create the interactive map outside the app
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true
+plotly_p <- ggplotly(p)
+
+```
+
+## Step one: create the interactive map outside the app
+
+```{r}
+#| echo: false
+#| output: true
+#| eval: true
+plotly_p 
+
+```
+
+## Step two: add that to the app
+
+Two small changes:
+
+1.  Within the `server`, use `RenderPlotly` instead of `RenderPlot`
+2.  Within the `ui`, use `plotlyOutput` instead of `plotOutput`
+
+## Putting it together
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+# Define UI 
+ui <- fluidPage(
+  titlePanel("DC airnb listings"),
+  sidebarLayout(
+    sidebarPanel(
+      radioButtons(inputId= "input_roomtype",
+                   label = "Room types to show:",
+                   choices = unique(airbnb$room_type),
+                   selected = "Entire home/apt"),
+      sliderInput(inputId = "input_price",
+                  label = "Price range:",
+                  min = min(airbnb$price),
+                  max = max(airbnb$price),
+                  value = c(50, 200))
+    ),
+    mainPanel(
+      plotlyOutput("map")
+    )
+  )
+)
+
+# Define server logic 
+server <- function(input, output) {
+  
+  d <- reactive({airbnb %>% filter(room_type ==
+                                     input$input_roomtype &
+                                     price >= 
+                                     input$input_price[1] &
+                                     price <= 
+                                     input$input_price[2])
+  })
+  
+  d_map <- reactive({d() %>%
+                      st_as_sf(coords = c("longitude", "latitude"), 
+                               crs = st_crs(dc_state))
+                })
+  
+  output$filtered_data <- renderTable(
+    { d() %>%
+        select(id,host_name, name,
+               room_type, price, neighbourhood) %>%
+        arrange(price)},
+    rownames = FALSE
+  )
+  
+  output$map <- renderPlotly({
+    p <- ggplot(dc_state) +
+      geom_sf(data = d_map(), color = "red", alpha = 0.5,
+              size = 0.5,
+              aes(text = sprintf("Airbnb name: %s;<br>price: $%d",
+                                 name, price))) +
+      geom_sf(color = "black", fill = "white", alpha= 0.1) +
+      theme_void() 
+    ggplotly(p)
+  })
+}
+
+
+```
+
+## How can we give users the option to export the results?
+
+-   In addition to visualizing the results, can give users the option to export the results that correspond to a given input even if we don't display the resulting table
+-   How:
+    -   For `server`: use `downloadHandler`
+    -   For `ui`: use `downloadButton`
+
+## Server side
+
+Where `d()` corresponds to whatever we named our output from the earlier `reactive` call that produced the filtered data
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+output$csv_download <- downloadHandler(
+    filename = function(){paste("airbnbfiltered-", 
+                                Sys.time(),
+                                ".csv", sep = "")},
+    content = function(file){
+              write.csv(d(), file)
+    }
+)
+
+
+```
+
+## UI side
+
+With the `outputId` corresponding to what we named it in the server
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+downloadButton("csv_download", "Download the results")
+
+
+```
+
+## Putting it together
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+# Define UI 
+ui <-  fluidPage(
+  titlePanel("DC airnb listings"),
+  sidebarLayout(
+    sidebarPanel(
+      radioButtons(inputId= "input_roomtype",
+                   label = "Room types to show:",
+                   choices = unique(airbnb$room_type),
+                   selected = "Entire home/apt"),
+      sliderInput(inputId = "input_price",
+                  label = "Price range:",
+                  min = min(airbnb$price),
+                  max = max(airbnb$price),
+                  value = c(50, 200)),
+      downloadButton("csv_download", "Download the results")
+    ),
+    mainPanel(
+      plotlyOutput("map")
+    )
+  )
+)
+
+# Define server logic 
+server <- function(input, output) {
+  
+  d <- reactive({airbnb %>% filter(room_type ==
+                                     input$input_roomtype &
+                                     price >= 
+                                     input$input_price[1] &
+                                     price <= 
+                                     input$input_price[2])
+  })
+  
+  d_map <- reactive({d() %>%
+                      st_as_sf(coords = c("longitude", "latitude"), 
+                               crs = st_crs(dc_state))
+                })
+  
+  output$filtered_data <- renderTable(
+    { d() %>%
+        select(id,host_name, name,
+               room_type, price, neighbourhood) %>%
+        arrange(price)},
+    rownames = FALSE
+  )
+  
+  output$map <- renderPlotly({
+    p <- ggplot(dc_state) +
+      geom_sf(data = d_map(), color = "red", alpha = 0.5,
+              size = 0.5,
+              aes(text = sprintf("Airbnb name: %s;<br>price: $%d",
+                                 name, price))) +
+      geom_sf(color = "black", fill = "white", alpha= 0.1) +
+      theme_void() 
+    ggplotly(p)
+  })
+  
+  output$csv_download <- downloadHandler(
+    filename = function(){paste("airbnbfiltered-", 
+                                Sys.time(),
+                                ".csv", sep = "")},
+    content = function(file){
+              write.csv(d(), file)
+    }
+  )
+}
+
+
+```
+
+## Summing up
+
+-   Introduction to Shiny apps and two types of apps:
+    -   Filtering and displaying subsets of data
+    -   Plot with that subset with hoverable labels
+-   Across types, common process:
+    -   Depending on code complexity, get code working outside the app
+    -   For each input you allow users to vary, create an `inputId` and add that somewhere within the server
+    -   For each output that feeds into what's displayed, create an `outputId` and reference that in the ui
