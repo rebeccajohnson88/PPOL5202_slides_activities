@@ -1,0 +1,326 @@
+---
+title: "Shiny: Week one"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Activity 1: create an app that loads and displays the first 5 rows of the FEMA flood claims dataset
+
+- Use this code to read in the data
+
+```{r}
+library(arrow)
+library(here)
+flood_claims <- read_parquet(here("fall_2024/activities/FimaNfipClaims.parquet"))
+
+
+```
+
+- Display the first five rows and following columns:
+  - dateOfLoss
+  - yearOfLoss
+  - reportedCity
+  - state
+  - buildingDamageAmount
+  
+- Hint: make sure the dateOfLoss column appears as a date rather than numeric - see here for guidance: https://stackoverflow.com/questions/59565784/shiny-showing-numbers-instead-of-dates
+  
+  
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+library(shiny)
+library(tidyverse)
+library(arrow)
+library(here)
+
+flood_claims <- read_parquet(here("fall_2024/activities/FimaNfipClaims.parquet"))
+
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("FEMA Flood Claims"),
+
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+           tableOutput("example_rows")
+        )
+    )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+
+    output$example_rows <- renderTable({
+        head(flood_claims %>%
+        select(dateOfLoss, yearOfLoss, reportedCity, state,
+               buildingDamageAmount) %>%
+      mutate(dateOfLoss = format(dateOfLoss, "%Y-%m-%d")), 5)
+    })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+```
+  
+
+# Activity 2: allow viewers to filter the data by two inputs:
+
+In the sidebar:
+
+- Use a `selectInput` widget (documentation here: [https://shiny.posit.co/r/reference/shiny/1.8.0/selectinput](https://shiny.posit.co/r/reference/shiny/1.8.0/selectinput)) to allow users to select a state 
+- Use a `dateRangeInput` to allow users to select a range of dates (documentation here: [https://shiny.posit.co/r/reference/shiny/0.14/daterangeinput](https://shiny.posit.co/r/reference/shiny/0.14/daterangeinput))
+
+In the main panel:
+
+- Display the same columns as above + a random sample of 20 rows of the dataset 
+
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+library(shiny)
+library(tidyverse)
+library(arrow)
+library(here)
+
+flood_claims <- read_parquet(here("fall_2024/activities/FimaNfipClaims.parquet"))
+
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("FEMA Flood Claims"),
+
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+          selectInput(inputId= "input_state",
+                       label = "State to show:",
+                       choices = sort(unique(flood_claims$state)),
+                       selected = "FL"),
+          dateRangeInput(inputId = "input_date",
+                        label = "Date Range",
+                        start = "1978-01-01",
+                        end = "2024-09-01",
+                        min = min(flood_claims$dateOfLoss),
+                        max = max(flood_claims$dateOfLoss),
+                        startview = "year")
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+           tableOutput("example_rows")
+        )
+    )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+
+    output$example_rows <- renderTable({
+        flood_claims %>%
+        filter(state == input$input_state &
+              dateOfLoss >= input$input_date[1],
+              dateOfLoss <= input$input_date[2]) %>%
+        select(dateOfLoss, yearOfLoss, reportedCity, state,
+               buildingDamageAmount) %>%
+        sample_n(20) %>%
+        arrange(yearOfLoss) %>%
+        mutate(dateOfLoss = format(dateOfLoss, "%Y-%m-%d"))
+    })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+```
+
+# Activity 3: change the main panel to a plot of # of claims per year in the focal state/date range
+
+- Keep the same inputs to the app: state and the date range 
+- Instead of having the output being a random sample of 20 rows of the data, change the output to two items:
+  - A table with a row for each year and a column for the count of claims in that year
+  - A plot (bar or line) where the x axis is each year and the y axis is the count of claims. Give the plot a title that illustrates which state it corresponds to
+- When creating this output, use the `reactive` command to store the aggregated by year data for use in both the table and the plot 
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+library(shiny)
+library(tidyverse)
+library(arrow)
+library(here)
+
+flood_claims <- read_parquet(here("fall_2024/activities/FimaNfipClaims.parquet")) 
+
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("FEMA Flood Claims"),
+
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+          selectInput(inputId= "input_state",
+                       label = "State to show:",
+                       choices = sort(unique(flood_claims$state)),
+                       selected = "FL"),
+          dateRangeInput(inputId = "input_date",
+                        label = "Date Range",
+                        start = "1978-01-01",
+                        end = "2024-09-01",
+                        min = min(flood_claims$dateOfLoss),
+                        max = max(flood_claims$dateOfLoss),
+                        startview = "year")
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+            plotOutput("year_plot"),
+           tableOutput("agg_table")
+        )
+    )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+
+    d_agg <- reactive({
+        flood_claims %>%
+        filter(state == input$input_state &
+              dateOfLoss >= input$input_date[1],
+              dateOfLoss <= input$input_date[2]) %>%
+       group_by(yearOfLoss) %>%
+      summarise(count_claims = n())
+    })
+    
+    output$agg_table <- renderTable({
+      d_agg()
+    })
+    
+    output$year_plot <- renderPlot({
+      ggplot(d_agg(), aes(x = yearOfLoss, y = count_claims)) +
+        geom_point() +
+        geom_line() +
+        theme_bw() +
+        xlab("Year of claim") +
+        ylab("Count of claims") +
+        scale_x_continuous(breaks = seq(from = min(d_agg()$yearOfLoss), to = 
+                                          max(d_agg()$yearOfLoss),
+                                        by = 2)) +
+        ggtitle(sprintf("Count of flood insurance claims per year in %s",
+                      input$input_state)) 
+    })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+
+
+```
+
+# Activity 4: modify the app to display the table and plot in different tabs
+
+Modify the app to display the plot and the table within different tabs of the mainPanel using the `tabsetPanel` command discussed here: [https://shiny.posit.co/r/reference/shiny/0.11/tabsetpanel](https://shiny.posit.co/r/reference/shiny/0.11/tabsetpanel) 
+
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+library(shiny)
+library(tidyverse)
+library(arrow)
+library(here)
+library(bslib)
+
+flood_claims <- read_parquet(here("fall_2024/activities/FimaNfipClaims.parquet")) 
+
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+
+    # Application title
+    titlePanel("FEMA Flood Claims"),
+
+    # Sidebar with a slider input for number of bins 
+    sidebarLayout(
+        sidebarPanel(
+          selectInput(inputId= "input_state",
+                       label = "State to show:",
+                       choices = sort(unique(flood_claims$state)),
+                       selected = "FL"),
+          dateRangeInput(inputId = "input_date",
+                        label = "Date Range",
+                        start = "1978-01-01",
+                        end = "2024-09-01",
+                        min = min(flood_claims$dateOfLoss),
+                        max = max(flood_claims$dateOfLoss),
+                        startview = "year")
+        ),
+
+        # Show a plot of the generated distribution
+        mainPanel(
+          tabsetPanel(
+            tabPanel("Plot by year", plotOutput("year_plot")),
+            tabPanel("Table by year", tableOutput("agg_table"))
+            
+          )
+        )
+    )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+
+    d_agg <- reactive({
+        flood_claims %>%
+        filter(state == input$input_state &
+              dateOfLoss >= input$input_date[1],
+              dateOfLoss <= input$input_date[2]) %>%
+       group_by(yearOfLoss) %>%
+      summarise(count_claims = n())
+    })
+    
+    output$agg_table <- renderTable({
+      d_agg()
+    })
+    
+    output$year_plot <- renderPlot({
+      ggplot(d_agg(), aes(x = yearOfLoss, y = count_claims)) +
+        geom_point() +
+        geom_line() +
+        theme_bw() +
+        xlab("Year of claim") +
+        ylab("Count of claims") +
+        scale_x_continuous(breaks = seq(from = min(d_agg()$yearOfLoss), to = 
+                                          max(d_agg()$yearOfLoss),
+                                        by = 2)) +
+        ggtitle(sprintf("Count of flood insurance claims per year in %s",
+                      input$input_state)) 
+    })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+```
