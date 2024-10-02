@@ -1,0 +1,56 @@
+---
+title: "Shiny: Week one"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Activity 1: create an app that loads and displays the first 5 rows of the FEMA flood claims dataset
+
+-   Copy over this code to read in the data
+
+```{r}
+library(arrow)
+library(here)
+flood_claims <- read_parquet(here("fall_2024/activities/FimaNfipClaims.parquet"))
+
+
+```
+
+-   Display the first five rows and following columns:
+    -   dateOfLoss
+    -   yearOfLoss
+    -   reportedCity
+    -   state
+    -   buildingDamageAmount
+-   Hint: make sure the dateOfLoss column appears as a date rather than numeric - see here for guidance: https://stackoverflow.com/questions/59565784/shiny-showing-numbers-instead-of-dates
+
+# Activity 2: allow viewers to filter the data by two inputs:
+
+In the sidebar:
+
+-   Use a `selectInput` widget (documentation here: <https://shiny.posit.co/r/reference/shiny/1.8.0/selectinput>) to allow users to select a state
+-   Use a `dateRangeInput` to allow users to select a range of dates (documentation here: <https://shiny.posit.co/r/reference/shiny/0.14/daterangeinput>)
+
+In the main panel:
+
+-   Display the same columns as above + a random sample of 20 rows of the dataset
+
+
+
+# Activity 3: change the main panel to a plot of \# of claims per year in the focal state/date range
+
+-   Keep the same inputs to the app: state and the date range
+-   Instead of having the output being a random sample of 20 rows of the data, change the output to two items:
+    -   A table with a row for each year and a column for the count of claims in that year
+    -   A plot (bar or line) where the x axis is each year and the y axis is the count of claims. Give the plot a title that illustrates which state it corresponds to
+-   When creating this output, use the `reactive` command to store the aggregated by year data for use in both the table and the plot
+
+
+
+# Activity 4: modify the app to display the table and plot in different tabs
+
+Modify the app to display the plot and the table within different tabs of the mainPanel using the `tabsetPanel` command discussed here: <https://shiny.posit.co/r/reference/shiny/0.11/tabsetpanel>
+
