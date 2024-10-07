@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="session7_shiny_leaflet_files/libs/clipboard/clipboard.min.js"></script>
+<script src="session7_shiny_leaflet_files/libs/quarto-html/tabby.min.js"></script>
+<script src="session7_shiny_leaflet_files/libs/quarto-html/popper.min.js"></script>
+<script src="session7_shiny_leaflet_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="session7_shiny_leaflet_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="session7_shiny_leaflet_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="session7_shiny_leaflet_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="session7_shiny_leaflet_files/libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.5.56">
+
+  <meta name="author" content="Prof.&nbsp;Rebecca A. Johnson">
+  <meta name="dcterms.date" content="2024-10-07">
+  <title>Session 7: Shiny + Leaflet</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="session7_shiny_leaflet_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="session7_shiny_leaflet_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; background-color: #2a0f15; font-weight: bold; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="session7_shiny_leaflet_files/libs/revealjs/dist/theme/quarto.css">
+  <link href="session7_shiny_leaflet_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="session7_shiny_leaflet_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="session7_shiny_leaflet_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="session7_shiny_leaflet_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;  
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple { 
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-titled) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-titled .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-titled .callout-title  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+    
+  .callout.callout-titled.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-titled.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-title {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-title {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-title {
+    display: flex
+  }
+    
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
+    padding-bottom: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .callout.callout-titled .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-titled) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-title {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-title {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-title {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-title {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-title {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="session7_shiny_leaflet_files/libs/htmlwidgets-1.6.0/htmlwidgets.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+  <link href="session7_shiny_leaflet_files/libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+  <script src="session7_shiny_leaflet_files/libs/leaflet-1.3.1/leaflet.js"></script>
+  <link href="session7_shiny_leaflet_files/libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+  <script src="session7_shiny_leaflet_files/libs/proj4-2.6.2/proj4.min.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+  <link href="session7_shiny_leaflet_files/libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+  <script src="session7_shiny_leaflet_files/libs/leaflet-binding-2.2.2/leaflet.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/leaflet-providers-plugin-2.2.2/leaflet-providers-plugin.js"></script>
+</head>
+<body class="quarto-dark">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">Session 7: Shiny + Leaflet</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Prof.&nbsp;Rebecca A. Johnson 
+</div>
+</div>
+</div>
+
+  <p class="date">2024-10-07</p>
+</section>
+<section id="overview" class="title-slide slide level1 center">
+<h1>Overview</h1>
+<ul>
+<li>Leaflet for interactive mapping</li>
+<li>Integrating Leaflet into Shiny apps</li>
+</ul>
+</section>
+
+<section>
+<section id="leaflet" class="title-slide slide level1 center">
+<h1>Leaflet</h1>
+
+</section>
+<section id="what-is-leaflet" class="slide level2">
+<h2>What is leaflet?</h2>
+<ul>
+<li>Plotly: general interactive <em>plotting</em>; compatible with maps but not specifically designed around geographic visualizations</li>
+<li>Leaflet: interactive visualization tool specifically geared towards mapping</li>
+<li>Open source JavaScript library you can use in R</li>
+</ul>
+</section>
+<section id="basic-structure-of-a-leaflet-map" class="slide level2">
+<h2>Basic structure of a leaflet map</h2>
+<ul>
+<li>Create a <code>base map</code> using different <code>tiles</code> available in the Leaflet package</li>
+<li>Add your own data — often spatial points data — to that base map</li>
+</ul>
+</section>
+<section id="getting-started" class="slide level2">
+<h2>Getting started</h2>
+<p>Basic tile of open street map</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">library</span>(leaflet)</span>
+<span id="cb1-2"><a href=""></a><span class="fu">library</span>(leaflet.extras)</span>
+<span id="cb1-3"><a href=""></a></span>
+<span id="cb1-4"><a href=""></a>basemap <span class="ot">&lt;-</span> <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb1-5"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb1-6"><a href=""></a>                     <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)</span>
+<span id="cb1-7"><a href=""></a></span>
+<span id="cb1-8"><a href=""></a>basemap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-32c64c7f097d8e31411b" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-32c64c7f097d8e31411b">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,"OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]}]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="adding-more-tiles-control-over-which-layer-to-display" class="slide level2">
+<h2>Adding more tiles + control over which layer to display</h2>
+<p>Can allow users to toggle between different layers of the map</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a>basemap <span class="ot">&lt;-</span> <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-2"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb2-3"><a href=""></a>                     <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"Esri.WorldStreetMap"</span>,</span>
+<span id="cb2-5"><a href=""></a>                     <span class="at">group =</span> <span class="st">"ESRI"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-6"><a href=""></a>    <span class="fu">addLayersControl</span>(<span class="at">baseGroups =</span> <span class="fu">c</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb2-7"><a href=""></a>                                    <span class="st">"ESRI"</span>),</span>
+<span id="cb2-8"><a href=""></a>                     <span class="at">position =</span> <span class="st">"topright"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="adding-more-tiles-control-over-which-layer-to-display-1" class="slide level2">
+<h2>Adding more tiles + control over which layer to display</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-0218579198295b40a7ab" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-0218579198295b40a7ab">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,"OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Esri.WorldStreetMap",null,"ESRI",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OpenStreetMap","ESRI"],[],{"collapsed":true,"autoZIndex":true,"position":"topright"}]}]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="how-do-we-focus-the-map-on-a-specific-location" class="slide level2">
+<h2>How do we focus the map on a specific location?</h2>
+<p><code>setView</code> command: can feed it a specific longitude, latitude, and level of Zoom</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href=""></a><span class="do">## get centroid of DC polygon</span></span>
+<span id="cb3-2"><a href=""></a>dc <span class="ot">&lt;-</span> tigris<span class="sc">::</span><span class="fu">states</span>(<span class="at">year =</span> <span class="dv">2021</span>, <span class="at">refresh =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href=""></a>      <span class="fu">filter</span>(STUSPS <span class="sc">==</span> <span class="st">"DC"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="how-do-we-focus-the-map-on-a-specific-location-1" class="slide level2">
+<h2>How do we focus the map on a specific location?</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a>dc_centroid <span class="ot">&lt;-</span> dc <span class="sc">%&gt;%</span> <span class="fu">st_centroid</span>() </span>
+<span id="cb4-2"><a href=""></a>dc_centroid <span class="ot">&lt;-</span> dc_centroid <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href=""></a>        <span class="fu">mutate</span>(<span class="at">lon =</span> <span class="fu">st_coordinates</span>(.)[, <span class="dv">1</span>],</span>
+<span id="cb4-4"><a href=""></a>               <span class="at">lat =</span> <span class="fu">st_coordinates</span>(.)[, <span class="dv">2</span>]) </span>
+<span id="cb4-5"><a href=""></a><span class="fu">head</span>(dc_centroid)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Simple feature collection with 1 feature and 16 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: -77.01629 ymin: 38.90476 xmax: -77.01629 ymax: 38.90476
+Geodetic CRS:  NAD83
+  REGION DIVISION STATEFP  STATENS GEOID STUSPS                 NAME LSAD MTFCC
+1      3        5      11 01702382    11     DC District of Columbia   00 G4000
+  FUNCSTAT     ALAND   AWATER    INTPTLAT     INTPTLON
+1        A 158316124 18709762 +38.9042474 -077.0165167
+                    geometry       lon      lat
+1 POINT (-77.01629 38.90476) -77.01629 38.90476</code></pre>
+</div>
+</div>
+</section>
+<section id="how-do-we-focus-the-map-on-a-specific-location-2" class="slide level2">
+<h2>How do we focus the map on a specific location?</h2>
+<p><code>setView</code> command: can feed it a specific longitude, latitude, and level of Zoom</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a>basemap <span class="ot">&lt;-</span> <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb6-3"><a href=""></a>                     <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"Esri.WorldStreetMap"</span>,</span>
+<span id="cb6-5"><a href=""></a>                     <span class="at">group =</span> <span class="st">"ESRI"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href=""></a>    <span class="fu">addLayersControl</span>(<span class="at">baseGroups =</span> <span class="fu">c</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb6-7"><a href=""></a>                                    <span class="st">"ESRI"</span>),</span>
+<span id="cb6-8"><a href=""></a>                     <span class="at">position =</span> <span class="st">"topright"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href=""></a>    <span class="fu">setView</span>(<span class="at">lng =</span> <span class="fu">as.numeric</span>(dc_centroid<span class="sc">$</span>lon),</span>
+<span id="cb6-10"><a href=""></a>            <span class="at">lat =</span> <span class="fu">as.numeric</span>(dc_centroid<span class="sc">$</span>lat), <span class="at">zoom =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="how-do-we-focus-the-map-on-a-specific-location-3" class="slide level2">
+<h2>How do we focus the map on a specific location?</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-5174dfe33d3cbb5e2f58" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-5174dfe33d3cbb5e2f58">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,"OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Esri.WorldStreetMap",null,"ESRI",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OpenStreetMap","ESRI"],[],{"collapsed":true,"autoZIndex":true,"position":"topright"}]}],"setView":[[38.90475809771283,-77.01628586582078],12,[]]},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="adding-a-single-point-to-a-map" class="slide level2">
+<h2>Adding a single point to a map</h2>
+<p>Can use the <code>addMarker()</code> variety of functions to add markers to the map; here, we show a single marker (McCourt School)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href=""></a>mccourt_lat <span class="ot">&lt;-</span> <span class="fl">38.896351</span></span>
+<span id="cb7-2"><a href=""></a>mccourt_lon <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">77.013199</span></span>
+<span id="cb7-3"><a href=""></a></span>
+<span id="cb7-4"><a href=""></a>basemap <span class="ot">&lt;-</span> <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb7-6"><a href=""></a>                     <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb7-7"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"Esri.WorldStreetMap"</span>,</span>
+<span id="cb7-8"><a href=""></a>                     <span class="at">group =</span> <span class="st">"ESRI"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a href=""></a>    <span class="fu">addLayersControl</span>(<span class="at">baseGroups =</span> <span class="fu">c</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb7-10"><a href=""></a>                                    <span class="st">"ESRI"</span>),</span>
+<span id="cb7-11"><a href=""></a>                     <span class="at">position =</span> <span class="st">"topright"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-12"><a href=""></a>    <span class="fu">setView</span>(<span class="at">lng =</span> <span class="fu">as.numeric</span>(dc_centroid<span class="sc">$</span>lon),</span>
+<span id="cb7-13"><a href=""></a>            <span class="at">lat =</span> <span class="fu">as.numeric</span>(dc_centroid<span class="sc">$</span>lat), <span class="at">zoom =</span> <span class="dv">12</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-14"><a href=""></a>    <span class="fu">addMarkers</span>(<span class="at">lng =</span> mccourt_lon, <span class="at">lat =</span> mccourt_lat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="adding-a-single-point-to-a-map-1" class="slide level2">
+<h2>Adding a single point to a map</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-288fd6654f267f8c06ce" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-288fd6654f267f8c06ce">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,"OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Esri.WorldStreetMap",null,"ESRI",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OpenStreetMap","ESRI"],[],{"collapsed":true,"autoZIndex":true,"position":"topright"}]},{"method":"addMarkers","args":[38.896351,-77.013199,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"setView":[[38.90475809771283,-77.01628586582078],12,[]],"limits":{"lat":[38.896351,38.896351],"lng":[-77.013199,-77.013199]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="adding-a-dataset-with-points-to-a-map" class="slide level2">
+<h2>Adding a dataset with points to a map</h2>
+<ul>
+<li>All <code>leaflet</code> maps use <code>crs = 4326</code> (WGS 84)</li>
+<li>Easiest to create or rename columns for <code>lng</code> (longitude) and <code>lat</code> (latitude)</li>
+<li>Feed data either to original <code>leaflet</code> call or the <code>addMarkers</code> step</li>
+</ul>
+</section>
+<section id="adding-a-dataset-with-points-to-a-map-1" class="slide level2">
+<h2>Adding a dataset with points to a map</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>homeless_facilities <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_read</span>(<span class="fu">here</span>(<span class="st">"fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href=""></a>      <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Reading layer `Homeless_Service_Facilities' from data source 
+  `/Users/rj545/Dropbox/PPOL5202_slides_activities/fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson' 
+  using driver `GeoJSON'
+Simple feature collection with 115 features and 68 fields
+Geometry type: POINT
+Dimension:     XY
+Bounding box:  xmin: -77.09718 ymin: 38.82999 xmax: -76.92901 ymax: 38.98029
+Geodetic CRS:  WGS 84</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a>basemap <span class="ot">&lt;-</span> <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb10-3"><a href=""></a>                     <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"Esri.WorldStreetMap"</span>,</span>
+<span id="cb10-5"><a href=""></a>                     <span class="at">group =</span> <span class="st">"ESRI"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-6"><a href=""></a>    <span class="fu">addLayersControl</span>(<span class="at">baseGroups =</span> <span class="fu">c</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb10-7"><a href=""></a>                                    <span class="st">"ESRI"</span>),</span>
+<span id="cb10-8"><a href=""></a>                     <span class="at">position =</span> <span class="st">"topright"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb10-9"><a href=""></a>    <span class="fu">addCircleMarkers</span>(<span class="at">data =</span> homeless_facilities, <span class="at">lat =</span> <span class="sc">~</span>LATITUDE,</span>
+<span id="cb10-10"><a href=""></a>               <span class="at">lng =</span> <span class="sc">~</span>LONGITUDE,</span>
+<span id="cb10-11"><a href=""></a>               <span class="at">color =</span> <span class="st">'darkgreen'</span>, <span class="at">radius =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="adding-a-dataset-with-points-to-a-map-2" class="slide level2">
+<h2>Adding a dataset with points to a map</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-cfb7c819b5edd8a5b42c" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-cfb7c819b5edd8a5b42c">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,"OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Esri.WorldStreetMap",null,"ESRI",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OpenStreetMap","ESRI"],[],{"collapsed":true,"autoZIndex":true,"position":"topright"}]},{"method":"addCircleMarkers","args":[[38.98028088,38.97443675,38.96691392,38.96556949,38.95512813,38.95273418,38.95136594,38.94760839,38.94622563,38.94220022,38.94110672,38.93347981,38.932702,38.93191525,38.9313123,38.93104813,38.93046772,38.92828361,38.92817003,38.92744073,38.9267581,38.92615416,38.92600363,38.92489085,38.92484802,38.92256186,38.92168021,38.92004237,38.91962229,38.9183818,38.91784146,38.91673953,38.91649347,38.91343456,38.91244216,38.91081441,38.91047536,38.91033198,38.91003395,38.90944791,38.90917422,38.909174,38.90891803,38.90844496,38.90824208,38.9080471,38.90756608,38.9066513,38.90647143,38.90537989,38.90537989,38.90419769,38.90400275,38.90357405,38.90218491,38.901557,38.90042073,38.90041317,38.90022564,38.89997606,38.89997477,38.89938028,38.89869166,38.89868476,38.89865771,38.8985433,38.89853139,38.89811423,38.89781195,38.89775511,38.8975388,38.89719409,38.89720759,38.89630278,38.89552125,38.89550412,38.89550412,38.89513201,38.89440688,38.89418122,38.89392349,38.892759,38.89116469,38.88921494,38.88895483,38.88536339,38.88430985,38.88408446,38.88363955,38.88363955,38.88145847,38.88138738,38.87986182,38.87953497,38.87902002,38.87869795,38.87628078,38.86866337,38.86620067,38.86612122,38.86592269,38.8659082,38.86584652,38.86543825,38.8648716,38.86346089,38.86309964,38.86309075,38.86139567,38.86048531,38.84926792,38.84618686,38.84359614,38.83132585,38.82998701],[-77.02703545,-77.02015686999999,-77.02706061000001,-77.07545672000001,-76.99958432,-77.03584632,-77.08063657,-77.07988675,-77.06520098999999,-77.02613743000001,-77.02724782999999,-77.03574784,-76.99191722,-77.03605165,-76.9920838,-77.03569449,-77.0371446,-77.03582688,-77.03303025,-76.97862566000001,-77.02315718,-77.03365011,-76.98361996,-77.03881041,-77.0399884,-76.99305218000001,-76.98935267,-77.03112933,-76.97487627,-77.09717464000001,-76.97416935,-77.02833038,-77.03355963999999,-77.06600731,-77.02221836,-77.00616898,-77.03163178,-77.02162495,-77.0368795,-77.00705953000001,-77.00696358,-77.006964,-77.01143175,-76.93215558,-77.01110063,-77.01142987999999,-77.03142561,-77.0076725,-77.03260054,-77.01335077,-77.01335077,-77.02931331000001,-77.01361683,-77.06202295,-77.04454792,-77.00966,-76.94746259999999,-76.99338336,-76.97215679,-77.03121326,-76.99645357999999,-77.05485782,-77.02476625,-77.01106317,-77.03046994,-77.02556601000001,-77.05196099,-77.02516941,-76.97913403,-77.01755124,-77.00617913000001,-76.9290124,-77.02295312,-77.01564767000001,-76.94845527,-77.01329693,-77.01329693,-77.03279974,-76.99635899,-76.94777105,-76.95130618,-77.01989943,-76.9375096,-77.05016058,-76.92957721000001,-76.996943,-76.97462269,-76.99651546,-76.99453724,-76.99453724,-76.98697007,-77.03655293,-76.99528434,-77.01242625,-77.01821207,-77.01583178,-76.96557696000001,-76.95814614,-76.98105455,-76.94994864,-76.98982639,-76.97862553,-76.98588530000001,-76.98923777,-76.95420120999999,-76.99126103,-76.98356446,-76.99137019,-76.99325090000001,-76.96895241,-76.98064502,-76.98125132,-76.97423215000001,-77.00936489999999,-77.00814912],2,null,null,{"interactive":true,"className":"","stroke":true,"color":"darkgreen","weight":5,"opacity":0.5,"fill":true,"fillColor":"darkgreen","fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[38.82998701,38.98028088],"lng":[-77.09717464000001,-76.9290124]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="adding-information-to-markers" class="slide level2">
+<h2>Adding information to markers</h2>
+<ul>
+<li>Add a <code>label</code> argument to the marker</li>
+<li>Use the <code>&lt;br&gt;</code> html syntax (and transform string to HTML) to create the linebreak</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>basemap <span class="ot">&lt;-</span> <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb11-3"><a href=""></a>                     <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"Esri.WorldStreetMap"</span>,</span>
+<span id="cb11-5"><a href=""></a>                     <span class="at">group =</span> <span class="st">"ESRI"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href=""></a>    <span class="fu">addLayersControl</span>(<span class="at">baseGroups =</span> <span class="fu">c</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb11-7"><a href=""></a>                                    <span class="st">"ESRI"</span>),</span>
+<span id="cb11-8"><a href=""></a>                     <span class="at">position =</span> <span class="st">"topright"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href=""></a>    <span class="fu">addCircleMarkers</span>(<span class="at">data =</span> homeless_facilities, <span class="at">lat =</span> <span class="sc">~</span>LATITUDE,</span>
+<span id="cb11-10"><a href=""></a>               <span class="at">lng =</span> <span class="sc">~</span>LONGITUDE,</span>
+<span id="cb11-11"><a href=""></a>               <span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"Name: %s&lt;br&gt;Target groups: %s"</span>,</span>
+<span id="cb11-12"><a href=""></a>                               homeless_facilities<span class="sc">$</span>PROGRAM_NAME,</span>
+<span id="cb11-13"><a href=""></a>                               homeless_facilities<span class="sc">$</span>TARGET) <span class="sc">%&gt;%</span></span>
+<span id="cb11-14"><a href=""></a>                            <span class="fu">lapply</span>(htmltools<span class="sc">::</span>HTML),</span>
+<span id="cb11-15"><a href=""></a>               <span class="at">color =</span> <span class="st">'darkgreen'</span>, <span class="at">radius =</span> <span class="dv">2</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="adding-information-to-markers-1" class="slide level2">
+<h2>Adding information to markers</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-fe1b2e469f9c50a22f4d" style="width:960px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-fe1b2e469f9c50a22f4d">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["OpenStreetMap",null,"OpenStreetMap",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addProviderTiles","args":["Esri.WorldStreetMap",null,"ESRI",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OpenStreetMap","ESRI"],[],{"collapsed":true,"autoZIndex":true,"position":"topright"}]},{"method":"addCircleMarkers","args":[[38.98028088,38.97443675,38.96691392,38.96556949,38.95512813,38.95273418,38.95136594,38.94760839,38.94622563,38.94220022,38.94110672,38.93347981,38.932702,38.93191525,38.9313123,38.93104813,38.93046772,38.92828361,38.92817003,38.92744073,38.9267581,38.92615416,38.92600363,38.92489085,38.92484802,38.92256186,38.92168021,38.92004237,38.91962229,38.9183818,38.91784146,38.91673953,38.91649347,38.91343456,38.91244216,38.91081441,38.91047536,38.91033198,38.91003395,38.90944791,38.90917422,38.909174,38.90891803,38.90844496,38.90824208,38.9080471,38.90756608,38.9066513,38.90647143,38.90537989,38.90537989,38.90419769,38.90400275,38.90357405,38.90218491,38.901557,38.90042073,38.90041317,38.90022564,38.89997606,38.89997477,38.89938028,38.89869166,38.89868476,38.89865771,38.8985433,38.89853139,38.89811423,38.89781195,38.89775511,38.8975388,38.89719409,38.89720759,38.89630278,38.89552125,38.89550412,38.89550412,38.89513201,38.89440688,38.89418122,38.89392349,38.892759,38.89116469,38.88921494,38.88895483,38.88536339,38.88430985,38.88408446,38.88363955,38.88363955,38.88145847,38.88138738,38.87986182,38.87953497,38.87902002,38.87869795,38.87628078,38.86866337,38.86620067,38.86612122,38.86592269,38.8659082,38.86584652,38.86543825,38.8648716,38.86346089,38.86309964,38.86309075,38.86139567,38.86048531,38.84926792,38.84618686,38.84359614,38.83132585,38.82998701],[-77.02703545,-77.02015686999999,-77.02706061000001,-77.07545672000001,-76.99958432,-77.03584632,-77.08063657,-77.07988675,-77.06520098999999,-77.02613743000001,-77.02724782999999,-77.03574784,-76.99191722,-77.03605165,-76.9920838,-77.03569449,-77.0371446,-77.03582688,-77.03303025,-76.97862566000001,-77.02315718,-77.03365011,-76.98361996,-77.03881041,-77.0399884,-76.99305218000001,-76.98935267,-77.03112933,-76.97487627,-77.09717464000001,-76.97416935,-77.02833038,-77.03355963999999,-77.06600731,-77.02221836,-77.00616898,-77.03163178,-77.02162495,-77.0368795,-77.00705953000001,-77.00696358,-77.006964,-77.01143175,-76.93215558,-77.01110063,-77.01142987999999,-77.03142561,-77.0076725,-77.03260054,-77.01335077,-77.01335077,-77.02931331000001,-77.01361683,-77.06202295,-77.04454792,-77.00966,-76.94746259999999,-76.99338336,-76.97215679,-77.03121326,-76.99645357999999,-77.05485782,-77.02476625,-77.01106317,-77.03046994,-77.02556601000001,-77.05196099,-77.02516941,-76.97913403,-77.01755124,-77.00617913000001,-76.9290124,-77.02295312,-77.01564767000001,-76.94845527,-77.01329693,-77.01329693,-77.03279974,-76.99635899,-76.94777105,-76.95130618,-77.01989943,-76.9375096,-77.05016058,-76.92957721000001,-76.996943,-76.97462269,-76.99651546,-76.99453724,-76.99453724,-76.98697007,-77.03655293,-76.99528434,-77.01242625,-77.01821207,-77.01583178,-76.96557696000001,-76.95814614,-76.98105455,-76.94994864,-76.98982639,-76.97862553,-76.98588530000001,-76.98923777,-76.95420120999999,-76.99126103,-76.98356446,-76.99137019,-76.99325090000001,-76.96895241,-76.98064502,-76.98125132,-76.97423215000001,-77.00936489999999,-77.00814912],2,null,null,{"interactive":true,"className":"","stroke":true,"color":"darkgreen","weight":5,"opacity":0.5,"fill":true,"fillColor":"darkgreen","fillOpacity":0.2},null,null,null,null,["Name: Shepherd Park Library<br>Target groups: Men & Women","Name: Takoma Library<br>Target groups: Men & Women","Name: Headquarters<br>Target groups: Families","Name: Chevy Chase Library<br>Target groups: Men & Women","Name: Lamond-Riggs Library<br>Target groups: Men & Women","Name: The Next Step Program (Admin Offices)<br>Target groups: Men & Women","Name: Drop-In Center & Clinic<br>Target groups: Men & Women","Name: Tenley-Friendship Library<br>Target groups: Men & Women","Name: Cleveland Park Library<br>Target groups: Men & Women","Name: Petworth Library<br>Target groups: Men & Women","Name: Taylor Street Service Center<br>Target groups: Men & Women","Name: Morning Program<br>Target groups: Men & Women","Name: Refugee Center<br>Target groups: NA","Name: Emergency Brief Services<br>Target groups: Women ","Name: Anchor Counseling Services<br>Target groups: NA","Name: Dinner Program<br>Target groups: Men & Women","Name: Mt. Pleasant Library<br>Target groups: Men & Women","Name: DC Safe Housing Drop-In Center<br>Target groups: Youth","Name: Upper Cardozo Health Center (Ward 1)<br>Target groups: Men & Women","Name: Woodridge Library<br>Target groups: Men & Women","Name: Drop-Inn Safe Center<br>Target groups: Youth","Name: Social Services<br>Target groups: Men & Women","Name: Community Resource & Referral Center<br>Target groups: Men & Women","Name: Columbia Road Health Services (Ward 1)<br>Target groups: Men & Women","Name: Medical Care & Housing Services<br>Target groups: Men & Women","Name: Virginia Williams Family Resource Center<br>Target groups: Families","Name: Brentwood Health Center (Ward 5)<br>Target groups: Men & Women","Name: Whitman-Walker WeWork Manhattan Laundry<br>Target groups: Men & Women","Name: Adams Place Drop-In Center<br>Target groups: Men & Women","Name: Palisades Library<br>Target groups: Men & Women","Name: Emergency Assistance<br>Target groups: NA","Name: Legal Assistance Project<br>Target groups: Men & Women","Name: Administrative Office<br>Target groups: Women","Name: Georgetown Library<br>Target groups: Men & Women","Name: Shaw Library<br>Target groups: Men & Women","Name: Administrative Office & Health Clinic<br>Target groups: Men & Women","Name: Whitman Walker 1525<br>Target groups: Men & Women","Name: Northwest Center<br>Target groups: Men & Women","Name: ID & Walk-In Ministry<br>Target groups: Men & Women","Name: Assessment and Referral Center (ARC)<br>Target groups: NA","Name: Family Services Administration<br>Target groups: Men & Women","Name: Shelter Hotline<br>Target groups: Men & Women","Name: Dining, Shower, and Clothing Programs<br>Target groups: Men & Women","Name: Deanwood Library<br>Target groups: Men & Women","Name: Medical & Behavioral Health Clinic<br>Target groups: NA","Name: Isaiah House Day Program<br>Target groups: Men & Women","Name: Bethany Women's Day Center<br>Target groups: Women","Name: Walker Jones Health Center (Ward 6)<br>Target groups: Men & Women","Name: Childcare Center<br>Target groups: Children","Name: The Next Step Program (Perry School Center)<br>Target groups: Men & Women","Name: Early Child Care Program<br>Target groups: Children","Name: Administrative Office<br>Target groups: Men & Women","Name: Northwest One Library<br>Target groups: Men & Women","Name: Clubhouse Drop-In Center<br>Target groups: Men & Women","Name: Library Express<br>Target groups: Men & Women","Name: Day Shelter Program<br>Target groups: Men","Name: Parkside Health Center (Ward 7)<br>Target groups: Men & Women","Name: Drop-In Center<br>Target groups: Men & Women","Name: Food Pantry & Computer Center<br>Target groups: Men & Women","Name: Day Program<br>Target groups: Men & Women","Name: H Street Service Center<br>Target groups: Men & Women","Name: West End Library<br>Target groups: Men & Women","Name: MLK Jr. Library<br>Target groups: Men & Women","Name: Ministry Resource Center & Shelter<br>Target groups: Men","Name: The Welcome Table<br>Target groups: Men & Women","Name: Drop-In Center (Downtown)<br>Target groups: Youth","Name: Meals Program<br>Target groups: Men & Women","Name: Administrative Office<br>Target groups: Men & Women","Name: Rosedale Library<br>Target groups: Men & Women","Name: Public Restrooms<br>Target groups: Men & Women","Name: Public Restrooms<br>Target groups: Men & Women","Name: Service Location<br>Target groups: Families","Name: Public Restrooms<br>Target groups: Men & Women","Name: Emergency Services Program<br>Target groups: Men & Women","Name: Intake Center<br>Target groups: Men & Women","Name: The Mitch Snyder Center for Arts and Education<br>Target groups: Men & Women","Name: DC HEAC<br>Target groups: Men & Women","Name: Public Restrooms<br>Target groups: Men & Women","Name: Northeast Library<br>Target groups: Men & Women","Name: Bening Library<br>Target groups: Men & Women","Name: Minnessota Ave Health Center (Ward 7)<br>Target groups: Men & Women","Name: Public Restrooms<br>Target groups: Men & Women","Name: East of the River Health Center (Ward 7)<br>Target groups: Men & Women","Name: Public Restrooms<br>Target groups: Men & Women","Name: Capitol View Library<br>Target groups: Men & Women","Name: The Center for Families and Children<br>Target groups: Families","Name: Harriet Tubman Day Program<br>Target groups: Women","Name: Southeast Library<br>Target groups: Men & Women","Name: Main Office<br>Target groups: Men & Women","Name: Administrative Offices<br>Target groups: Men & Women","Name: Shirley's Place<br>Target groups: Individuals","Name: Public Restrooms<br>Target groups: Men & Women","Name: Drop-In Center (Barraks Row)<br>Target groups: Youth","Name: Southwest Health Center (Ward 6)<br>Target groups: Men & Women","Name: Housing Resource Center<br>Target groups: Women","Name: Southwest Library<br>Target groups: Men & Women","Name: Service Location<br>Target groups: Families","Name: Main Office<br>Target groups: Families","Name: Southeast Center<br>Target groups: Men & Women","Name: Fort Davis Service Center<br>Target groups: Men & Women","Name: Service Location<br>Target groups: Families","Name: Anacostia Library<br>Target groups: Men & Women","Name: The Next Step Program (SE DC Offices)<br>Target groups: Men & Women","Name: Anacostia Service Center<br>Target groups: Men & Women","Name: Francis A. Gregory Library<br>Target groups: Men & Women","Name: Max Robinson Center<br>Target groups: Men & Women","Name: Anacostia Health Center (Ward 8)<br>Target groups: Men & Women","Name: Social Services<br>Target groups: Men & Women","Name: BBC Outreach Center<br>Target groups: NA","Name: The Next Step Program (Skyland Workforce Center)<br>Target groups: Men & Women","Name: Stanton Road Health Center (Ward 8)<br>Target groups: Men & Women","Name: Parklands-Turner Library<br>Target groups: Men & Women","Name: Resource Center<br>Target groups: Youth","Name: Bellevue Library<br>Target groups: Men & Women","Name: Congress Heights Service Center<br>Target groups: Men & Women"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[38.82998701,38.98028088],"lng":[-77.09717464000001,-76.9290124]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section></section>
+<section>
+<section id="where-we-are" class="title-slide slide level1 center">
+<h1>Where we are</h1>
+<ul>
+<li>Leaflet for interactive mapping</li>
+<li>Integrating Leaflet into Shiny apps</li>
+</ul>
+</section>
+<section id="shiny-leaflet" class="slide level2">
+<h2>Shiny + Leaflet</h2>
+<p>To start with a simple example, we can embed the leaflet map into an app with no inputs</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">library</span>(shiny)</span>
+<span id="cb12-2"><a href=""></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb12-3"><a href=""></a><span class="fu">library</span>(leaflet)</span>
+<span id="cb12-4"><a href=""></a><span class="fu">library</span>(leaflet.extras)</span>
+<span id="cb12-5"><a href=""></a><span class="fu">library</span>(htmltools)</span>
+<span id="cb12-6"><a href=""></a><span class="fu">library</span>(sf)</span>
+<span id="cb12-7"><a href=""></a></span>
+<span id="cb12-8"><a href=""></a>homeless_facilities <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_read</span>(<span class="fu">here</span>(<span class="st">"fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-9"><a href=""></a>      <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb12-10"><a href=""></a></span>
+<span id="cb12-11"><a href=""></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="cb12-12"><a href=""></a>  <span class="co"># Application title</span></span>
+<span id="cb12-13"><a href=""></a>  <span class="fu">titlePanel</span>(<span class="st">"Map of Homeless Facilities in DC"</span>),</span>
+<span id="cb12-14"><a href=""></a>  <span class="co"># Leaflet output</span></span>
+<span id="cb12-15"><a href=""></a>  <span class="fu">leafletOutput</span>(<span class="st">"map"</span>)</span>
+<span id="cb12-16"><a href=""></a>)</span>
+<span id="cb12-17"><a href=""></a></span>
+<span id="cb12-18"><a href=""></a><span class="co"># Define server logic required to draw a histogram</span></span>
+<span id="cb12-19"><a href=""></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb12-20"><a href=""></a> </span>
+<span id="cb12-21"><a href=""></a>  output<span class="sc">$</span>map <span class="ot">&lt;-</span> <span class="fu">renderLeaflet</span>({</span>
+<span id="cb12-22"><a href=""></a>    <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-23"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb12-24"><a href=""></a>                     <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb12-25"><a href=""></a>    <span class="fu">addProviderTiles</span>(<span class="st">"Esri.WorldStreetMap"</span>,</span>
+<span id="cb12-26"><a href=""></a>                     <span class="at">group =</span> <span class="st">"ESRI"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-27"><a href=""></a>    <span class="fu">addLayersControl</span>(<span class="at">baseGroups =</span> <span class="fu">c</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb12-28"><a href=""></a>                                    <span class="st">"ESRI"</span>),</span>
+<span id="cb12-29"><a href=""></a>                     <span class="at">position =</span> <span class="st">"topright"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-30"><a href=""></a>    <span class="fu">addCircleMarkers</span>(<span class="at">data =</span> homeless_facilities, <span class="at">lat =</span> <span class="sc">~</span>LATITUDE,</span>
+<span id="cb12-31"><a href=""></a>               <span class="at">lng =</span> <span class="sc">~</span>LONGITUDE,</span>
+<span id="cb12-32"><a href=""></a>               <span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"Name: %s&lt;br&gt;Target groups: %s"</span>,</span>
+<span id="cb12-33"><a href=""></a>                               homeless_facilities<span class="sc">$</span>PROGRAM_NAME,</span>
+<span id="cb12-34"><a href=""></a>                               homeless_facilities<span class="sc">$</span>TARGET) <span class="sc">%&gt;%</span></span>
+<span id="cb12-35"><a href=""></a>                            <span class="fu">lapply</span>(htmltools<span class="sc">::</span>HTML),</span>
+<span id="cb12-36"><a href=""></a>               <span class="at">color =</span> <span class="st">'darkgreen'</span>, <span class="at">radius =</span> <span class="dv">2</span>) </span>
+<span id="cb12-37"><a href=""></a>  })</span>
+<span id="cb12-38"><a href=""></a>}</span>
+<span id="cb12-39"><a href=""></a></span>
+<span id="cb12-40"><a href=""></a><span class="co"># Run the application </span></span>
+<span id="cb12-41"><a href=""></a><span class="fu">shinyApp</span>(<span class="at">ui =</span> ui, <span class="at">server =</span> server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="two-interactive-components" class="slide level2">
+<h2>Two interactive components:</h2>
+<ul>
+<li>Allow users to filter to different target groups for the facility</li>
+<li>Allow users to draw a polygon and download a list of homeless facilities within that radius</li>
+</ul>
+</section>
+<section id="input-to-filter-by-a-categorical-variable" class="slide level2">
+<h2>Input to filter by a categorical variable</h2>
+<p>In contrast to earlier example, allow users to select multiple inputs</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>homeless_facilities <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_read</span>(<span class="fu">here</span>(<span class="st">"fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href=""></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">target_clean =</span> <span class="fu">case_when</span>(<span class="fu">trimws</span>(TARGET) <span class="sc">%in%</span> </span>
+<span id="cb13-4"><a href=""></a>                              <span class="fu">c</span>(<span class="st">"Children"</span>, <span class="st">"Families"</span>,</span>
+<span id="cb13-5"><a href=""></a>                                <span class="st">"Youth"</span>) <span class="sc">~</span> <span class="st">"Children + Families"</span>,</span>
+<span id="cb13-6"><a href=""></a>                              <span class="fu">is.na</span>(TARGET) <span class="sc">~</span> <span class="st">"Unknown"</span>,</span>
+<span id="cb13-7"><a href=""></a>                              <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">trimws</span>(TARGET)))</span>
+<span id="cb13-8"><a href=""></a></span>
+<span id="cb13-9"><a href=""></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="cb13-10"><a href=""></a>  <span class="co"># Application title</span></span>
+<span id="cb13-11"><a href=""></a>  <span class="fu">titlePanel</span>(<span class="st">"Map of Homeless Facilities in DC"</span>),</span>
+<span id="cb13-12"><a href=""></a>  <span class="fu">sidebarLayout</span>(</span>
+<span id="cb13-13"><a href=""></a>    <span class="fu">sidebarPanel</span>(</span>
+<span id="cb13-14"><a href=""></a>      <span class="fu">selectInput</span>(<span class="at">inputId=</span> <span class="st">"input_type"</span>,</span>
+<span id="cb13-15"><a href=""></a>                  <span class="at">label =</span> <span class="st">"Type of facility:"</span>,</span>
+<span id="cb13-16"><a href=""></a>                  <span class="at">choices =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(homeless_facilities<span class="sc">$</span>target_clean)),</span>
+<span id="cb13-17"><a href=""></a>                  <span class="at">selected =</span> <span class="st">"Men &amp; Women"</span>,</span>
+<span id="cb13-18"><a href=""></a>                  <span class="at">multiple =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb13-19"><a href=""></a>    ),</span>
+<span id="cb13-20"><a href=""></a>    <span class="fu">mainPanel</span>(</span>
+<span id="cb13-21"><a href=""></a>      <span class="co"># Leaflet output</span></span>
+<span id="cb13-22"><a href=""></a>      <span class="fu">leafletOutput</span>(<span class="st">"map"</span>)</span>
+<span id="cb13-23"><a href=""></a>    )</span>
+<span id="cb13-24"><a href=""></a>  )</span>
+<span id="cb13-25"><a href=""></a></span>
+<span id="cb13-26"><a href=""></a>)</span>
+<span id="cb13-27"><a href=""></a></span>
+<span id="cb13-28"><a href=""></a><span class="co"># Define server logic required to draw a histogram</span></span>
+<span id="cb13-29"><a href=""></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb13-30"><a href=""></a>  </span>
+<span id="cb13-31"><a href=""></a>  d <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb13-32"><a href=""></a>    homeless_facilities <span class="sc">%&gt;%</span></span>
+<span id="cb13-33"><a href=""></a>    <span class="fu">filter</span>(target_clean <span class="sc">%in%</span> input<span class="sc">$</span>input_type)</span>
+<span id="cb13-34"><a href=""></a>    </span>
+<span id="cb13-35"><a href=""></a>  })</span>
+<span id="cb13-36"><a href=""></a>  </span>
+<span id="cb13-37"><a href=""></a>  output<span class="sc">$</span>map <span class="ot">&lt;-</span> <span class="fu">renderLeaflet</span>({</span>
+<span id="cb13-38"><a href=""></a>    <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-39"><a href=""></a>      <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb13-40"><a href=""></a>                       <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb13-41"><a href=""></a>      <span class="fu">addProviderTiles</span>(<span class="st">"Esri.WorldStreetMap"</span>,</span>
+<span id="cb13-42"><a href=""></a>                       <span class="at">group =</span> <span class="st">"ESRI"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-43"><a href=""></a>      <span class="fu">addLayersControl</span>(<span class="at">baseGroups =</span> <span class="fu">c</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb13-44"><a href=""></a>                                      <span class="st">"ESRI"</span>),</span>
+<span id="cb13-45"><a href=""></a>                       <span class="at">position =</span> <span class="st">"topright"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-46"><a href=""></a>      <span class="fu">addCircleMarkers</span>(<span class="at">data =</span> <span class="fu">d</span>(), <span class="at">lat =</span> <span class="sc">~</span>LATITUDE,</span>
+<span id="cb13-47"><a href=""></a>                       <span class="at">lng =</span> <span class="sc">~</span>LONGITUDE,</span>
+<span id="cb13-48"><a href=""></a>                       <span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"Name: %s&lt;br&gt;Target groups: %s"</span>,</span>
+<span id="cb13-49"><a href=""></a>                                       <span class="fu">d</span>()<span class="sc">$</span>PROGRAM_NAME,</span>
+<span id="cb13-50"><a href=""></a>                                       <span class="fu">d</span>()<span class="sc">$</span>target_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb13-51"><a href=""></a>                         <span class="fu">lapply</span>(htmltools<span class="sc">::</span>HTML),</span>
+<span id="cb13-52"><a href=""></a>                       <span class="at">color =</span> <span class="st">'darkgreen'</span>, <span class="at">radius =</span> <span class="dv">2</span>) </span>
+<span id="cb13-53"><a href=""></a>  })</span>
+<span id="cb13-54"><a href=""></a>}</span>
+<span id="cb13-55"><a href=""></a></span>
+<span id="cb13-56"><a href=""></a><span class="co"># Run the application </span></span>
+<span id="cb13-57"><a href=""></a><span class="fu">shinyApp</span>(<span class="at">ui =</span> ui, <span class="at">server =</span> server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-one-add-draw-options-to-the-map" class="slide level2">
+<h2>Step one: add draw options to the map</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">addDrawToolbar</span>(<span class="at">targetGroup =</span> <span class="st">"draw"</span>,</span>
+<span id="cb14-2"><a href=""></a>                     <span class="at">polylineOptions =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb14-3"><a href=""></a>                     <span class="at">circleMarkerOptions =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb14-4"><a href=""></a>                     <span class="at">markerOptions =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb14-5"><a href=""></a>                     <span class="at">circleOptions =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb14-6"><a href=""></a>                     <span class="at">rectangleOptions =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-two-add-somewhere-to-store-the-within-polygon-locations" class="slide level2">
+<h2>Step two: add somewhere to store the within-polygon locations</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a>output<span class="sc">$</span>selected_sites <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb15-2"><a href=""></a>    <span class="fu">req</span>(input<span class="sc">$</span>map_draw_stop)</span>
+<span id="cb15-3"><a href=""></a>    <span class="do">## more code here </span></span>
+<span id="cb15-4"><a href=""></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-three-use-the-drawing-selection-to-draw-a-polygon" class="slide level2">
+<h2>Step three: use the drawing selection to draw a polygon</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a>output<span class="sc">$</span>selected_sites <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb16-2"><a href=""></a>    <span class="fu">req</span>(input<span class="sc">$</span>map_draw_stop)</span>
+<span id="cb16-3"><a href=""></a>    polygon_coordinates <span class="ot">&lt;-</span> input<span class="sc">$</span>map_draw_new_feature<span class="sc">$</span>geometry<span class="sc">$</span>coordinates[[<span class="dv">1</span>]]</span>
+<span id="cb16-4"><a href=""></a>    drawn_polygon <span class="ot">&lt;-</span> <span class="fu">st_sfc</span>(<span class="fu">st_polygon</span>(<span class="fu">list</span>(<span class="fu">do.call</span>(rbind,</span>
+<span id="cb16-5"><a href=""></a>                                  <span class="fu">lapply</span>(polygon_coordinates,</span>
+<span id="cb16-6"><a href=""></a>                                         <span class="cf">function</span>(x){<span class="fu">c</span>(x[[<span class="dv">1</span>]][<span class="dv">1</span>],x[[<span class="dv">2</span>]][<span class="dv">1</span>])}))))) </span>
+<span id="cb16-7"><a href=""></a>    <span class="fu">print</span>(<span class="st">"draw polygon complete"</span>)</span>
+<span id="cb16-8"><a href=""></a>    <span class="fu">st_crs</span>(drawn_polygon) <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(homeless_facilities)</span>
+<span id="cb16-9"><a href=""></a>    <span class="fu">print</span>(<span class="st">"set crs of polygon"</span>)</span>
+<span id="cb16-10"><a href=""></a>    </span>
+<span id="cb16-11"><a href=""></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-four-intersect-that-polygon-with-our-point-locations" class="slide level2">
+<h2>Step four: intersect that polygon with our point locations</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>output<span class="sc">$</span>selected_sites <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb17-2"><a href=""></a>    <span class="fu">req</span>(input<span class="sc">$</span>map_draw_stop)</span>
+<span id="cb17-3"><a href=""></a>    polygon_coordinates <span class="ot">&lt;-</span> input<span class="sc">$</span>map_draw_new_feature<span class="sc">$</span>geometry<span class="sc">$</span>coordinates[[<span class="dv">1</span>]]</span>
+<span id="cb17-4"><a href=""></a>    drawn_polygon <span class="ot">&lt;-</span> <span class="fu">st_sfc</span>(<span class="fu">st_polygon</span>(<span class="fu">list</span>(<span class="fu">do.call</span>(rbind,</span>
+<span id="cb17-5"><a href=""></a>                                  <span class="fu">lapply</span>(polygon_coordinates,</span>
+<span id="cb17-6"><a href=""></a>                                         <span class="cf">function</span>(x){<span class="fu">c</span>(x[[<span class="dv">1</span>]][<span class="dv">1</span>],x[[<span class="dv">2</span>]][<span class="dv">1</span>])}))))) </span>
+<span id="cb17-7"><a href=""></a>    <span class="fu">print</span>(<span class="st">"draw polygon complete"</span>)</span>
+<span id="cb17-8"><a href=""></a>    <span class="fu">st_crs</span>(drawn_polygon) <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(<span class="fu">d</span>())</span>
+<span id="cb17-9"><a href=""></a>    <span class="fu">print</span>(<span class="st">"set crs of polygon"</span>)</span>
+<span id="cb17-10"><a href=""></a>    homeless_overlap_list <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">st_intersects</span>(<span class="fu">d</span>(),</span>
+<span id="cb17-11"><a href=""></a>                            drawn_polygon))</span>
+<span id="cb17-12"><a href=""></a>    <span class="fu">print</span>(<span class="st">"found intersecting rows"</span>)</span>
+<span id="cb17-13"><a href=""></a></span>
+<span id="cb17-14"><a href=""></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="step-five-subest-to-the-intersecting-rows" class="slide level2">
+<h2>Step five: subest to the intersecting rows</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>output<span class="sc">$</span>selected_sites <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb18-2"><a href=""></a>    <span class="fu">req</span>(input<span class="sc">$</span>map_draw_stop)</span>
+<span id="cb18-3"><a href=""></a>    polygon_coordinates <span class="ot">&lt;-</span> input<span class="sc">$</span>map_draw_new_feature<span class="sc">$</span>geometry<span class="sc">$</span>coordinates[[<span class="dv">1</span>]]</span>
+<span id="cb18-4"><a href=""></a>    drawn_polygon <span class="ot">&lt;-</span> <span class="fu">st_sfc</span>(<span class="fu">st_polygon</span>(<span class="fu">list</span>(<span class="fu">do.call</span>(rbind,</span>
+<span id="cb18-5"><a href=""></a>                                  <span class="fu">lapply</span>(polygon_coordinates,</span>
+<span id="cb18-6"><a href=""></a>                                         <span class="cf">function</span>(x){<span class="fu">c</span>(x[[<span class="dv">1</span>]][<span class="dv">1</span>],x[[<span class="dv">2</span>]][<span class="dv">1</span>])}))))) </span>
+<span id="cb18-7"><a href=""></a>    <span class="fu">print</span>(<span class="st">"draw polygon complete"</span>)</span>
+<span id="cb18-8"><a href=""></a>    <span class="fu">st_crs</span>(drawn_polygon) <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(<span class="fu">d</span>())</span>
+<span id="cb18-9"><a href=""></a>    <span class="fu">print</span>(<span class="st">"set crs of polygon"</span>)</span>
+<span id="cb18-10"><a href=""></a>    homeless_overlap_list <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">st_intersects</span>(<span class="fu">d</span>(),</span>
+<span id="cb18-11"><a href=""></a>                            drawn_polygon))</span>
+<span id="cb18-12"><a href=""></a>    <span class="fu">print</span>(<span class="st">"found intersecting rows"</span>)</span>
+<span id="cb18-13"><a href=""></a>    rows_keep <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">row.names</span>(<span class="fu">d</span>()), <span class="fu">as.character</span>(homeless_overlap_list<span class="sc">$</span>row.id))</span>
+<span id="cb18-14"><a href=""></a>    homeless_df <span class="ot">&lt;-</span> <span class="fu">d</span>() <span class="sc">%&gt;%</span> <span class="fu">st_drop_geometry</span>()</span>
+<span id="cb18-15"><a href=""></a>    homeless_sub <span class="ot">&lt;-</span> homeless_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">row.names</span>(homeless_df) <span class="sc">%in%</span> rows_keep) <span class="sc">%&gt;%</span></span>
+<span id="cb18-16"><a href=""></a>                <span class="fu">select</span>(PROGRAM_NAME, WEBSITE_URL, target_clean)</span>
+<span id="cb18-17"><a href=""></a>  })</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="putting-it-all-together" class="slide level2">
+<h2>Putting it all together</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a><span class="fu">library</span>(shiny)</span>
+<span id="cb19-2"><a href=""></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb19-3"><a href=""></a><span class="fu">library</span>(leaflet)</span>
+<span id="cb19-4"><a href=""></a><span class="fu">library</span>(leaflet.extras)</span>
+<span id="cb19-5"><a href=""></a><span class="fu">library</span>(htmltools)</span>
+<span id="cb19-6"><a href=""></a><span class="fu">library</span>(sf)</span>
+<span id="cb19-7"><a href=""></a><span class="fu">library</span>(here)</span>
+<span id="cb19-8"><a href=""></a></span>
+<span id="cb19-9"><a href=""></a>homeless_facilities <span class="ot">&lt;-</span> sf<span class="sc">::</span><span class="fu">st_read</span>(<span class="fu">here</span>(<span class="st">"fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb19-10"><a href=""></a>  <span class="fu">st_transform</span>(<span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-11"><a href=""></a>  <span class="fu">mutate</span>(<span class="at">target_clean =</span> <span class="fu">case_when</span>(<span class="fu">trimws</span>(TARGET) <span class="sc">%in%</span> </span>
+<span id="cb19-12"><a href=""></a>                              <span class="fu">c</span>(<span class="st">"Children"</span>, <span class="st">"Families"</span>,</span>
+<span id="cb19-13"><a href=""></a>                                <span class="st">"Youth"</span>) <span class="sc">~</span> <span class="st">"Children + Families"</span>,</span>
+<span id="cb19-14"><a href=""></a>                              <span class="fu">is.na</span>(TARGET) <span class="sc">~</span> <span class="st">"Unknown"</span>,</span>
+<span id="cb19-15"><a href=""></a>                              <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">trimws</span>(TARGET)))</span>
+<span id="cb19-16"><a href=""></a></span>
+<span id="cb19-17"><a href=""></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="cb19-18"><a href=""></a>  <span class="co"># Application title</span></span>
+<span id="cb19-19"><a href=""></a>  <span class="fu">titlePanel</span>(<span class="st">"Map of Homeless Facilities in DC"</span>),</span>
+<span id="cb19-20"><a href=""></a>  <span class="fu">sidebarLayout</span>(</span>
+<span id="cb19-21"><a href=""></a>    <span class="fu">sidebarPanel</span>(</span>
+<span id="cb19-22"><a href=""></a>      <span class="fu">selectInput</span>(<span class="at">inputId=</span> <span class="st">"input_type"</span>,</span>
+<span id="cb19-23"><a href=""></a>                  <span class="at">label =</span> <span class="st">"Type of facility:"</span>,</span>
+<span id="cb19-24"><a href=""></a>                  <span class="at">choices =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(homeless_facilities<span class="sc">$</span>target_clean)),</span>
+<span id="cb19-25"><a href=""></a>                  <span class="at">selected =</span> <span class="st">"Men &amp; Women"</span>,</span>
+<span id="cb19-26"><a href=""></a>                  <span class="at">multiple =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-27"><a href=""></a>    ),</span>
+<span id="cb19-28"><a href=""></a>    <span class="fu">mainPanel</span>(</span>
+<span id="cb19-29"><a href=""></a>      <span class="co"># Leaflet output</span></span>
+<span id="cb19-30"><a href=""></a>      <span class="fu">leafletOutput</span>(<span class="st">"map"</span>),</span>
+<span id="cb19-31"><a href=""></a>      <span class="fu">tableOutput</span>(<span class="st">"selected_sites"</span>)</span>
+<span id="cb19-32"><a href=""></a>    )</span>
+<span id="cb19-33"><a href=""></a>  )</span>
+<span id="cb19-34"><a href=""></a></span>
+<span id="cb19-35"><a href=""></a>)</span>
+<span id="cb19-36"><a href=""></a></span>
+<span id="cb19-37"><a href=""></a><span class="co"># Define server logic required to draw a histogram</span></span>
+<span id="cb19-38"><a href=""></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output) {</span>
+<span id="cb19-39"><a href=""></a>  </span>
+<span id="cb19-40"><a href=""></a>  d <span class="ot">&lt;-</span> <span class="fu">reactive</span>({</span>
+<span id="cb19-41"><a href=""></a>    homeless_facilities <span class="sc">%&gt;%</span></span>
+<span id="cb19-42"><a href=""></a>      <span class="fu">filter</span>(target_clean <span class="sc">%in%</span> input<span class="sc">$</span>input_type)</span>
+<span id="cb19-43"><a href=""></a>    </span>
+<span id="cb19-44"><a href=""></a>  })</span>
+<span id="cb19-45"><a href=""></a></span>
+<span id="cb19-46"><a href=""></a>  output<span class="sc">$</span>map <span class="ot">&lt;-</span> <span class="fu">renderLeaflet</span>({</span>
+<span id="cb19-47"><a href=""></a>    <span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb19-48"><a href=""></a>      <span class="fu">addProviderTiles</span>(<span class="st">"OpenStreetMap"</span>,</span>
+<span id="cb19-49"><a href=""></a>                       <span class="at">group =</span> <span class="st">"OpenStreetMap"</span>)  <span class="sc">%&gt;%</span></span>
+<span id="cb19-50"><a href=""></a>      <span class="fu">addCircleMarkers</span>(<span class="at">data =</span> <span class="fu">d</span>(), <span class="at">lat =</span> <span class="sc">~</span>LATITUDE,</span>
+<span id="cb19-51"><a href=""></a>                       <span class="at">lng =</span> <span class="sc">~</span>LONGITUDE,</span>
+<span id="cb19-52"><a href=""></a>                       <span class="at">label =</span> <span class="fu">sprintf</span>(<span class="st">"Name: %s&lt;br&gt;Target groups: %s"</span>,</span>
+<span id="cb19-53"><a href=""></a>                                       <span class="fu">d</span>()<span class="sc">$</span>PROGRAM_NAME,</span>
+<span id="cb19-54"><a href=""></a>                                       <span class="fu">d</span>()<span class="sc">$</span>target_clean) <span class="sc">%&gt;%</span></span>
+<span id="cb19-55"><a href=""></a>                         <span class="fu">lapply</span>(htmltools<span class="sc">::</span>HTML),</span>
+<span id="cb19-56"><a href=""></a>                       <span class="at">color =</span> <span class="st">'darkgreen'</span>, <span class="at">radius =</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-57"><a href=""></a>      <span class="fu">addDrawToolbar</span>(<span class="at">targetGroup =</span> <span class="st">"draw"</span>,</span>
+<span id="cb19-58"><a href=""></a>                     <span class="at">polylineOptions =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-59"><a href=""></a>                     <span class="at">circleMarkerOptions =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-60"><a href=""></a>                     <span class="at">markerOptions =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-61"><a href=""></a>                     <span class="at">circleOptions =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-62"><a href=""></a>                     <span class="at">rectangleOptions =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-63"><a href=""></a>  })</span>
+<span id="cb19-64"><a href=""></a>  </span>
+<span id="cb19-65"><a href=""></a>  output<span class="sc">$</span>selected_sites <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb19-66"><a href=""></a>    <span class="fu">req</span>(input<span class="sc">$</span>map_draw_stop)</span>
+<span id="cb19-67"><a href=""></a>    polygon_coordinates <span class="ot">&lt;-</span> input<span class="sc">$</span>map_draw_new_feature<span class="sc">$</span>geometry<span class="sc">$</span>coordinates[[<span class="dv">1</span>]]</span>
+<span id="cb19-68"><a href=""></a>    drawn_polygon <span class="ot">&lt;-</span> <span class="fu">st_sfc</span>(<span class="fu">st_polygon</span>(<span class="fu">list</span>(<span class="fu">do.call</span>(rbind,</span>
+<span id="cb19-69"><a href=""></a>                                  <span class="fu">lapply</span>(polygon_coordinates,</span>
+<span id="cb19-70"><a href=""></a>                                         <span class="cf">function</span>(x){<span class="fu">c</span>(x[[<span class="dv">1</span>]][<span class="dv">1</span>],x[[<span class="dv">2</span>]][<span class="dv">1</span>])}))))) </span>
+<span id="cb19-71"><a href=""></a>    <span class="fu">print</span>(<span class="st">"draw polygon complete"</span>)</span>
+<span id="cb19-72"><a href=""></a>    <span class="fu">st_crs</span>(drawn_polygon) <span class="ot">&lt;-</span> <span class="fu">st_crs</span>(<span class="fu">d</span>())</span>
+<span id="cb19-73"><a href=""></a>    <span class="fu">print</span>(<span class="st">"set crs of polygon"</span>)</span>
+<span id="cb19-74"><a href=""></a>    homeless_overlap_list <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">st_intersects</span>(<span class="fu">d</span>(),</span>
+<span id="cb19-75"><a href=""></a>                            drawn_polygon))</span>
+<span id="cb19-76"><a href=""></a>    <span class="fu">print</span>(<span class="st">"found intersecting rows"</span>)</span>
+<span id="cb19-77"><a href=""></a>    rows_keep <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">row.names</span>(<span class="fu">d</span>()), <span class="fu">as.character</span>(homeless_overlap_list<span class="sc">$</span>row.id))</span>
+<span id="cb19-78"><a href=""></a>    homeless_df <span class="ot">&lt;-</span> <span class="fu">d</span>() <span class="sc">%&gt;%</span> <span class="fu">st_drop_geometry</span>()</span>
+<span id="cb19-79"><a href=""></a>    homeless_sub <span class="ot">&lt;-</span> homeless_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">row.names</span>(homeless_df) <span class="sc">%in%</span> rows_keep) <span class="sc">%&gt;%</span></span>
+<span id="cb19-80"><a href=""></a>                <span class="fu">select</span>(PROGRAM_NAME, WEBSITE_URL, target_clean)</span>
+<span id="cb19-81"><a href=""></a>  })</span>
+<span id="cb19-82"><a href=""></a></span>
+<span id="cb19-83"><a href=""></a>}</span>
+<span id="cb19-84"><a href=""></a></span>
+<span id="cb19-85"><a href=""></a><span class="co"># Run the application </span></span>
+<span id="cb19-86"><a href=""></a><span class="fu">shinyApp</span>(<span class="at">ui =</span> ui, <span class="at">server =</span> server)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="wrapping-up" class="slide level2">
+<h2>Wrapping up</h2>
+<ul>
+<li>Covered <code>leaflet</code> as a tool for creating interactive maps; while <code>plotly</code> is an all-purpose tool for interactive visualizations, <code>leaflet</code> has a specific focus on spatial data</li>
+<li>Different features of <code>leaflet</code>:
+<ul>
+<li>Ability to zoom</li>
+<li>Ability to toggle different background layers on/off</li>
+<li>Hoverable information on points</li>
+</ul></li>
+<li>Covered two integrations with Shiny:
+<ul>
+<li>Filtering a map’s points</li>
+<li>Drawing a polygon around points and showing the results</li>
+</ul></li>
+</ul>
+<div class="quarto-auto-generated-content">
+<div class="footer footer-default">
+
+</div>
+</div>
+</section></section>
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="session7_shiny_leaflet_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="session7_shiny_leaflet_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();  
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {                     
+            return true;
+          }
+        }
+        return false;
+      }
+      const onCopySuccess = function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();    
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      }
+      const getTextToCopy = function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+        text: getTextToCopy
+      });
+      clipboard.on('success', onCopySuccess);
+      if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+        // For code content inside modals, clipBoardJS needs to be initialized with a container option
+        // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+        const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+          text: getTextToCopy,
+          container: window.document.getElementById('quarto-embedded-source-code-modal')
+        });
+        clipboardModal.on('success', onCopySuccess);
+      }
+        var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+        var mailtoRegex = new RegExp(/^mailto:/);
+          var filterRegex = new RegExp('/' + window.location.host + '/');
+        var isInternal = (href) => {
+            return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+        }
+        // Inspect non-navigation links and adorn them if external
+     	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+        for (var i=0; i<links.length; i++) {
+          const link = links[i];
+          if (!isInternal(link.href)) {
+            // undo the damage that might have been done by quarto-nav.js in the case of
+            // links that we want to consider external
+            if (link.dataset.originalHref !== undefined) {
+              link.href = link.dataset.originalHref;
+            }
+          }
+        }
+      function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+        const config = {
+          allowHTML: true,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start',
+        };
+        if (contentFn) {
+          config.content = contentFn;
+        }
+        if (onTriggerFn) {
+          config.onTrigger = onTriggerFn;
+        }
+        if (onUntriggerFn) {
+          config.onUntrigger = onUntriggerFn;
+        }
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config); 
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note) {
+            return note.innerHTML;
+          } else {
+            return "";
+          }
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+    
+
+</body></html>

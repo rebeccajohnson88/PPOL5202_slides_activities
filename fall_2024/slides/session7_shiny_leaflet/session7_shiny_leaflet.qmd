@@ -1,0 +1,630 @@
+---
+title: "Session 7: Shiny + Leaflet"
+author: "Prof. Rebecca A. Johnson"
+date: "7 October 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+    highlight-style: arrow-dark
+    code-block-background: true
+    slide-number: true
+editor: visual
+execute:
+  warning: false
+  message: false 
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+library(shiny)
+library(here)
+library(leaflet)
+library(sf)
+library(htmltools)
+library(here)
+```
+
+# Overview
+
+-   Leaflet for interactive mapping
+-   Integrating Leaflet into Shiny apps
+
+# Leaflet
+
+## What is leaflet?
+
+-   Plotly: general interactive *plotting*; compatible with maps but not specifically designed around geographic visualizations
+-   Leaflet: interactive visualization tool specifically geared towards mapping
+-   Open source JavaScript library you can use in R
+
+## Basic structure of a leaflet map
+
+-   Create a `base map` using different `tiles` available in the Leaflet package
+-   Add your own data --- often spatial points data --- to that base map
+
+## Getting started
+
+Basic tile of open street map
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true 
+
+library(leaflet)
+library(leaflet.extras)
+
+basemap <- leaflet() %>%
+    addProviderTiles("OpenStreetMap",
+                     group = "OpenStreetMap")
+
+basemap
+
+```
+
+## Adding more tiles + control over which layer to display
+
+Can allow users to toggle between different layers of the map
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true 
+
+basemap <- leaflet() %>%
+    addProviderTiles("OpenStreetMap",
+                     group = "OpenStreetMap")  %>%
+    addProviderTiles("Esri.WorldStreetMap",
+                     group = "ESRI") %>%
+    addLayersControl(baseGroups = c("OpenStreetMap",
+                                    "ESRI"),
+                     position = "topright") 
+
+```
+
+## Adding more tiles + control over which layer to display
+
+
+```{r}
+#| echo: false
+#| output: true
+#| eval: true 
+
+
+basemap
+
+```
+
+## How do we focus the map on a specific location?
+
+`setView` command: can feed it a specific longitude, latitude, and level of Zoom
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: true 
+
+## get centroid of DC polygon
+dc <- tigris::states(year = 2021, refresh = TRUE) %>%
+      filter(STUSPS == "DC")
+
+```
+
+## How do we focus the map on a specific location?
+
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true 
+
+
+dc_centroid <- dc %>% st_centroid() 
+dc_centroid <- dc_centroid %>%
+        mutate(lon = st_coordinates(.)[, 1],
+               lat = st_coordinates(.)[, 2]) 
+head(dc_centroid)
+```
+
+## How do we focus the map on a specific location?
+
+`setView` command: can feed it a specific longitude, latitude, and level of Zoom
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true 
+
+basemap <- leaflet() %>%
+    addProviderTiles("OpenStreetMap",
+                     group = "OpenStreetMap")  %>%
+    addProviderTiles("Esri.WorldStreetMap",
+                     group = "ESRI") %>%
+    addLayersControl(baseGroups = c("OpenStreetMap",
+                                    "ESRI"),
+                     position = "topright") %>%
+    setView(lng = as.numeric(dc_centroid$lon),
+            lat = as.numeric(dc_centroid$lat), zoom = 12)
+
+```
+
+## How do we focus the map on a specific location?
+
+
+```{r}
+#| echo: false
+#| output: true
+#| eval: true 
+basemap
+
+```
+
+## Adding a single point to a map
+
+Can use the `addMarker()` variety of functions to add markers to the map; here, we show a single marker (McCourt School)
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true 
+
+mccourt_lat <- 38.896351
+mccourt_lon <- -77.013199
+
+basemap <- leaflet() %>%
+    addProviderTiles("OpenStreetMap",
+                     group = "OpenStreetMap")  %>%
+    addProviderTiles("Esri.WorldStreetMap",
+                     group = "ESRI") %>%
+    addLayersControl(baseGroups = c("OpenStreetMap",
+                                    "ESRI"),
+                     position = "topright") %>%
+    setView(lng = as.numeric(dc_centroid$lon),
+            lat = as.numeric(dc_centroid$lat), zoom = 12) %>%
+    addMarkers(lng = mccourt_lon, lat = mccourt_lat)
+
+```
+
+## Adding a single point to a map
+
+```{r}
+#| echo: false
+#| output: true
+#| eval: true 
+
+basemap
+```
+
+## Adding a dataset with points to a map
+
+-   All `leaflet` maps use `crs = 4326` (WGS 84)
+-   Easiest to create or rename columns for `lng` (longitude) and `lat` (latitude)
+-   Feed data either to original `leaflet` call or the `addMarkers` step
+
+## Adding a dataset with points to a map
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true 
+ 
+homeless_facilities <- sf::st_read(here("fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson")) %>%
+      st_transform(crs = 4326)
+
+basemap <- leaflet() %>%
+    addProviderTiles("OpenStreetMap",
+                     group = "OpenStreetMap")  %>%
+    addProviderTiles("Esri.WorldStreetMap",
+                     group = "ESRI") %>%
+    addLayersControl(baseGroups = c("OpenStreetMap",
+                                    "ESRI"),
+                     position = "topright") %>%
+    addCircleMarkers(data = homeless_facilities, lat = ~LATITUDE,
+               lng = ~LONGITUDE,
+               color = 'darkgreen', radius = 2)
+
+```
+
+## Adding a dataset with points to a map
+
+
+```{r}
+#| echo: false
+#| output: true
+#| eval: true 
+
+basemap
+
+```
+
+## Adding information to markers
+
+-   Add a `label` argument to the marker
+-   Use the `<br>` html syntax (and transform string to HTML) to create the linebreak
+
+```{r}
+#| echo: true
+#| output: true
+#| eval: true 
+
+basemap <- leaflet() %>%
+    addProviderTiles("OpenStreetMap",
+                     group = "OpenStreetMap")  %>%
+    addProviderTiles("Esri.WorldStreetMap",
+                     group = "ESRI") %>%
+    addLayersControl(baseGroups = c("OpenStreetMap",
+                                    "ESRI"),
+                     position = "topright") %>%
+    addCircleMarkers(data = homeless_facilities, lat = ~LATITUDE,
+               lng = ~LONGITUDE,
+               label = sprintf("Name: %s<br>Target groups: %s",
+                               homeless_facilities$PROGRAM_NAME,
+                               homeless_facilities$TARGET) %>%
+                            lapply(htmltools::HTML),
+               color = 'darkgreen', radius = 2) 
+```
+
+
+## Adding information to markers
+
+
+```{r}
+#| echo: false
+#| output: true
+#| eval: true 
+
+basemap
+
+```
+
+# Where we are
+
+-   Leaflet for interactive mapping
+-   Integrating Leaflet into Shiny apps
+
+## Shiny + Leaflet
+
+To start with a simple example, we can embed the leaflet map into an app with no inputs
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false 
+library(shiny)
+library(tidyverse)
+library(leaflet)
+library(leaflet.extras)
+library(htmltools)
+library(sf)
+
+homeless_facilities <- sf::st_read(here("fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson")) %>%
+      st_transform(crs = 4326)
+
+ui <- fluidPage(
+  # Application title
+  titlePanel("Map of Homeless Facilities in DC"),
+  # Leaflet output
+  leafletOutput("map")
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+ 
+  output$map <- renderLeaflet({
+    leaflet() %>%
+    addProviderTiles("OpenStreetMap",
+                     group = "OpenStreetMap")  %>%
+    addProviderTiles("Esri.WorldStreetMap",
+                     group = "ESRI") %>%
+    addLayersControl(baseGroups = c("OpenStreetMap",
+                                    "ESRI"),
+                     position = "topright") %>%
+    addCircleMarkers(data = homeless_facilities, lat = ~LATITUDE,
+               lng = ~LONGITUDE,
+               label = sprintf("Name: %s<br>Target groups: %s",
+                               homeless_facilities$PROGRAM_NAME,
+                               homeless_facilities$TARGET) %>%
+                            lapply(htmltools::HTML),
+               color = 'darkgreen', radius = 2) 
+  })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+```
+
+## Two interactive components:
+
+-   Allow users to filter to different target groups for the facility
+-   Allow users to draw a polygon and download a list of homeless facilities within that radius
+
+## Input to filter by a categorical variable
+
+In contrast to earlier example, allow users to select multiple inputs
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false 
+
+homeless_facilities <- sf::st_read(here("fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson")) %>%
+  st_transform(crs = 4326) %>%
+  mutate(target_clean = case_when(trimws(TARGET) %in% 
+                              c("Children", "Families",
+                                "Youth") ~ "Children + Families",
+                              is.na(TARGET) ~ "Unknown",
+                              TRUE ~ trimws(TARGET)))
+
+ui <- fluidPage(
+  # Application title
+  titlePanel("Map of Homeless Facilities in DC"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput(inputId= "input_type",
+                  label = "Type of facility:",
+                  choices = sort(unique(homeless_facilities$target_clean)),
+                  selected = "Men & Women",
+                  multiple = TRUE)
+    ),
+    mainPanel(
+      # Leaflet output
+      leafletOutput("map")
+    )
+  )
+
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  
+  d <- reactive({
+    homeless_facilities %>%
+    filter(target_clean %in% input$input_type)
+    
+  })
+  
+  output$map <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles("OpenStreetMap",
+                       group = "OpenStreetMap")  %>%
+      addProviderTiles("Esri.WorldStreetMap",
+                       group = "ESRI") %>%
+      addLayersControl(baseGroups = c("OpenStreetMap",
+                                      "ESRI"),
+                       position = "topright") %>%
+      addCircleMarkers(data = d(), lat = ~LATITUDE,
+                       lng = ~LONGITUDE,
+                       label = sprintf("Name: %s<br>Target groups: %s",
+                                       d()$PROGRAM_NAME,
+                                       d()$target_clean) %>%
+                         lapply(htmltools::HTML),
+                       color = 'darkgreen', radius = 2) 
+  })
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+```
+
+## Step one: add draw options to the map
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false 
+
+addDrawToolbar(targetGroup = "draw",
+                     polylineOptions = FALSE,
+                     circleMarkerOptions = FALSE,
+                     markerOptions = FALSE,
+                     circleOptions = FALSE,
+                     rectangleOptions = FALSE)
+
+
+
+```
+
+## Step two: add somewhere to store the within-polygon locations
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false 
+
+output$selected_sites <- renderTable({
+    req(input$map_draw_stop)
+    ## more code here 
+  })
+
+
+
+```
+
+## Step three: use the drawing selection to draw a polygon
+
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false 
+
+output$selected_sites <- renderTable({
+    req(input$map_draw_stop)
+    polygon_coordinates <- input$map_draw_new_feature$geometry$coordinates[[1]]
+    drawn_polygon <- st_sfc(st_polygon(list(do.call(rbind,
+                                  lapply(polygon_coordinates,
+                                         function(x){c(x[[1]][1],x[[2]][1])}))))) 
+    print("draw polygon complete")
+    st_crs(drawn_polygon) <- st_crs(homeless_facilities)
+    print("set crs of polygon")
+    
+  })
+
+
+
+```
+
+
+## Step four: intersect that polygon with our point locations
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false 
+
+output$selected_sites <- renderTable({
+    req(input$map_draw_stop)
+    polygon_coordinates <- input$map_draw_new_feature$geometry$coordinates[[1]]
+    drawn_polygon <- st_sfc(st_polygon(list(do.call(rbind,
+                                  lapply(polygon_coordinates,
+                                         function(x){c(x[[1]][1],x[[2]][1])}))))) 
+    print("draw polygon complete")
+    st_crs(drawn_polygon) <- st_crs(d())
+    print("set crs of polygon")
+    homeless_overlap_list <- as.data.frame(st_intersects(d(),
+                            drawn_polygon))
+    print("found intersecting rows")
+
+  })
+
+
+
+```
+
+## Step five: subest to the intersecting rows 
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+output$selected_sites <- renderTable({
+    req(input$map_draw_stop)
+    polygon_coordinates <- input$map_draw_new_feature$geometry$coordinates[[1]]
+    drawn_polygon <- st_sfc(st_polygon(list(do.call(rbind,
+                                  lapply(polygon_coordinates,
+                                         function(x){c(x[[1]][1],x[[2]][1])}))))) 
+    print("draw polygon complete")
+    st_crs(drawn_polygon) <- st_crs(d())
+    print("set crs of polygon")
+    homeless_overlap_list <- as.data.frame(st_intersects(d(),
+                            drawn_polygon))
+    print("found intersecting rows")
+    rows_keep <- intersect(row.names(d()), as.character(homeless_overlap_list$row.id))
+    homeless_df <- d() %>% st_drop_geometry()
+    homeless_sub <- homeless_df %>% filter(row.names(homeless_df) %in% rows_keep) %>%
+                select(PROGRAM_NAME, WEBSITE_URL, target_clean)
+  })
+```
+
+## Putting it all together
+
+```{r}
+#| echo: true
+#| output: false
+#| eval: false
+
+library(shiny)
+library(tidyverse)
+library(leaflet)
+library(leaflet.extras)
+library(htmltools)
+library(sf)
+library(here)
+
+homeless_facilities <- sf::st_read(here("fall_2024/slides/session5_geospatial_R/Homeless_Service_Facilities.geojson")) %>%
+  st_transform(crs = 4326) %>%
+  mutate(target_clean = case_when(trimws(TARGET) %in% 
+                              c("Children", "Families",
+                                "Youth") ~ "Children + Families",
+                              is.na(TARGET) ~ "Unknown",
+                              TRUE ~ trimws(TARGET)))
+
+ui <- fluidPage(
+  # Application title
+  titlePanel("Map of Homeless Facilities in DC"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput(inputId= "input_type",
+                  label = "Type of facility:",
+                  choices = sort(unique(homeless_facilities$target_clean)),
+                  selected = "Men & Women",
+                  multiple = TRUE)
+    ),
+    mainPanel(
+      # Leaflet output
+      leafletOutput("map"),
+      tableOutput("selected_sites")
+    )
+  )
+
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  
+  d <- reactive({
+    homeless_facilities %>%
+      filter(target_clean %in% input$input_type)
+    
+  })
+
+  output$map <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles("OpenStreetMap",
+                       group = "OpenStreetMap")  %>%
+      addCircleMarkers(data = d(), lat = ~LATITUDE,
+                       lng = ~LONGITUDE,
+                       label = sprintf("Name: %s<br>Target groups: %s",
+                                       d()$PROGRAM_NAME,
+                                       d()$target_clean) %>%
+                         lapply(htmltools::HTML),
+                       color = 'darkgreen', radius = 2) %>%
+      addDrawToolbar(targetGroup = "draw",
+                     polylineOptions = FALSE,
+                     circleMarkerOptions = FALSE,
+                     markerOptions = FALSE,
+                     circleOptions = FALSE,
+                     rectangleOptions = FALSE)
+  })
+  
+  output$selected_sites <- renderTable({
+    req(input$map_draw_stop)
+    polygon_coordinates <- input$map_draw_new_feature$geometry$coordinates[[1]]
+    drawn_polygon <- st_sfc(st_polygon(list(do.call(rbind,
+                                  lapply(polygon_coordinates,
+                                         function(x){c(x[[1]][1],x[[2]][1])}))))) 
+    print("draw polygon complete")
+    st_crs(drawn_polygon) <- st_crs(d())
+    print("set crs of polygon")
+    homeless_overlap_list <- as.data.frame(st_intersects(d(),
+                            drawn_polygon))
+    print("found intersecting rows")
+    rows_keep <- intersect(row.names(d()), as.character(homeless_overlap_list$row.id))
+    homeless_df <- d() %>% st_drop_geometry()
+    homeless_sub <- homeless_df %>% filter(row.names(homeless_df) %in% rows_keep) %>%
+                select(PROGRAM_NAME, WEBSITE_URL, target_clean)
+  })
+
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+
+```
+
+
+## Wrapping up
+
+- Covered `leaflet` as a tool for creating interactive maps; while `plotly` is an all-purpose tool for interactive visualizations, `leaflet` has a specific focus on spatial data
+- Different features of `leaflet`:
+  - Ability to zoom
+  - Ability to toggle different background layers on/off
+  - Hoverable information on points
+- Covered two integrations with Shiny:
+  - Filtering a map's points
+  - Drawing a polygon around points and showing the results 
