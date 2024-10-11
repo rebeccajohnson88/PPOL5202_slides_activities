@@ -1,0 +1,203 @@
+---
+title: "PPOL 5202: Problem Set 2"
+format:
+  html:
+    embed-resources: true
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+Contents: Geospatial data in R; Interactive visualization with Shiny in R
+
+## **Question 1:** Spatial data visualization (32 points)
+
+### Part 1: County-level Choropleth Map with `tigris` and `tidycensus`(8 points)
+
+In this part, you should pull and visualize county-level data for the entire United States using the **`tidycensus`** and **`tigris`** packages. For this assignment, you will retrieve **median household income** data for all counties in the U.S. from the most recent American Community Survey (ACS).
+
+#### Guidance:
+
+-   Using the `tidycensus` package, retrieve **median household income** data from 2022 ACS 5-year estimates for all counties in the United States.
+
+    -   Use the `get_acs` function to obtain the variable `B19013_001` (median household income). For this, you'll likely need a Census API key, which you can sign up for here: https://api.census.gov/data/key_signup.html
+
+    -   Use the `tigris` package to pull the geographic data for U.S. counties.
+
+-   Using `ggplot2`, create a choropleth map that visualizes the distribution of median household income across U.S. counties. For clarity of viewing, omit the following values for non-continental states + territorities of `STUSPS` from the plot:
+
+-   `MP`
+
+-   `GU`
+
+-   `MP`
+
+-   `AK`
+
+-   `PR`
+
+-   `VI`
+
+-   `HI`
+
+-   Write a short (2-3 sentences) analysis of the map, identifying any noticeable geographic trends in the distribution of household income across counties in the United States. Are there any regions that stand out as having particularly high or low median incomes?
+
+
+```{r, message=FALSE,warning=FALSE}
+#| echo: True
+
+
+
+```
+
+### Part 2: State-level Hex Map with `tigris` and `tidycensus`(8 points)
+
+In this part, you should pull and visualize state-level data for the same dataset in Part 1, but you will aggregate it to the state level.
+
+#### Guidance:
+
+-   Use the dataset from Part 1 to generate a state-level dataset to show the *mean* (not counting NAs) median household income in each state.
+
+-   Load the US hexmap template shapefile (**us_states_hexgrid.geojson**).
+
+-   Using `ggplot2`, create a hex map that visualizes the distribution of median household income across U.S. counties. You can keep Alaska and Hawaii in this map. You should make sure each state has a two-digit label on it (see GitHub issue for an example)
+
+-   Write a short (1-2 sentence) analysis of the map, identifying any noticeable, state-level geographic trends in the distribution of household income across states in the United States. Are there any states that stand out as having particularly high or low median incomes?
+
+
+
+```{r, message=FALSE,warning=FALSE}
+#| echo: True
+
+
+```
+
+### Part 3: Spatial Intersection of Counties and Political Precincts in Maryland (16 points)
+
+In this question, you will analyze the overlap between **counties** and **political precincts** in the state of **Maryland**. The goal is to visualize the spatial relationship between these two geographic layers, focusing on the number of political precincts within each county.
+
+#### **Guidance:**
+
+1.  **Data Acquisition:**
+
+    -   Use the **`tidycensus`** and **`tigris`** packages to obtain geographic data for **counties** in Maryland.
+
+    -   Load the **political precincts** shapefile for Maryland (**Maryland_Election_Boundaries\_-\_Precincts_2022.geojson**).
+
+2.  **Spatial Intersection:**
+
+    -   Perform a **spatial intersection** between the **county** boundaries and **political precincts** to find where the precincts fall within each county.
+
+    -   Calculate the **number of precincts in each county**.
+
+3.  **Data Visualization:**
+
+    -   Create a shaded map using **`ggplot2`** to visualize the **count of precincts per county**.
+
+    -   Use a suitable color scale to highlight the variation in precinct count across different counties.
+
+    -   Overlay the precincts on the county map to visually inspect the spatial relationship.
+
+4.  **Interpretation:**
+
+    -   Write a short analysis explaining the spatial relationship between counties and precincts in Maryland.
+
+    -   Discuss any trends or insights (e.g., Are there counties with particularly high or low numbers of precincts? Do certain precincts span multiple counties?).
+
+
+```{r, message=FALSE,warning=FALSE}
+#| echo: True
+
+
+```
+
+### Rubric across Question 1
+
+
+-   **Title, Subtitle, and Caption**
+
+    -   Add an informative **title**, **subtitle**, and **caption** to the plot.
+
+    -   Ensure the title and subtitle are **centered** and the title is **bold** and larger in size for emphasis.
+
+-   **Legend Positioning and Readability**
+
+    -   Position the legend at the **bottom** of the plot.
+
+    -   Set an appropriate **text size** for the legend to avoid overlap or outliers.
+
+-   **Plot Presentation**
+
+    -   Ensure the plot is clear and readable, with no overlapping text or elements.
+
+    -   Use an appropriate **color palette** for data visualization and ensure all components (title, legend, map) are proportionally sized.
+
+    -   Ensure the geographic visualization can be viewed without other barriers, like x,y-axis.
+
+
+-   **Analysis**
+
+    -   Write a brief analysis based on the larger version of the plot, focusing on patterns, trends, and any noticeable outliers.
+
+
+## Question 2: R Shiny (31 points)
+
+### **Instructions:**
+
+In this assignment, you will use the following dataset:
+
+-   **`global_power_plant_database.csv`** file
+
+You will create and publish a **Shiny dashboard**. The content of the plots and text elements will not be graded based on their data or insights, but their presence and correct structure will be evaluated as per the criteria listed below.
+
+------------------------------------------------------------------------
+
+### **Grading Breakdown (31 Points):**
+
+### 1. **Dashboard Theme and Title (2 Points)**
+
+-   **(1 point)**: Apply a theme of your choice to the dashboard using the `shinytheme()` function. You can choose a theme from the **shinythemes** package. Review the documentation for more options.
+
+-   **(1 point)**: Add your **name** below the `titlePanel()` using an `<h2>` header element. This should be placed above the remaining UI components in your app.
+
+------------------------------------------------------------------------
+
+### 2. **Plots (24 Points Total)**
+
+-   **(8 points per plot)**: Add **three plots** of your choice to the dashboard:
+
+    1.  **1st plot (Bar Plot)**: Must include at least **two inputs** that allow users to choose options (e.g., selecting a category or filter for the bar plot).
+
+    2.  **2nd plot (Interactive Plot)**: Should use **`plotly()`** or **`ggplotly()`** to make it interactive, allowing users to hover over points for more information.
+
+    3.  **3rd plot (Interactive Map Plot with Leaflet)**: Should be a **geographic map** made with **`leaflet`** with a sidebar with at least one **selection** (e.g., dropdown or slider to filter regions, time, or data categories).
+
+------------------------------------------------------------------------
+
+### 3. Across plots, **Titles and Subtitles (4 Points Total)**
+
+-   **(2 points)**: Add a **title** using an `<h3>` header above each plot.
+
+-   **(2 points)**: Add a **subtitle** in **bold text** below each title, between the title and the plot itself.
+
+------------------------------------------------------------------------
+
+### 4. **Publishing (1 Point)**
+
+-   **Create a free account** on **shinyapps.io**.
+
+-   **Publish** your Shiny dashboard to your shinyapps.io account.
+
+-   Submit the **link to your published dashboard** on Canvas for grading.
+
+------------------------------------------------------------------------
+
+### 7. **Academic Integrity (0 Points, but Required)**
+
+-   If you used **ChatGPT** or any other AI assistance during the assignment, per course policy, **indicate this** in a comment when submitting your dashboard link on Canvas. Include the **prompt** you used for academic integrity.
+
+------------------------------------------------------------------------
+
+**Total Points: 31**
+
