@@ -1,0 +1,38 @@
+---
+title: "Shiny: Week two (leaflet)"
+format:
+  html:
+    embed-resources: true
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Activity 1: outside of an app, create a leaflet map of DC liquor licenses
+
+-   Read in the `Liquor_Licenses.geojson` file
+-   Create a map where you use:
+-   OpenStreetMap as the background tile
+-   Circle marker to indicate each location of a license
+-   Use the `clusterOptions = markerClusterOptions()` to cluster together locations of a high density of markers
+-   Add a label to each point using the `TRADE_NAME` and `TYPE` columns
+
+```{r}
+
+```
+
+# Activity 2: put that code in a Shiny app + add filtering option
+
+-   Embed the above map in a Shiny app
+-   Use the `selectInput` widget to allow users to filter the points by 1 or more types of establishments
+-   When doing the filtering, create a `reactive` object on the server side that stores the filtered output
+
+
+# Activity 3: modify the Shiny app to have one tab with the map, another with data to download
+
+Create a two-tab app:
+
+-   The first tab should contain the map
+-   The second tab should contain a button to download a csv file reflecting the selected establishment types
+
