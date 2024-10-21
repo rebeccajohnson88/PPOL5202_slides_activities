@@ -1,0 +1,535 @@
+---
+title: "Session 8: Geospatial Data Visualization in Python"
+author: "Prof. Rebecca A. Johnson"
+date: "23 September 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+    highlight-style: arrow-dark
+    code-block-background: true
+    slide-number: true
+    embed-resources: true 
+editor: visual
+execute:
+  warning: false
+  message: false 
+---
+
+```{r}
+library(reticulate)
+
+```
+
+```{python}
+#| label: setup
+#| include: false
+import pandas as pd
+import numpy as np
+import geopandas as gpd
+import geodatasets
+import matplotlib.pyplot as plt
+from matplotlib import colors as mcolors
+import contextily as cx 
+from pygris.data import get_census
+from pygris.utils import erase_water
+import folium
+```
+
+## Roadmap
+
+-   Static plots with `geopandas`
+    - Two types of background layers: street maps + census data
+    - Spatial joins/intersections
+
+-   Interactive plotting with `folium`
+
+## Geopandas
+
+Two basic data structures: 
+
+- `GeoSeries`: a single series that holds either spatial points, spatial lines, or spatial polygons 
+- `GeoDataFrame`: one column of the dataframe is a `GeoSeries` column; similar to R, this is named the `geometry` column
+
+## Importing spatial data
+
+Similar to R, can import `geojson` and other file formats
+
+```{python}
+#| echo: true
+#| output: true
+homeless_facilities = gpd.read_file("Homeless_Service_Facilities.geojson")
+homeless_facilities.head()
+type(homeless_facilities)
+homeless_facilities.geometry
+
+```
+
+## Obtaining background layers
+
+-   For street-map type layers, `contextily` package is one resource
+-   For Census tract/county/state layers, can either obtain shapefiles from Census API directly or use `pygris`, similar to R's `tigris`
+
+## Approach one: Street map layers
+
+-   First create the plot (defaults to `matplotlib`)
+-   Then, add the basemap as the background
+
+```{python}
+#| echo: true
+#| output: false
+points_plot = homeless_facilities.plot(color = "green", markersize = 0.5)
+cx.add_basemap(points_plot, crs = homeless_facilities.crs)
+```
+
+
+## Approach one: Street map layers
+
+```{python}
+#| echo: false
+#| output: true
+points_plot = homeless_facilities.plot(color = "green", markersize = 0.5)
+cx.add_basemap(points_plot, crs = homeless_facilities.crs)
+```
+
+
+
+## Approach two: census data as background
+
+- Unlike R, no clear equivalent to `tidycensus` that can pull both geometries + information about those geometries
+- Two options:
+   - Obtain shapefiles directly from Census TIGER site: [link here](https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html)
+   - Use `pygris` package (similar to `tigris` in `R`)
+   
+## Working directly with shapefiles
+
+```{python}
+#| echo: true
+#| output: true
+dc_tracts = gpd.read_file(filename =
+"https://www2.census.gov/geo/tiger/TIGER2020/TRACT/tl_2020_11_tract.zip")
+
+dc_tracts.head()
+type(dc_tracts)
+
+```
+
+## Plotting polygons
+
+```{python}
+#| echo: true
+#| output: true
+fig, ax = plt.subplots()
+dc_tracts.plot(edgecolor = "white", alpha = 0.5, 
+              ax = ax)
+ax.set_axis_off()
+fig.patch.set_visible(False)
+
+```
+
+## Adding points to a polygon plot
+
+Make sure to align the crs!
+
+```{python}
+#| echo: true
+#| output: false
+homeless_tractcrs = homeless_facilities.to_crs(dc_tracts.crs)
+fig, ax = plt.subplots()
+dc_tracts.plot(edgecolor = "black", alpha = 0.1, 
+              ax = ax)
+homeless_tractcrs.plot(ax = ax,
+              marker = "o", color = "red", markersize = 0.5)
+ax.set_axis_off()
+plt.title("Homeless facilities in DC")
+fig.patch.set_visible(False)
+plt.show()
+
+```
+
+## Adding points to a polygon plot
+
+
+```{python}
+#| echo: false
+#| output: true
+homeless_tractcrs = homeless_facilities.to_crs(dc_tracts.crs)
+fig, ax = plt.subplots()
+dc_tracts.plot(edgecolor = "white", alpha = 0.8, 
+              ax = ax)
+homeless_tractcrs.plot(ax = ax,
+              marker = "o", color = "red", markersize = 1)
+ax.set_axis_off()
+plt.title("Homeless facilities in DC",
+color = "white")
+fig.patch.set_visible(False)
+plt.show()
+
+```
+
+## Pulling demographic information
+
+Multiple options:
+
+- Can pull directly from the Census API
+- Can use the `get_census()` function within `pygris`
+
+## get_census() for pulling demographic info.
+
+```{python}
+#| echo: true
+#| output: true
+dc_poverty_info = get_census(
+  dataset = "acs/acs5/profile",
+  variables = "DP03_0119PE",
+  year = 2020,
+  params = {"for": "tract:*",
+          "in": "state:11"},
+  guess_dtypes = True, 
+  return_geoid = True)
+
+dc_poverty_info.head(3)
+```
+
+## Merging with polygon information
+
+See that similar to `sf` in R, `geopandas` helps maintain it as a spatial dataframe post merge
+
+```{python}
+#| echo: true
+#| output: true
+dc_tracts_wpov = dc_tracts.merge(dc_poverty_info,
+              how = "inner", 
+              on = "GEOID")
+type(dc_tracts_wpov)
+
+```
+
+## Plotting the result 
+
+See here for a list of colormap (`cmap`) options: [link here](https://matplotlib.org/stable/users/explain/colors/colormaps.html)
+
+```{python}
+#| echo: true
+#| output: false
+fig, ax = plt.subplots()
+dc_tracts_wpov.plot(edgecolor = "black", alpha = 0.9, 
+              ax = ax,
+              column = "DP03_0119PE",
+              legend = True,
+              cmap = "Blues")
+homeless_tractcrs.plot(ax = ax,
+              marker = "o", color = "red", markersize = 0.5)
+ax.set_axis_off()
+plt.title("Homeless facilities in DC vs. % of tract living in poverty",
+color = "white")
+fig.patch.set_visible(False)
+plt.show()
+
+```
+
+## Plotting the result 
+
+
+```{python}
+#| echo: false
+#| output: true
+fig, ax = plt.subplots()
+dc_tracts_wpov.plot(edgecolor = "black", alpha = 0.9, 
+              ax = ax,
+              column = "DP03_0119PE",
+              legend = True,
+              cmap = "Blues")
+homeless_tractcrs.plot(ax = ax,
+              marker = "o", color = "red", markersize = 0.5)
+ax.set_axis_off()
+plt.title("Homeless facilities in DC vs. % of tract living in poverty", color = "white")
+fig.patch.set_visible(False)
+plt.show()
+
+```
+
+## Where we are
+
+-   Static plots with `geopandas`
+    - [Two types of background layers: street maps + census data]{style="color:gray;"}
+    - **Spatial joins/intersections**
+
+-   [Interactive plotting with `folium`]{style="color:gray;"}
+
+
+
+## Spatial intersection
+
+- Previous example was merging a spatial dataframe with a non-spatial attribute using a `GEOID` column
+- How can we do a spatial intersection where we find the count of homeless facilities within each tract?
+- Unlike `intersects` and `intersection` in R, which check all elements against each other, the equivalent operations in python only check pairs of rows
+- If want to avoid iteration, can use the `sjoin` command
+
+## Step one: perform the spatial intersection/join
+
+```{python}
+#| echo: true
+#| output: true
+tracts_w_facilities = gpd.sjoin(dc_tracts_wpov,
+                homeless_tractcrs,
+                predicate = "contains")
+
+dc_tracts_wpov.shape[0]
+homeless_tractcrs.shape[0]
+len(tracts_w_facilities.GEOID.unique())
+tracts_w_facilities.shape[0]
+
+```
+
+## Step two: aggregate by tract 
+
+```{python}
+#| echo: true
+#| output: true
+
+## group the dataframe to find the count in tracts with 1+ overlap
+count_pertract_1plus = tracts_w_facilities.groupby('GEOID').size().\
+                      reset_index() 
+count_pertract_1plus.columns = ["GEOID", "count_facilities"]
+
+## create a similar dataframe with the tracts that had
+## no intersections with a facility (so count = 0)
+nonjoined_tracts = set(dc_tracts_wpov.GEOID).\
+        difference(tracts_w_facilities.GEOID)
+count_pertract_zero = pd.DataFrame({'GEOID': 
+            list(nonjoined_tracts),
+        'count_facilities': 0}) 
+        
+count_pertract_all = pd.concat([count_pertract_1plus,
+                    count_pertract_zero])
+
+assert count_pertract_all.shape[0] == \
+          len(count_pertract_all.GEOID.unique())
+          
+## merge back using GEOID
+dc_tracts_wcount = dc_tracts.merge(count_pertract_all,
+        how = "inner", on = "GEOID") 
+        
+
+```
+
+## Step three: plot the results with a categorical shading
+
+
+```{python}
+#| echo: true
+#| output: false
+fig, ax = plt.subplots()
+dc_tracts_wcount.plot(edgecolor = "black", alpha = 0.9, 
+              ax = ax,
+              column = "count_facilities",
+              categorical = True,
+              legend = True,
+              cmap = "Blues")
+ax.set_axis_off()
+plt.title("Count of homeless facilities per DC census tract", 
+color = "white")
+fig.patch.set_visible(False)
+plt.show()
+
+```
+
+## Step three: plot the results with a categorical shading
+
+
+```{python}
+#| echo: false
+#| output: true
+fig, ax = plt.subplots()
+dc_tracts_wcount.plot(edgecolor = "black", alpha = 0.9, 
+              ax = ax,
+              column = "count_facilities",
+              categorical = True,
+              legend = True,
+              cmap = "Blues")
+ax.set_axis_off()
+plt.title("Count of homeless facilities per DC census tract", color = "white")
+fig.patch.set_visible(False)
+plt.show()
+
+```
+
+## Where we are
+
+-   [Static plots with `geopandas`]{style="color:gray;"}
+    - [Two types of background layers: street maps + census data]{style="color:gray;"}
+    - [Spatial joins/intersections]{style="color:gray;"}
+
+-   Interactive plotting with `folium`
+
+## Folium for interactive plotting 
+
+- Wrapper for `leaflet` which we covered in `R`
+- Similar capabilities including zoom and hoverable/clickable markers and shapes
+
+## Step one: create the background map
+
+Default is open street map
+
+```{python}
+#| echo: true
+#| output: true
+m = folium.Map(location = [38.9047, -77.016], 
+    zoom_start = 12)
+m
+```
+
+## Example one: add markers with hoverable + clickable information
+
+- *Tooltips*: pull up information as you hover over a marker/point
+- *Popups*: pull up information as you click on a marker/point - can also add the ability to zoom in on that point
+- The `geoJson` set of commands within folium can accept either geojson or geopandas dataframes for plotting 
+
+## Example one: add markers with hoverable + clickable information
+
+Use `add_to()` to add to the basemap
+
+```{python}
+#| echo: true
+#| output: false
+homeless_folium = homeless_facilities[['PROGRAM_NAME',
+'WEBSITE_URL', 'geometry', 'TARGET']].to_crs(4326).copy() 
+m = folium.Map(location = [38.9047, -77.016], 
+    zoom_start = 12)
+folium.GeoJson(homeless_folium,
+    name = "Homeless facilities",
+    marker = folium.Circle(radius = 5,
+            fill_color = "green",
+            fill_opacity = 0.5,
+            color = "green"),
+    tooltip = folium.GeoJsonTooltip(fields = ["PROGRAM_NAME",
+    "WEBSITE_URL", "TARGET"],
+    aliases = ["Name:", "URL:", "Target group:"]),
+    popup = folium.GeoJsonPopup(fields = ["PROGRAM_NAME",
+    "WEBSITE_URL", "TARGET"],
+    aliases = ["Name:", "URL:", "Target group:"]),
+    zoom_on_click = True).add_to(m)
+
+```
+
+## Example one: add markers with hoverable + clickable information
+
+```{python}
+#| echo: false
+#| output: true
+homeless_folium = homeless_facilities[['PROGRAM_NAME',
+'WEBSITE_URL', 'geometry', 'TARGET']].to_crs(4326).copy() 
+m = folium.Map(location = [38.9047, -77.016], 
+    zoom_start = 12)
+folium.GeoJson(homeless_folium,
+    name = "Homeless facilities",
+    marker = folium.Circle(radius = 5,
+            fill_color = "green",
+            fill_opacity = 0.5,
+            color = "green"),
+    tooltip = folium.GeoJsonTooltip(fields = ["PROGRAM_NAME",
+    "WEBSITE_URL", "TARGET"],
+    aliases = ["Name:", "URL:", "Target group:"]),
+    popup = folium.GeoJsonPopup(fields = ["PROGRAM_NAME",
+    "WEBSITE_URL", "TARGET"],
+    aliases = ["Name:", "URL:", "Target group:"]),
+    zoom_on_click = True).add_to(m)
+m
+
+```
+
+## Example two: add information to a choropleth map
+
+Step 1: start with a choropleth map 
+
+```{python}
+#| echo: true
+#| output: false
+dc_tracts_folium = dc_tracts_wpov.to_crs(4326).copy()
+m = folium.Map(location = [38.9047, -77.016], 
+    zoom_start = 11)
+    
+folium.Choropleth(geo_data = dc_tracts_folium,
+    name = "Household poverty",
+    data = dc_tracts_folium,
+    columns = ["GEOID", "DP03_0119PE"],
+    key_on = "feature.properties.GEOID",
+    fill_color = "Blues").add_to(m)
+
+
+```
+
+## Example two: add information to a choropleth map
+
+```{python}
+#| echo: false
+#| output: true
+dc_tracts_folium = dc_tracts_wpov.to_crs(4326).copy()
+m = folium.Map(location = [38.9047, -77.016], 
+    zoom_start = 11)
+    
+folium.Choropleth(geo_data = dc_tracts_folium,
+    name = "Household poverty",
+    data = dc_tracts_folium,
+    columns = ["GEOID", "DP03_0119PE"],
+    key_on = "feature.properties.GEOID",
+    fill_color = "Blues").add_to(m)
+
+m
+
+```
+
+## Example two: add information to a choropleth map
+
+Step 2: add hoverable information
+
+Need to use the `geojson` attribute from the choropleth map
+
+```{python}
+#| echo: true
+#| output: false
+dc_tracts_folium = dc_tracts_wpov.to_crs(4326).copy()
+m = folium.Map(location = [38.9047, -77.016], 
+    zoom_start = 11)
+    
+cp = folium.Choropleth(geo_data = dc_tracts_folium,
+    name = "Household poverty",
+    data = dc_tracts_folium,
+    columns = ["GEOID", "DP03_0119PE"],
+    key_on = "feature.properties.GEOID",
+    fill_color = "Blues").add_to(m)
+    
+cp.geojson.add_child(folium.features.GeoJsonTooltip(['DP03_0119PE'],
+aliases = ['Poverty rate:']))
+
+```
+
+## Example two: add information to a choropleth map
+
+```{python}
+#| echo: false
+#| output: true
+dc_tracts_folium = dc_tracts_wpov.to_crs(4326).copy()
+m = folium.Map(location = [38.9047, -77.016], 
+    zoom_start = 11)
+    
+cp = folium.Choropleth(geo_data = dc_tracts_folium,
+    name = "Household poverty",
+    data = dc_tracts_folium,
+    columns = ["GEOID", "DP03_0119PE"],
+    key_on = "feature.properties.GEOID",
+    fill_color = "Blues").add_to(m)
+    
+cp.geojson.add_child(folium.features.GeoJsonTooltip(['DP03_0119PE'],
+aliases = ['Poverty rate:']))
+
+m
+```
+
+## Wrapping up 
+
+-   Static plots with `geopandas`
+    - Two types of background layers: street maps + census data
+    - Spatial joins/intersections
+
+-   Interactive plotting with `folium`
