@@ -8,7 +8,6 @@ format:
     highlight-style: arrow-dark
     code-block-background: true
     slide-number: true
-    embed-resources: true 
 editor: visual
 execute:
   warning: false
@@ -38,17 +37,16 @@ import folium
 ## Roadmap
 
 -   Static plots with `geopandas`
-    - Two types of background layers: street maps + census data
-    - Spatial joins/intersections
-
+    -   Two types of background layers: street maps + census data
+    -   Spatial joins/intersections
 -   Interactive plotting with `folium`
 
 ## Geopandas
 
-Two basic data structures: 
+Two basic data structures:
 
-- `GeoSeries`: a single series that holds either spatial points, spatial lines, or spatial polygons 
-- `GeoDataFrame`: one column of the dataframe is a `GeoSeries` column; similar to R, this is named the `geometry` column
+-   `GeoSeries`: a single series that holds either spatial points, spatial lines, or spatial polygons
+-   `GeoDataFrame`: one column of the dataframe is a `GeoSeries` column; similar to R, this is named the `geometry` column
 
 ## Importing spatial data
 
@@ -81,7 +79,6 @@ points_plot = homeless_facilities.plot(color = "green", markersize = 0.5)
 cx.add_basemap(points_plot, crs = homeless_facilities.crs)
 ```
 
-
 ## Approach one: Street map layers
 
 ```{python}
@@ -91,15 +88,13 @@ points_plot = homeless_facilities.plot(color = "green", markersize = 0.5)
 cx.add_basemap(points_plot, crs = homeless_facilities.crs)
 ```
 
-
-
 ## Approach two: census data as background
 
-- Unlike R, no clear equivalent to `tidycensus` that can pull both geometries + information about those geometries
-- Two options:
-   - Obtain shapefiles directly from Census TIGER site: [link here](https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html)
-   - Use `pygris` package (similar to `tigris` in `R`)
-   
+-   Unlike R, no clear equivalent to `tidycensus` that can pull both geometries + information about those geometries
+-   Two options:
+    -   Obtain shapefiles directly from Census TIGER site: [link here](https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html)
+    -   Use `pygris` package (similar to `tigris` in `R`)
+
 ## Working directly with shapefiles
 
 ```{python}
@@ -148,7 +143,6 @@ plt.show()
 
 ## Adding points to a polygon plot
 
-
 ```{python}
 #| echo: false
 #| output: true
@@ -170,8 +164,8 @@ plt.show()
 
 Multiple options:
 
-- Can pull directly from the Census API
-- Can use the `get_census()` function within `pygris`
+-   Can pull directly from the Census API
+-   Can use the `get_census()` function within `pygris`
 
 ## get_census() for pulling demographic info.
 
@@ -204,7 +198,7 @@ type(dc_tracts_wpov)
 
 ```
 
-## Plotting the result 
+## Plotting the result
 
 See here for a list of colormap (`cmap`) options: [link here](https://matplotlib.org/stable/users/explain/colors/colormaps.html)
 
@@ -227,8 +221,7 @@ plt.show()
 
 ```
 
-## Plotting the result 
-
+## Plotting the result
 
 ```{python}
 #| echo: false
@@ -251,19 +244,16 @@ plt.show()
 ## Where we are
 
 -   Static plots with `geopandas`
-    - [Two types of background layers: street maps + census data]{style="color:gray;"}
-    - **Spatial joins/intersections**
-
+    -   [Two types of background layers: street maps + census data]{style="color:gray;"}
+    -   **Spatial joins/intersections**
 -   [Interactive plotting with `folium`]{style="color:gray;"}
-
-
 
 ## Spatial intersection
 
-- Previous example was merging a spatial dataframe with a non-spatial attribute using a `GEOID` column
-- How can we do a spatial intersection where we find the count of homeless facilities within each tract?
-- Unlike `intersects` and `intersection` in R, which check all elements against each other, the equivalent operations in python only check pairs of rows
-- If want to avoid iteration, can use the `sjoin` command
+-   Previous example was merging a spatial dataframe with a non-spatial attribute using a `GEOID` column
+-   How can we do a spatial intersection where we find the count of homeless facilities within each tract?
+-   Unlike `intersects` and `intersection` in R, which check all elements against each other, the equivalent operations in python only check pairs of rows
+-   If want to avoid iteration, can use the `sjoin` command
 
 ## Step one: perform the spatial intersection/join
 
@@ -281,7 +271,7 @@ tracts_w_facilities.shape[0]
 
 ```
 
-## Step two: aggregate by tract 
+## Step two: aggregate by tract
 
 ```{python}
 #| echo: true
@@ -315,7 +305,6 @@ dc_tracts_wcount = dc_tracts.merge(count_pertract_all,
 
 ## Step three: plot the results with a categorical shading
 
-
 ```{python}
 #| echo: true
 #| output: false
@@ -335,7 +324,6 @@ plt.show()
 ```
 
 ## Step three: plot the results with a categorical shading
-
 
 ```{python}
 #| echo: false
@@ -357,15 +345,14 @@ plt.show()
 ## Where we are
 
 -   [Static plots with `geopandas`]{style="color:gray;"}
-    - [Two types of background layers: street maps + census data]{style="color:gray;"}
-    - [Spatial joins/intersections]{style="color:gray;"}
-
+    -   [Two types of background layers: street maps + census data]{style="color:gray;"}
+    -   [Spatial joins/intersections]{style="color:gray;"}
 -   Interactive plotting with `folium`
 
-## Folium for interactive plotting 
+## Folium for interactive plotting
 
-- Wrapper for `leaflet` which we covered in `R`
-- Similar capabilities including zoom and hoverable/clickable markers and shapes
+-   Wrapper for `leaflet` which we covered in `R`
+-   Similar capabilities including zoom and hoverable/clickable markers and shapes
 
 ## Step one: create the background map
 
@@ -381,9 +368,9 @@ m
 
 ## Example one: add markers with hoverable + clickable information
 
-- *Tooltips*: pull up information as you hover over a marker/point
-- *Popups*: pull up information as you click on a marker/point - can also add the ability to zoom in on that point
-- The `geoJson` set of commands within folium can accept either geojson or geopandas dataframes for plotting 
+-   *Tooltips*: pull up information as you hover over a marker/point
+-   *Popups*: pull up information as you click on a marker/point - can also add the ability to zoom in on that point
+-   The `geoJson` set of commands within folium can accept either geojson or geopandas dataframes for plotting
 
 ## Example one: add markers with hoverable + clickable information
 
@@ -440,7 +427,7 @@ m
 
 ## Example two: add information to a choropleth map
 
-Step 1: start with a choropleth map 
+Step 1: start with a choropleth map
 
 ```{python}
 #| echo: true
@@ -526,10 +513,9 @@ aliases = ['Poverty rate:']))
 m
 ```
 
-## Wrapping up 
+## Wrapping up
 
 -   Static plots with `geopandas`
-    - Two types of background layers: street maps + census data
-    - Spatial joins/intersections
-
+    -   Two types of background layers: street maps + census data
+    -   Spatial joins/intersections
 -   Interactive plotting with `folium`
