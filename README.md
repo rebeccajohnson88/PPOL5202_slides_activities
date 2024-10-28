@@ -18,3 +18,5 @@ Course slides, activities, and assignments for Georgetown McCourt School of Publ
 - [Session 7: Shiny + Leaflet](https://html-preview.github.io/?url=https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/slides/session7_shiny_leaflet/session7_shiny_leaflet.html)
 
 - [Session 8: Geospatial Visualization in Python](https://html-preview.github.io/?url=https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/slides/session8_geospatial_python/session8_geospatial_python.html)
+
+- [Session 9: Altair (Python)](https://html-preview.github.io/?url=https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/slides/session9_altair/session9_altair.slides.html)
