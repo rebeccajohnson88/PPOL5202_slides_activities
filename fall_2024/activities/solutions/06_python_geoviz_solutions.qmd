@@ -1,0 +1,172 @@
+---
+title: "Geospatial data in Python"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Setup
+
+```{r}
+library(reticulate)
+
+```
+
+```{python}
+import pandas as pd
+import numpy as np
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from matplotlib import colormaps
+from pygris import states
+import folium
+import branca.colormap as cm
+from branca.colormap import linear
+
+```
+
+# Activity 1: Choropleth map with one poll's data
+
+- Load the `1976-2020-president.csv` file
+- Filter to:
+   - `year` = 2020
+   - `party_simplified` is REPUBLICAN
+- Create a new column `vote_share` defined as `candidatevotes`/`totalvotes`
+- Use `pygris` to download state polygons (set the year to be 2020)
+- Use `folium` to create a choropleth map with the Republican vote share for 2020 for each state.
+    - Hint: I would recommend merging the data on `STATEFP` prior to plotting. For that, you may need to add leading zeros to the two digit state fips codes. See here for a useful reference: https://pandas.pydata.org/docs/reference/api/pandas.Series.str.pad.html 
+
+
+
+```{python}
+## data preparation 
+vote_returns = pd.read_csv("1976-2020-president.csv")
+vote_returns['STATEFP'] = vote_returns.state_fips.astype(str).str.pad(width = 2, side = 'left', fillchar = "0")
+vote_focus = vote_returns[(vote_returns.year == 2020) & 
+                          (vote_returns.party_simplified.isin(["REPUBLICAN"]))].copy()
+vote_focus['vote_share'] = vote_focus.candidatevotes/vote_focus.totalvotes 
+
+## get state boundaries for mapping 
+state_boundaries = states(year = 2020)
+state_boundaries_folium = state_boundaries.to_crs(4326)
+
+## merge 
+state_w_votefocus = state_boundaries_folium.merge(vote_focus, on = "STATEFP")
+```
+
+
+```{python}
+
+m = folium.Map(location=[40, -95], zoom_start=3)
+
+## create the plot
+folium.Choropleth(geo_data = state_w_votefocus,
+    name = "Republican vote share",
+    data = state_w_votefocus,
+    columns = ["STATEFP", "vote_share"],
+    key_on = "feature.properties.GEOID",
+    legend = True,
+    legend_name = "Republican vote share",
+    fill_color = "YlOrRd").add_to(m)
+    
+m
+
+
+```
+
+## Activity 2: add a hoverable popup to the plot
+
+For each state, add a hoverable popup with:
+- The state name
+- The republican vote share (rounded to 2 digits)
+
+
+```{python}
+
+state_w_votefocus['rounded_vs'] = state_w_votefocus.vote_share.round(2)
+state_w_votefocus['state_title'] = state_w_votefocus.state.str.title()
+
+m = folium.Map(location=[40, -95], zoom_start=3)
+
+## create the plot
+cp = folium.Choropleth(geo_data = state_w_votefocus,
+    name = "Republican vote share",
+    data = state_w_votefocus,
+    columns = ["STATEFP", "vote_share"],
+    key_on = "feature.properties.GEOID",
+    legend = True,
+    legend_name = "Republican vote share",
+    fill_color = "YlOrRd").add_to(m)
+    
+cp.geojson.add_child(folium.features.GeoJsonTooltip(['state_title', 'rounded_vs'],
+aliases = ["State:", "Republican vote share:"]))
+
+m
+
+```
+
+## Activity 3: switch to R and create the same choropleth map using leaflet
+
+- See here for some example code: https://rstudio.github.io/leaflet/articles/choropleths.html 
+- *Hint*: you'll need to reload the presidential results data and use `tigris` to get the state polygons
+
+```{r}
+library(tidyverse) 
+library(stringr)
+library(leaflet)
+library(leaflet.extras)
+library(tigris)
+library(sf)
+options(tigris_use_cache = TRUE)
+
+## clean vote data
+vote_returns = read.csv("1976-2020-president.csv")
+vote_focus <- vote_returns %>%
+          filter(year == 2020 & 
+                party_simplified == "REPUBLICAN") %>%
+          mutate(STATEFP = str_pad(state_fips, width = 2, side = "left", pad = "0"),
+                 vote_share = candidatevotes/totalvotes) 
+
+## load state polygons
+states <- states(year = 2020)
+states_leaflet <- states %>% 
+            st_transform(crs = 4326)
+
+## merge state polygons with vote share
+state_w_votefocus <- states_leaflet %>%
+            inner_join(vote_focus, by = "STATEFP")
+
+## create color palette
+bins <- quantile(vote_focus$vote_share, probs = seq(from = 0, to = 1, by = 0.2))
+palette <- colorBin("YlOrRd", domain = state_w_votefocus$vote_share, bins = bins)
+
+## create labels for each state
+state_labels <- sprintf("State:%s<br/>Republican Vote Share: %.2f",
+                  state_w_votefocus$NAME,
+                  state_w_votefocus$vote_share) %>%
+            lapply(htmltools::HTML)
+
+## create choropleth map
+leaflet(state_w_votefocus) %>%
+    addProviderTiles(providers$Stadia.StamenWatercolor) %>%
+    setView(-96, 37.8, 4) %>%
+    addPolygons(fillColor = ~palette(vote_share),
+                weight = 2,
+                opacity = 1,
+                color = "white",
+                fillOpacity = 0.8,
+    highlightOptions = highlightOptions(
+    weight = 5,
+    color = "black",
+    fillOpacity = 0.8,
+    bringToFront = TRUE),
+    label = state_labels) %>%
+    addLegend(pal = palette, values = ~vote_share, opacity = 0.8, 
+              title = "Republican vote share",
+    position = "bottomright")
+
+```
+
+

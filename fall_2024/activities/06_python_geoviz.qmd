@@ -1,0 +1,78 @@
+---
+title: "Geospatial data in Python"
+format: html
+editor: visual
+execute: 
+  warning: false
+  message: false
+---
+
+# Setup
+
+```{r}
+library(reticulate)
+
+```
+
+```{python}
+import pandas as pd
+import numpy as np
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from matplotlib import colormaps
+from pygris import states
+import folium
+import branca.colormap as cm
+from branca.colormap import linear
+
+```
+
+# Activity 1: Choropleth map with one poll's data
+
+-   Load the `1976-2020-president.csv` file
+-   Filter to:
+    -   `year` = 2020
+    -   `party_simplified` is REPUBLICAN
+-   Create a new column `vote_share` defined as `candidatevotes`/`totalvotes`
+-   Use `pygris` to download state polygons (set the year to be 2020)
+-   Use `folium` to create a choropleth map with the Republican vote share for 2020 for each state.
+    -   Hint: I would recommend merging the data on `STATEFP` prior to plotting. For that, you may need to add leading zeros to the two digit state fips codes. See here for a useful reference: https://pandas.pydata.org/docs/reference/api/pandas.Series.str.pad.html
+
+```{python}
+
+```
+
+```{python}
+
+
+
+```
+
+## Activity 2: add a hoverable popup to the plot
+
+For each state, add a hoverable popup with:
+
+- The state name
+
+- The republican vote share (rounded to 2 digits)
+
+```{python}
+
+
+
+```
+
+## Activity 3: switch to R and create the same choropleth map using leaflet
+
+-   See here for some example code: https://rstudio.github.io/leaflet/articles/choropleths.html
+-   *Hint*: you'll need to reload the presidential results data and use `tigris` to get the state polygons
+
+```{r}
+library(tidyverse) 
+library(stringr)
+library(leaflet)
+library(leaflet.extras)
+library(tigris)
+library(sf)
+
+```
