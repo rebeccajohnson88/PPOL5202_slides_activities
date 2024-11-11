@@ -1,0 +1,285 @@
+---
+title: "Session 11: Tableau"
+author: "Prof. Rebecca A. Johnson"
+date: "11 November 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+    highlight-style: arrow-dark
+    code-block-background: true
+    slide-number: true
+editor: visual
+execute:
+  warning: false
+  message: false 
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(tidyverse)
+```
+
+
+
+## Roadmap
+
+
+-   About Tableau*
+
+-   Structuring data for Tableau
+
+-   Tableau terminology
+
+-   Tableau demo
+
+*Acknowledgment to Prof Pickens' Lecture 8 for Tableau content 
+
+
+
+# About Tableau
+
+## Products
+
+-   Tableau Prep
+
+-   **Tableau Desktop**
+
+-   Tableau Server and Tableau Online
+
+-   Tableau Mobile
+
+-   Honorable mention: **Tableau Public**
+
+## Tableau Prep
+
+-   Combine, clean, and shape data
+
+-   Automate data flows
+
+## Tableau Server and Tableau Online (and Tableau mobile...)
+
+-   Publish data sources (extracts and live connections)
+
+-   Publish dashboards (created on desktop or server via data sources)
+
+    -   Dashboards published to server are only visible to other server users with appropriate permissions
+
+## Tableau Desktop
+
+-   "Classic" Tableau product
+
+-   Business intelligence/data visualization software
+
+-   Primarily drag-and-drop interface
+
+-   Built-in analytics and calculation options
+
+-   Substantial options for connecting to data
+
+## Tableau Public
+
+-   Publish Tableau dashboards for public consumption
+
+    -   Once published, can generate HTML to embed on an external site
+
+-   Not possible to publish "privately"
+
+-   Is possible to limit permissions for downloading dashboards/underlying data
+
+## Tableau - Community
+
+-   Tableau Public [Gallery](https://public.tableau.com/app/discover) and Viz of the Day
+
+-   Tableau [Visionaries](https://www.tableau.com/community/community-leaders/visionaries) (formerly Zen Masters) (lol)
+
+## Pros
+
+-   Very powerful, respected, and common BI engine/tool
+
+-   Non-intimidating interface and intuitive to learn (particularly for users without programming experience)
+
+-   Designed for easy and automatic interactivity (substantially easier than Shiny)​
+
+-   Very supportive online community​
+
+-   Offers substantial options for data connections
+
+## Cons
+
+-   No version control and reproducible examples are hard to create​ (can make asking questions online difficult​)
+
+-   Limited to built-in statistical functionality​ unless you add external analytics connectors
+
+-   Options for public data distribution not great (even if you are paying for Tableau server)​
+
+-   Very inflexible if the use case is new or unanticipated
+
+## Takeaway and Use Case
+
+-   Tableau is very good at what it is designed to do, but the moment you need additional features or flexibility, it becomes a "round peg square hole" problem.​
+
+-   Best for:​
+
+    -   Products created/maintained by researchers or those with less technical experience​
+
+    -   Dashboards that require interactivity and public access
+
+    -   When your boss/company/project requires it
+
+## What should you take away from today's session if you never use Tableau again?
+
+-   Different way of thinking about data/data tools
+
+-   Understanding comparative advantages of programming languages vs. BI software
+
+-   Start to see if this is something you would like
+
+-   ...never say never (sometimes you don't have a choice)
+
+# Structuring data for Tableau
+
+## Tableau is oriented around columns as fields (variables) and rows (or groups of rows) as marks (data points on a visualization)
+
+## No
+
+![Source: Practical Tableau Chapter 4](images/prta_0401.png){fig-align="center"}
+
+## Yes
+
+![Source: Practical Tableau Chapter 4](images/prta_0403.png){fig-align="center"}
+
+# Tableau terminology
+
+# Or, some corporate terminology for things you may or may not already have names for
+
+## Dimensions and measures
+
+-   **Dimensions** are qualitative data, such as a name or date
+
+    -   What you "slice and dice" the number by
+
+    -   If it doesn't make sense to "sum" the number, it's likely a dimension
+
+-   **Measures** are quantitative numerical data; data that is classified as a measure can be aggregated based on a given dimension (i.e., total sales (measure) by region (dimension))
+
+    -   You can think of measures as dependent variables; functions of 1+ dimensions
+
+
+## Continuous and discrete fields
+
+-   **Continuous** fields can contain an infinite number of values; they are colored green in Tableau
+
+-   **Discrete** fields contain a finite number of values; they are colored blue in Tableau
+
+-   You can convert between continuous and discrete for numbers and dates
+
+## Discrete dates
+
+Discrete fields draw headers; continuous fields draw axes. Discrete fields can be sorted; continuous fields cannot.
+
+![Source: Practical Tableau Chapter 7](images/prta_0701.png){fig-align="center"}
+
+## Continuous Dates
+
+Discrete fields draw headers; continuous fields draw axes. Discrete fields can be sorted; continuous fields cannot.
+
+![Source: Practical Tableau Chapter 7](images/prta_0702.png){fig-align="center"}
+
+## Worksheets/Views/Dashboards
+
+-   Each tab in a Tableau workbook is called a worksheet
+
+-   The area that displays a data visualization is called a view
+
+-   Dashboards are composed of worksheets and other objects; they are the only thing that is published
+
+## Workbook vs packaged workbook
+
+-   Workbooks often reference external resources; when you save a workbook, links to these resources are also saved. (.twb extension)
+
+-   Packaged workbooks contain the workbook along with a copy (stored as plain text) of any local file data sources and background images. The workbook is no longer linked to the original data sources and images, so anyone can open them. (.twbx extension)
+
+## Pill
+
+-   Slang term for fields being used on a worksheet
+
+## Mark
+
+-   Each data point on the view
+-   Tableau displays data so that every mark corresponds to a row (or a group of rows) in your data source
+
+## Aggregation
+
+-   Row-level data rolled up to a higher category, such as sum of sales or total profit.
+
+-   When you add a measure to the view, Tableau automatically aggregates its values.
+
+## Filters
+
+-   Exclude/include data based on conditions or values
+
+-   You can filter individual data points (marks), or a selection of data points from your view
+
+-   Note: Tableau has a specific [order of operations](https://help.tableau.com/current/pro/desktop/en-us/filtering.htm) for filters. **This matters.**
+
+## Parameters
+
+-   Parameters (https://www.tableau.com/blog/using-parameter-change-fields-45866) offer input a user can control
+
+-   Can apply these as early in the pipeline as the database connection via custom SQL
+
+## Cards and Shelves
+
+-   Cards are containers for the different controls that are available in Tableau.
+
+-   Shelves are a type of card control. When you drag fields from the **Data** pane to the Columns or Rows shelves, the data is added as a column or a row on the axes in your view.
+
+-   When you drag fields from the **Data** pane to the Marks card, you can control visual properties like type, color, size, shape, and more. Only the marks in your view are impacted by this action; axes do not change.
+
+## Tooltip
+
+-   Appears when you hover over a mark (only appears for measures)
+
+## Calculated fields
+
+-   Create a field (column) that does not appear in your data source
+
+-   Read about calculation [building blocks](https://help.tableau.com/current/pro/desktop/en-us/functions_operators.htm) (functions, fields, operators, literals) (optional: parameters, comments)
+
+-   Tableau [functions by category](https://help.tableau.com/current/pro/desktop/en-us/functions_all_categories.htm) and [logical functions](https://help.tableau.com/current/pro/desktop/en-us/functions_functions_logical.htm)
+
+## Level of detail expressions
+
+-   Compute aggregations that are not at the level of detail of the visualization (more granular, less granular, or fixed)
+
+-   [Read more](https://help.tableau.com/current/pro/desktop/en-us/calculations_calculatedfields_lod.htm)
+
+# Layout
+
+## A - Back button
+
+![Source: https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-drag.htm](images/layout.png){fig-align="center"}
+
+## B - Data pane
+
+![Source: https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-drag.htm](images/layout.png){fig-align="center"}
+
+## C - Cards
+
+![Source: https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-drag.htm](images/layout.png){fig-align="center"}
+
+## D - Shelves
+
+![Source: https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-drag.htm](images/layout.png){fig-align="center"}
+
+## E - Show/hide cards
+
+![Source: https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-drag.htm](images/layout.png){fig-align="center"}
+
+
+## Demo
+
+-   Based on [this tutorial](https://help.tableau.com/current/guides/get-started-tutorial/en-us/get-started-tutorial-connect.htm)
+
+
