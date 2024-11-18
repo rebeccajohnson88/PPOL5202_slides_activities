@@ -1,0 +1,185 @@
+---
+title: "Session 12: Data Visualization for the Web"
+author: "Prof. Rebecca A. Johnson"
+date: "17 November 2024"
+format:
+  revealjs: 
+    theme: ppol5202_workingtheme.scss
+    highlight-style: arrow-dark
+    code-block-background: true
+    slide-number: true
+editor: visual
+execute:
+  warning: false
+  message: false 
+---
+
+## Roadmap
+
+-   Essentials of building websites
+
+-   Old tools, new applications
+
+-   Tool review and discussion
+
+-   Personal websites
+
+*Acknowledgments to Prof. Pickens' Lecture 12
+
+# Essentials of building websites
+
+## All websites are essentially an HTML file displayed in a web browser
+
+-   Static and dynamic websites generate this HTML in different ways
+
+## Static vs. dynamic
+
+![Source: https://www.zesty.io/mindshare/marketing-technology/dynamic-vs-static-websites/](images/static-v-dynamic.png){fig-align="center"}
+
+Good [blog post](https://blog.hubspot.com/website/static-vs-dynamic-website)
+
+## Static does not mean "not interactive"
+
+-   "Static" means the only way to change the client side is by manually changing the content of the files
+
+    -   So, the results of any interactivity will always look the same to everyone
+
+## Static Pros
+
+-   **Simplicity;** easiest to build and maintain from scratch
+
+-   Minimal backend processing means it can load faster for the user; also easier to cache
+
+## Static Cons
+
+-   **Scalability;** any time you make a sitewide content update, you have to update each HTML file
+
+-   New pages also require a new HTML file; not sustainable for large websites
+
+## Github pages
+
+"GitHub Pages is a static site hosting service that takes HTML, CSS, and JavaScript files straight from a repository on GitHub, optionally runs the files through a build process, and publishes a website." - [documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages)
+
+-   Default domain name (`repository_name.github.io`) can be updated easily
+
+## Netlify
+
+-   Another static site hosting option - you can also connect this account to a Github repository
+
+-   Mostly mentioning this for awareness
+
+## Wordpress
+
+-   Relevant option for easy creation of **dynamic** sites
+
+-   Free options are limited and it's a pain to update (not targeted at coders)
+
+# Old tools, new applications
+
+## `blogdown` and Hugo
+
+-   `blogdown` is an R Markdown extension that interfaces with Hugo
+
+-   Hugo is a software that applies layout to content (that we created with `blogdown`) and generates HTML files that can be served into a static website; explore available themes [here](https://themes.gohugo.io/) (some are more `blogdown`-friendly than others)
+
+-   Good blogdown [tutorial](https://www.andreashandel.com/posts/2020-01-02-blogdown-website-1/index.html)
+
+-   Example blogdown [personal website](https://amber.rbind.io/), [research results](https://dspg-young-scholars-program.github.io/dspg20career/?type=dspg)
+
+## Or you can use Quarto (recommended)
+
+-   [Create websites using Quarto](https://quarto.org/docs/websites/)
+
+-   Less control over themes, but much easier/less dependencies
+
+-   Good Quarto website [tutorial](https://albert-rapp.de/posts/13_quarto_blog_writing_guide/13_quarto_blog_writing_guide.html)
+
+-   Quarto [blog](https://blog.djnavarro.net/), Quarto [website](https://ui-research.github.io/reproducibility-at-urban/), Quarto [book](https://ui-research.github.io/2023_jsm-data-privacy-training/) (ft. shameless self-promotion)
+
+## Embedding places the HTML directly into a webpage document
+
+-   Embedding Shiny [1](https://datasciencegenie.com/how-to-embed-a-shiny-app-on-website/), [2](https://sscc.wisc.edu/sscc/pubs/shiny/embedding-shiny-apps.html)
+
+-   Embedding Tableau [1](https://help.tableau.com/current/pro/desktop/en-us/embed.htm#:~:text=You%20can%20embed%20interactive%20Tableau,Tableau%20Server%20or%20Tableau%20Cloud.), [2](https://help.tableau.com/current/api/embedding_api/en-us/index.html)
+
+## Publishing `.qmd` or `.Rmd` documents with Shiny components
+
+-   Quarto and R Markdown documents can have embedded Shiny components
+
+    -   Quarto create [document](https://quarto.org/docs/interactive/shiny/), Quarto [publish document](https://quarto.org/docs/interactive/shiny/running.html)
+
+    -   R Markdown [create document](https://bookdown.org/yihui/rmarkdown/interactive-documents.html#intro-shiny)
+
+-   These are best for simpler apps with limited functionality accompanied by static plots/text; may not be worth learning new syntax
+
+# Tool Review and discussion
+
+## What are some applications of websites for data viz?
+
+## Data viz applications of websites
+
+-   Storytelling
+
+    -   Presenting analysis results
+
+-   Portfolio/Personal Websites
+
+-   Blogging/Tutorials
+
+-   Books (Quarto, `bookdown`)
+
+-   Documentation
+
+## What are the main tools we've covered for publishing data viz?
+
+## Main tools
+
+-   Tableau Public
+
+    -   Embed dashboard, or link directly to published version
+
+-   Shinyapps.io
+
+    -   Embed dashboard, or link directly to published version
+
+    -   Alternate for simple dashboards: generate HTML document/publish (`.qmd`, `.Rmd`)
+
+-   Websites
+
+    -   blogdown (w/Hugo) or Quarto for static sites
+
+    -   Hosting options: Github pages, Netlify
+
+## How do you pick one? What are the pros and cons you could consider?
+
+## Considerations
+
+-   Is your viz static or dynamic?
+
+-   Are you embedding the viz as an image or HTML, or generating it directly with R?
+
+-   Is your viz part of a story or dashboard? Is it part of a larger series of results? What is the ratio of text to image? \[Subjective\]
+
+-   What kind of performance do you need? Are you willing to pay for hosting?
+
+# A note on personal websites
+
+## Developing a portfolio
+
+These resources were compiled originally by Eric Dunford:
+
+-   [How to Build a Data Science Portfolio](https://towardsdatascience.com/how-to-build-a-data-science-portfolio-5f566517c79c) - Michael Galarnyk
+
+-   [4 Dos and Don'ts to Building a Data Science Portfolio](https://blog.brainstation.io/how-to-build-a-data-science-portfolio-4-dos-and-donts/)
+
+    -   Don't Include Your Whole Body of Work
+
+    -   Do Showcase Your Communication Skills
+
+    -   Do Consider GitHub Instead of a Website
+
+    -   Don't Just Show Code in Isolation
+
+-   [How You Should Create A Data Science Portfolio That Will Get You Hired](https://www.datascienceweekly.org/articles/how-you-should-create-a-data-science-portfolio-that-will-get-you-hired)
+
+
