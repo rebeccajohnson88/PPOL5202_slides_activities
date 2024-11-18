@@ -24,3 +24,5 @@ Course slides, activities, and assignments for Georgetown McCourt School of Publ
 - [Session 10: Bokeh (Python)](https://html-preview.github.io/?url=https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/slides/session10_bokeh/session10_bokeh.slides.html)
 
 - [Session 11: Tableau](https://html-preview.github.io/?url=https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/slides/session11_tableau/session11_tableau.html)
+
+- [Session 12: Data Visualization for the Web](https://html-preview.github.io/?url=https://github.com/rebeccajohnson88/PPOL5202_slides_activities/blob/main/fall_2024/slides/session12_datavizonweb/week-12-slides.html)
